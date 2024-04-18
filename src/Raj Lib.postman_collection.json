@@ -1,0 +1,930 @@
+{
+	"info": {
+		"_postman_id": "b97c2f91-9b32-4210-a58a-472640897004",
+		"name": "Raj Lib",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29245463",
+		"_collection_link": "https://planetary-crescent-916928.postman.co/workspace/New-Team-Workspace~de937f4d-7543-49fb-a59d-f79f4ed32f68/collection/29245463-b97c2f91-9b32-4210-a58a-472640897004?action=share&source=collection_link&creator=29245463"
+	},
+	"item": [
+		{
+			"name": "Register User",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"bhargav\",\r\n    \"email\": \"bhargav@gmail.com\",\r\n    \"password\": \"securePassword123\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Login",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiaGFyZ2F2IiwiaWF0IjoxNzExNTE5NjE0LCJleHAiOjE3MTE2MDYwMTR9.tqfHliENqp4x-uzDOCjwJuNOwkWBxu7e1vtGIzpl4Io",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"bhargav\",\r\n    \"password\": \"securePassword123\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/signin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save Purchase",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiaGFyZ2F2IiwiaWF0IjoxNzEyMzE2ODMwLCJleHAiOjE3MTI0MDMyMzB9.x3JIOrf4iIlFRT5qoioMV3F-dUbned_8keIhHWW04aU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"invoiceNo\": \"INV2024\",\r\n  \"invoiceDate\": \"2024-04-04\",\r\n  \"billTotal\": 1200,\r\n  \"discountPercent\": 5,\r\n  \"discountAmount\": 60,\r\n  \"totalAfterDiscount\": 1140,\r\n  \"gstPercent\": 18,\r\n  \"gstAmount\": 205.2,\r\n  \"grandTotal\": 1345.2,\r\n  \"ledgerId\": 3,\r\n  \"purchaseDetails\": [\r\n    {\r\n      \"bookName\": \"java\",\r\n      \"qty\": 3,\r\n      \"rate\": 100,\r\n      \"amount\": 300\r\n    },\r\n    {\r\n      \"bookName\": \"spring\",\r\n      \"qty\": 4,\r\n      \"rate\": 50,\r\n      \"amount\": 200\r\n    }\r\n  ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/purchase",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"purchase"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all Purchase",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrcmlzaG5hIiwiaWF0IjoxNzExNjg4MTM1LCJleHAiOjE3MTE3NzQ1MzV9.ZTPxaYZhsLsNg2-RoKaF41rTRqtfZ9sL0Z1nYZMHEtM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/purchase/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"purchase",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Purchase book details by Id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrcmlzaG5hIiwiaWF0IjoxNzExNjg4MTM1LCJleHAiOjE3MTE3NzQ1MzV9.ZTPxaYZhsLsNg2-RoKaF41rTRqtfZ9sL0Z1nYZMHEtM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/purchase/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"purchase",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Ledgers",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/ledger/list",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"ledger",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ledger By Id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiaGFyZ2F2IiwiaWF0IjoxNzEyMDQyNjMwLCJleHAiOjE3MTIxMjkwMzB9.VPeLoIiK11LKS6ml2wNR7CbHLxn0Zs1cTK16d7wMJYI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/ledger/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"ledger",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List of ledger",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/ledger/partyname",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"ledger",
+						"partyname"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Price for book",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/purchase/book/book 2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"purchase",
+						"book",
+						"book 2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Books list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/bookdetails",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"bookdetails"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Books Details",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiaGFyZ2F2IiwiaWF0IjoxNzEyMTU0MzAyLCJleHAiOjE3MTIyNDA3MDJ9.ojZxtxRefvX4nYnmDXvXzEekIUqHQfladycD16ag3ak",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/bookdetails/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"bookdetails",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Book Details by Id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiaGFyZ2F2IiwiaWF0IjoxNzEyMTU0OTIxLCJleHAiOjE3MTIyNDEzMjF9.BXuGzlbSre_YpukLzQgTKKPVVUDqVHb6tW1qTsaukS8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/bookdetails/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"bookdetails",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save Book details",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiaGFyZ2F2IiwiaWF0IjoxNzEyMjE1NDE3LCJleHAiOjE3MTIzMDE4MTd9.RMbfJWZUMRf4TDqExHx3ekrVtC8cekX0-FgAs5YP1hE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"invoiceNo\": \"INV123\",\r\n  \"invoiceDate\": \"2024-03-29\",\r\n  \"billTotal\": 1000,\r\n  \"discountPercent\": 10,\r\n  \"discountAmount\": 100,\r\n  \"totalAfterDiscount\": 900,\r\n  \"gstPercent\": 18,\r\n  \"gstAmount\": 162,\r\n  \"grandTotal\": 1062,\r\n  \"ledgerId\": 2,\r\n  \"ledgerName\": \"Agrawal Traders Ledger\",\r\n  \"bookDetails\": [\r\n    {\r\n      \"bookName\": \"Book 1\",\r\n      \"isbn\": \"ISBN123\",\r\n      \"price\": 250,\r\n      \"language\": \"English\",\r\n      \"classificationNumber\": \"Class-1\",\r\n      \"itemNumber\": \"Item-1\",\r\n      \"author\": \"Author 1\",\r\n      \"editor\": \"Editor 1\",\r\n      \"title\": \"Title 1\",\r\n      \"secondTitle\": \"Second Title 1\",\r\n      \"seriesTitle\": \"Series Title 1\",\r\n      \"edition\": 1,\r\n      \"placeOfPublication\": \"Place 1\",\r\n      \"nameOfPublisher\": \"Publisher 1\",\r\n      \"publicationYear\": 2020,\r\n      \"numberOfPages\": 200,\r\n      \"subjectHeading\": \"Subject 1\",\r\n      \"secondAuthorEditor\": \"Second Author/Editor 1\",\r\n      \"thirdAuthorEditor\": \"Third Author/Editor 1\",\r\n      \"itemType\": \"Type 1\",\r\n      \"permanentLocation\": \"Location 1\",\r\n      \"currentLocation\": \"Current Location 1\",\r\n      \"shelvingLocation\": \"Shelving Location 1\",\r\n      \"volumeNo\": 1,\r\n      \"fullCallNumber\": \"Call Number 1\",\r\n      \"copyNo\": \"Copy Number 1\",\r\n      \"accessionNo\": \"Accession Number 1\"\r\n    },\r\n    {\r\n      \"bookName\": \"Book 2\",\r\n      \"isbn\": \"ISBN456\",\r\n      \"price\": 150,\r\n      \"language\": \"English\",\r\n      \"classificationNumber\": \"Class-2\",\r\n      \"itemNumber\": \"Item-2\",\r\n      \"author\": \"Author 2\",\r\n      \"editor\": \"Editor 2\",\r\n      \"title\": \"Title 2\",\r\n      \"secondTitle\": \"Second Title 2\",\r\n      \"seriesTitle\": \"Series Title 2\",\r\n      \"edition\": 2,\r\n      \"placeOfPublication\": \"Place 2\",\r\n      \"nameOfPublisher\": \"Publisher 2\",\r\n      \"publicationYear\": 2021,\r\n      \"numberOfPages\": 250,\r\n      \"subjectHeading\": \"Subject 2\",\r\n      \"secondAuthorEditor\": \"Second Author/Editor 2\",\r\n      \"thirdAuthorEditor\": \"Third Author/Editor 2\",\r\n      \"itemType\": \"Type 2\",\r\n      \"permanentLocation\": \"Location 2\",\r\n      \"currentLocation\": \"Current Location 2\",\r\n      \"shelvingLocation\": \"Shelving Location 2\",\r\n      \"volumeNo\": 2,\r\n      \"fullCallNumber\": \"Call Number 2\",\r\n      \"copyNo\": \"Copy Number 2\",\r\n      \"accessionNo\": \"Accession Number 2\"\r\n    }\r\n  ],\r\n  \"purchaseDetails\": [\r\n    {\r\n      \"bookName\": \"Book 1\",\r\n      \"qty\": 2,\r\n      \"rate\": 250,\r\n      \"amount\": 500\r\n    },\r\n    {\r\n      \"bookName\": \"Book 2\",\r\n      \"qty\": 3,\r\n      \"rate\": 150,\r\n      \"amount\": 450\r\n    }\r\n  ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/bookdetails/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"bookdetails",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Book Types",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/bookTypes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"bookTypes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update Bookdetail",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "\"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiaGFyZ2F2IiwiaWF0IjoxNzEyMzczNTk2LCJleHAiOjE3MTI0NTk5OTZ9.nEieo5LhJYfCbYquuaeiadgBX_EPVp30vsAY0JK_CPQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"isbn\": \"123-456-789\",\r\n  \"language\": \"English\",\r\n  \"classificationNumber\": \"001.234\",\r\n  \"itemNumber\": \"567890\",\r\n  \"author\": \"Author Name\",\r\n  \"editor\": \"Editor Name\",\r\n  \"title\": \"Updated Book Title\",\r\n  \"secondTitle\": \"Updated Second Title\",\r\n  \"seriesTitle\": \"Updated Series Title\",\r\n  \"edition\": 2,\r\n  \"placeOfPublication\": \"Updated Place of Publication\",\r\n  \"nameOfPublisher\": \"Updated Publisher\",\r\n  \"publicationYear\": 2024,\r\n  \"numberOfPages\": 300,\r\n  \"subjectHeading\": \"Updated Subject Heading\",\r\n  \"secondAuthorEditor\": \"Second Author/Editor\",\r\n  \"thirdAuthorEditor\": \"Third Author/Editor\",\r\n  \"itemType\": \"Updated Item Type\",\r\n  \"permanentLocation\": \"Updated Permanent Location\",\r\n  \"currentLocation\": \"Updated Current Location\",\r\n  \"shelvingLocation\": \"Updated Shelving Location\",\r\n  \"volumeNo\": 3,\r\n  \"fullCallNumber\": \"Updated Full Call Number\",\r\n  \"copyNo\": \"CopyNo Updated\",\r\n  \"accessionNo\": \"AccessionNo Updated\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/purchase/update/book-details/24",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"purchase",
+						"update",
+						"book-details",
+						"24"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register As Admin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"kiran\",\r\n  \"email\": \"kiran@gmail.com\",\r\n  \"password\": \"kiran@123\",\r\n  \"role\": [\"admin\"]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save Book Language",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bookLangName\": \"Sindhi\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/book-languages",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"book-languages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Languages",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/auth/book-languages",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"book-languages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Language By id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiaGFyZ2F2IiwiaWF0IjoxNzEzMjQ4MTQwLCJleHAiOjE3MTMzMzQ1NDB9.dszCnEdevVrf5TalHG6TD2_hJIo4lQVwvf17Ldk1eDE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bookLangName\": \"malyani\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/book-languages/27",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"book-languages",
+						"27"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Book Langugae by id",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/auth/book-languages/27",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"book-languages",
+						"27"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Book Language",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/auth/book-languages/27",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"book-languages",
+						"27"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save Book Type",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bookTypeName\": \"Fiction\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/book-types",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"book-types"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Book Type",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/auth/book-types",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"book-types"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Book Type By Id",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/auth/book-types/47",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"book-types",
+						"47"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update Book Type by Id",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bookTypeName\": \"Non-Fiction\"   \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/book-types/47",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"book-types",
+						"47"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete book Type",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/auth/book-types/47",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"book-types",
+						"47"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save Book",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bookName\": \"Sample Book\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/book",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"book"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Boks",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/auth/book",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"book"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get books by id",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/auth/book/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"book",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update book",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bookName\": \"Updated Book Name\",\r\n    \"isBlock\": \"true\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/book/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"book",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete book",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/auth/book/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"book",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

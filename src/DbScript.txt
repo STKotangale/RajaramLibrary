@@ -1,0 +1,76 @@
+CREATE SCHEMA `rajalib` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
+
+INSERT INTO `roles` (`id`, `name`) VALUES 
+(1, 'ROLE_USER'),
+(2, 'ROLE_MODERATOR'),
+(3, 'ROLE_ADMIN');
+
+INSERT INTO book_type (book_type_name, is_block) VALUES
+('Literary', 0),
+('Mystery', 0),
+('Thriller', 0),
+('Science-Fiction', 0),
+('Fantasy', 0),
+('Historical', 0),
+('Romance', 0),
+('Horror', 0),
+('Adventure', 0),
+('Crime', 0),
+('Drama', 0),
+('Satire', 0),
+('Biographical', 0),
+('Autobiographical', 0),
+('Educational', 0),
+('Self-Help', 0),
+('Health', 0),
+('Travel', 0),
+('Guide', 0),
+('Religion', 0),
+('Science', 0),
+('History', 0),
+('Math', 0),
+('Anthology', 0),
+('Poetry', 0),
+('Encyclopedias', 0),
+('Dictionaries', 0),
+('Comics', 0),
+('Art', 0),
+('Cookbooks', 0),
+('Diaries', 0),
+('Journals', 0),
+('Prayerbooks', 0),
+('Series', 0),
+('Trilogy', 0),
+('Biographies', 0);
+
+
+INSERT INTO book_language (book_lang_id, book_lang_name, is_block) VALUES
+(1, 'English', 0),
+(2, 'Mandarin Chinese', 0),
+(3, 'Spanish', 0),
+(4, 'Hindi', 0),
+(5, 'French', 0),
+(6, 'Standard Arabic', 0),
+(7, 'Bengali', 0),
+(8, 'Russian', 0),
+(9, 'Portuguese', 0),
+(10, 'Urdu', 0),
+(11, 'Indonesian', 0),
+(12, 'German', 0),
+(13, 'Japanese', 0),
+(14, 'Swahili', 0),
+(15, 'Telugu', 0),
+(16, 'Turkish', 0); 
+
+INSERT INTO ledger (ledger_code, ledger_name) VALUES
+('GBW123', 'Global Books Wholesalers'),
+('NLS456', 'National Literary Supply'),
+('ABD789', 'Academic Books Distribution'),
+('FFS101', 'Fiction Fanatics Suppliers'),
+('ERI202', 'Educational Resources Inc.'),
+('STI303', 'SciTech Innovators'),
+('ACC404', 'Art and Culture Curators'),
+('CHB505', 'Children’s Book Hub');
+
+
+
