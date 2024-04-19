@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
 import com.raja.lib.invt.model.BookDetails;
 import com.raja.lib.invt.model.Ledger;
 import com.raja.lib.invt.model.Purchase;
@@ -20,6 +22,7 @@ import com.raja.lib.invt.repository.PurchaseDetailRepository;
 import com.raja.lib.invt.repository.PurchaseRepository;
 import com.raja.lib.invt.request.PurchaseDetailDto;
 import com.raja.lib.invt.request.PurchaseRequestDto;
+import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.resposne.GetPurchaseReponseDto;
 import com.raja.lib.invt.resposne.PurchaseResponseDto;
 
@@ -104,15 +107,16 @@ public class PurchaseServiceImpl {
 	}
 
 	public GetPurchaseReponseDto getPurchaseDetails(Long purchaseId) {
-		Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
-		if (optionalPurchase.isPresent()) {
-			Purchase purchase = optionalPurchase.get();
-			GetPurchaseReponseDto responseDto = mapToResponseDto(purchase);
-			return responseDto;
-		} else {
-			return null;
-		}
+	    Optional<Purchase> optionalPurchase = purchaseRepository.findByIdAndFetchLedgerEagerly(purchaseId);
+	    if (optionalPurchase.isPresent()) {
+	        Purchase purchase = optionalPurchase.get();
+	        GetPurchaseReponseDto responseDto = mapToResponseDto(purchase);
+	        return responseDto;
+	    } else {
+	        return null;
+	    }
 	}
+
 
 	public List<GetPurchaseReponseDto> getAllPurchaseDetails() {
 		List<Purchase> purchases = purchaseRepository.findAll();
@@ -120,24 +124,32 @@ public class PurchaseServiceImpl {
 	}
 
 	private GetPurchaseReponseDto mapToResponseDto(Purchase purchase) {
-		GetPurchaseReponseDto responseDto = new GetPurchaseReponseDto();
-		responseDto.setPurchaseId(purchase.getPurchaseId());
-		responseDto.setInvoiceNo(purchase.getInvoiceNo());
-		responseDto.setInvoiceDate(purchase.getInvoiceDate());
-		responseDto.setBillTotal(purchase.getBillTotal());
-		responseDto.setDiscountPercent(purchase.getDiscountPercent());
-		responseDto.setDiscountAmount(purchase.getDiscountAmount());
-		responseDto.setTotalAfterDiscount(purchase.getTotalAfterDiscount());
-		responseDto.setGstPercent(purchase.getGstPercent());
-		responseDto.setGstAmount(purchase.getGstAmount());
-		responseDto.setGrandTotal(purchase.getGrandTotal());
+	    GetPurchaseReponseDto responseDto = new GetPurchaseReponseDto();
+	    responseDto.setPurchaseId(purchase.getPurchaseId());
+	    responseDto.setInvoiceNo(purchase.getInvoiceNo());
+	    responseDto.setInvoiceDate(purchase.getInvoiceDate());
+	    responseDto.setBillTotal(purchase.getBillTotal());
+	    responseDto.setDiscountPercent(purchase.getDiscountPercent());
+	    responseDto.setDiscountAmount(purchase.getDiscountAmount());
+	    responseDto.setTotalAfterDiscount(purchase.getTotalAfterDiscount());
+	    responseDto.setGstPercent(purchase.getGstPercent());
+	    responseDto.setGstAmount(purchase.getGstAmount());
+	    responseDto.setGrandTotal(purchase.getGrandTotal());
 
-		List<PurchaseDetailDto> purchaseDetailDtos = purchase.getPurchaseDetails().stream().map(this::mapToDetailDto)
-				.collect(Collectors.toList());
-		responseDto.setPurchaseDetails(purchaseDetailDtos);
+	    if (purchase.getLedger() != null) {
+	        responseDto.setLedger_name(purchase.getLedger().getLedgerName());
+	    } else {
+	        responseDto.setLedger_name("Ledger not available");
+	    }
 
-		return responseDto;
+	    List<PurchaseDetailDto> purchaseDetailDtos = purchase.getPurchaseDetails().stream()
+	                                                         .map(this::mapToDetailDto)
+	                                                         .collect(Collectors.toList());
+	    responseDto.setPurchaseDetails(purchaseDetailDtos);
+
+	    return responseDto;
 	}
+
 
 	private PurchaseDetailDto mapToDetailDto(PurchaseDetail purchaseDetail) {
 		PurchaseDetailDto detailDto = new PurchaseDetailDto();
@@ -152,7 +164,6 @@ public class PurchaseServiceImpl {
 		Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
 		if (optionalPurchase.isPresent()) {
 			Purchase purchase = optionalPurchase.get();
-			// Update purchase details
 			purchase.setInvoiceNo(requestDto.getInvoiceNo());
 			purchase.setInvoiceDate(requestDto.getInvoiceDate());
 			purchase.setBillTotal(requestDto.getBillTotal());
@@ -162,11 +173,9 @@ public class PurchaseServiceImpl {
 			purchase.setGstPercent(requestDto.getGstPercent());
 			purchase.setGstAmount(requestDto.getGstAmount());
 			purchase.setGrandTotal(requestDto.getGrandTotal());
-			// Update associated ledger
 			Ledger ledger = ledgerRepository.findById(requestDto.getLedgerId())
 					.orElseThrow(() -> new RuntimeException("Ledger not found with id: " + requestDto.getLedgerId()));
 			purchase.setLedger(ledger);
-			// Update associated purchase details
 			List<PurchaseDetail> purchaseDetails = purchase.getPurchaseDetails();
 			for (int i = 0; i < purchaseDetails.size(); i++) {
 				PurchaseDetailDto detailDto = requestDto.getPurchaseDetails().get(i);
@@ -176,9 +185,7 @@ public class PurchaseServiceImpl {
 				purchaseDetail.setRate(detailDto.getRate());
 				purchaseDetail.setAmount(detailDto.getAmount());
 			}
-			// Save updated purchase
 			purchase = purchaseRepository.save(purchase);
-			// Return response
 			PurchaseResponseDto responseDto = new PurchaseResponseDto();
 			responseDto.setPurchaseId(purchase.getPurchaseId());
 			responseDto.setInvoiceNo(purchase.getInvoiceNo());
@@ -187,24 +194,22 @@ public class PurchaseServiceImpl {
 			responseDto.setSuccess(true);
 			return responseDto;
 		} else {
-			// Handle case where purchase is not found
 			throw new RuntimeException("Purchase not found with id: " + purchaseId);
 		}
 	}
 
-	public void deletePurchase(Long purchaseId) {
-		Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
-		if (optionalPurchase.isPresent()) {
-			Purchase purchase = optionalPurchase.get();
-			// Delete associated purchase details
-			purchaseDetailRepository.deleteAll(purchase.getPurchaseDetails());
-			// Delete purchase
-			purchaseRepository.delete(purchase);
-		} else {
-			// Handle case where purchase is not found
-			throw new RuntimeException("Purchase not found with id: " + purchaseId);
-		}
+	public ApiResponseDTO<Object> deletePurchase(Long purchaseId) {
+	    Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
+	    if (optionalPurchase.isPresent()) {
+	        Purchase purchase = optionalPurchase.get();
+	        purchaseDetailRepository.deleteAll(purchase.getPurchaseDetails());
+	        purchaseRepository.delete(purchase);
+	        return new ApiResponseDTO<>(true, "Purchase deleted successfully", null, HttpStatus.OK.value());
+	    } else {
+	        throw new RuntimeException("Purchase not found with id: " + purchaseId);
+	    }
 	}
+
 
 	public BookRate getBookRate(String bookName) {
 		BookRate bookRate = purchaseDetailRepository.getBookRate(bookName);

@@ -23,6 +23,7 @@ import com.raja.lib.invt.objects.BookName;
 import com.raja.lib.invt.objects.BookRate;
 import com.raja.lib.invt.request.PurchaseRequestDto;
 import com.raja.lib.invt.request.UpdateBookDetailsRequest;
+import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.resposne.GetPurchaseReponseDto;
 import com.raja.lib.invt.resposne.PurchaseResponseDto;
 import com.raja.lib.invt.service.BookDetailsService;
@@ -68,15 +69,11 @@ public class PurchaseController {
 		return ResponseEntity.ok(responseDto);
 	}
 
-	@DeleteMapping("/{purchaseId}")
-	public ResponseEntity<?> deletePurchase(@PathVariable Long purchaseId) {
-		try {
-			purchaseService.deletePurchase(purchaseId);
-			return ResponseEntity.ok().build();
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-		}
-	}
+	 @DeleteMapping("/{purchaseId}")
+	    public ResponseEntity<ApiResponseDTO<Object>> deletePurchase(@PathVariable Long purchaseId) {
+	        ApiResponseDTO<Object> response = purchaseService.deletePurchase(purchaseId);
+	        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
+	    }
 
 	@GetMapping("/book/{bookname}")
 	public ResponseEntity<BookRate> getBookRate(@PathVariable("bookname") String bookName) {

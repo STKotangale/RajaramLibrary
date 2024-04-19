@@ -17,7 +17,7 @@ public class GetPurchaseReponseDto {
 	private Long purchaseId;
 	private String invoiceNo;
 	private Date invoiceDate;
-	private String partyName;
+	private String ledger_name;
 	private double billTotal;
 	private double discountPercent;
 	private double discountAmount;
