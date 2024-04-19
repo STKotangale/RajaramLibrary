@@ -24,23 +24,20 @@ import com.raja.lib.invt.resposne.GetPurchaseReponseDto;
 import com.raja.lib.invt.resposne.PurchaseResponseDto;
 
 @Service
-public class PurchaseServiceImpl  {
+public class PurchaseServiceImpl {
 
 	private final PurchaseRepository purchaseRepository;
 	private final PurchaseDetailRepository purchaseDetailRepository;
 	private final LedgerRepository ledgerRepository;
 	private final BookDetailsRepository bookDetailsRepository;
 
-	public PurchaseServiceImpl(PurchaseRepository purchaseRepository,
-	                           PurchaseDetailRepository purchaseDetailRepository,
-	                           LedgerRepository ledgerRepository,
-	                           BookDetailsRepository bookDetailsRepository) {
-	    this.purchaseRepository = purchaseRepository;
-	    this.purchaseDetailRepository = purchaseDetailRepository;
-	    this.ledgerRepository = ledgerRepository;
-	    this.bookDetailsRepository = bookDetailsRepository;
+	public PurchaseServiceImpl(PurchaseRepository purchaseRepository, PurchaseDetailRepository purchaseDetailRepository,
+			LedgerRepository ledgerRepository, BookDetailsRepository bookDetailsRepository) {
+		this.purchaseRepository = purchaseRepository;
+		this.purchaseDetailRepository = purchaseDetailRepository;
+		this.ledgerRepository = ledgerRepository;
+		this.bookDetailsRepository = bookDetailsRepository;
 	}
-
 
 	public PurchaseResponseDto createPurchase(PurchaseRequestDto requestDto) {
 		Ledger ledger = ledgerRepository.findById(requestDto.getLedgerId())
@@ -56,7 +53,7 @@ public class PurchaseServiceImpl  {
 		purchase.setGstPercent(requestDto.getGstPercent());
 		purchase.setGstAmount(requestDto.getGstAmount());
 		purchase.setGrandTotal(requestDto.getGrandTotal());
-		purchase.setLedger(ledger); 
+		purchase.setLedger(ledger);
 		purchase = purchaseRepository.save(purchase);
 
 		List<PurchaseDetail> purchaseDetails = new ArrayList<>();
@@ -75,24 +72,24 @@ public class PurchaseServiceImpl  {
 		Map<Long, Integer> purchaseCopyMap = new HashMap<>();
 
 		for (PurchaseDetail purchaseDetail : purchaseDetails) {
-		    int quantity = purchaseDetail.getQty();
-		    int rate = purchaseDetail.getRate();
-		    Long purchaseDetailId = purchaseDetail.getPurchaseDetail();
-		    purchaseCopyMap.putIfAbsent(purchaseDetailId, 1);
-		    
-		    for (int i = 0; i < quantity; i++) {
-		        BookDetails bookDetails = new BookDetails();
-		        bookDetails.setPurchaseDetail(purchaseDetail); 
-		        bookDetails.setPurchaseDetailIdf(purchaseDetail);
-		        bookDetails.setRate(rate);
-		        
-		        int purchaseCopyNo = purchaseCopyMap.get(purchaseDetailId);
-		        bookDetails.setPurchaseCopyNo(purchaseCopyNo);
-		        
-		        bookDetailsList.add(bookDetails);
-		        
-		        purchaseCopyMap.put(purchaseDetailId, purchaseCopyNo + 1);
-		    }
+			int quantity = purchaseDetail.getQty();
+			int rate = purchaseDetail.getRate();
+			Long purchaseDetailId = purchaseDetail.getPurchaseDetail();
+			purchaseCopyMap.putIfAbsent(purchaseDetailId, 1);
+
+			for (int i = 0; i < quantity; i++) {
+				BookDetails bookDetails = new BookDetails();
+				bookDetails.setPurchaseDetail(purchaseDetail);
+				bookDetails.setPurchaseDetailIdf(purchaseDetail);
+				bookDetails.setRate(rate);
+
+				int purchaseCopyNo = purchaseCopyMap.get(purchaseDetailId);
+				bookDetails.setPurchaseCopyNo(purchaseCopyNo);
+
+				bookDetailsList.add(bookDetails);
+
+				purchaseCopyMap.put(purchaseDetailId, purchaseCopyNo + 1);
+			}
 		}
 		bookDetailsRepository.saveAll(bookDetailsList);
 
@@ -150,21 +147,76 @@ public class PurchaseServiceImpl  {
 		detailDto.setAmount(purchaseDetail.getAmount());
 		return detailDto;
 	}
-	
-	
+
+	public PurchaseResponseDto updatePurchase(Long purchaseId, PurchaseRequestDto requestDto) {
+		Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
+		if (optionalPurchase.isPresent()) {
+			Purchase purchase = optionalPurchase.get();
+			// Update purchase details
+			purchase.setInvoiceNo(requestDto.getInvoiceNo());
+			purchase.setInvoiceDate(requestDto.getInvoiceDate());
+			purchase.setBillTotal(requestDto.getBillTotal());
+			purchase.setDiscountPercent(requestDto.getDiscountPercent());
+			purchase.setDiscountAmount(requestDto.getDiscountAmount());
+			purchase.setTotalAfterDiscount(requestDto.getTotalAfterDiscount());
+			purchase.setGstPercent(requestDto.getGstPercent());
+			purchase.setGstAmount(requestDto.getGstAmount());
+			purchase.setGrandTotal(requestDto.getGrandTotal());
+			// Update associated ledger
+			Ledger ledger = ledgerRepository.findById(requestDto.getLedgerId())
+					.orElseThrow(() -> new RuntimeException("Ledger not found with id: " + requestDto.getLedgerId()));
+			purchase.setLedger(ledger);
+			// Update associated purchase details
+			List<PurchaseDetail> purchaseDetails = purchase.getPurchaseDetails();
+			for (int i = 0; i < purchaseDetails.size(); i++) {
+				PurchaseDetailDto detailDto = requestDto.getPurchaseDetails().get(i);
+				PurchaseDetail purchaseDetail = purchaseDetails.get(i);
+				purchaseDetail.setBookName(detailDto.getBookName());
+				purchaseDetail.setQty(detailDto.getQty());
+				purchaseDetail.setRate(detailDto.getRate());
+				purchaseDetail.setAmount(detailDto.getAmount());
+			}
+			// Save updated purchase
+			purchase = purchaseRepository.save(purchase);
+			// Return response
+			PurchaseResponseDto responseDto = new PurchaseResponseDto();
+			responseDto.setPurchaseId(purchase.getPurchaseId());
+			responseDto.setInvoiceNo(purchase.getInvoiceNo());
+			responseDto.setMessage("Purchase updated successfully");
+			responseDto.setStatusCode(HttpStatus.OK.value());
+			responseDto.setSuccess(true);
+			return responseDto;
+		} else {
+			// Handle case where purchase is not found
+			throw new RuntimeException("Purchase not found with id: " + purchaseId);
+		}
+	}
+
+	public void deletePurchase(Long purchaseId) {
+		Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
+		if (optionalPurchase.isPresent()) {
+			Purchase purchase = optionalPurchase.get();
+			// Delete associated purchase details
+			purchaseDetailRepository.deleteAll(purchase.getPurchaseDetails());
+			// Delete purchase
+			purchaseRepository.delete(purchase);
+		} else {
+			// Handle case where purchase is not found
+			throw new RuntimeException("Purchase not found with id: " + purchaseId);
+		}
+	}
+
 	public BookRate getBookRate(String bookName) {
-	    BookRate bookRate = purchaseDetailRepository.getBookRate(bookName);
-	    if (bookRate == null) {
-	        return null;
-	    }
-	    return bookRate;
+		BookRate bookRate = purchaseDetailRepository.getBookRate(bookName);
+		if (bookRate == null) {
+			return null;
+		}
+		return bookRate;
 	}
 
-	
 	public List<BookName> getBookNames() {
-	    List<BookName> bookNames = purchaseDetailRepository.getBookName();
-	    return bookNames;
+		List<BookName> bookNames = purchaseDetailRepository.getBookName();
+		return bookNames;
 	}
-
 
 }
