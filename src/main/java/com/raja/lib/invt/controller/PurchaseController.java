@@ -56,8 +56,7 @@ public class PurchaseController {
 		}
 	}
 
-	@GetMapping("/all")
-	@PreAuthorize("hasRole('USER')")
+	@GetMapping("all")
 	public List<GetPurchaseReponseDto> getAllPurchaseDetails() {
 		return purchaseService.getAllPurchaseDetails();
 	}
