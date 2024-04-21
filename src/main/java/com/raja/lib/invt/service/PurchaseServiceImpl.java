@@ -135,6 +135,7 @@ public class PurchaseServiceImpl {
 	    responseDto.setGstPercent(purchase.getGstPercent());
 	    responseDto.setGstAmount(purchase.getGstAmount());
 	    responseDto.setGrandTotal(purchase.getGrandTotal());
+	    responseDto.setLedger_id(purchase.getLedger().getLedgerId());
 
 	    if (purchase.getLedger() != null) {
 	        responseDto.setLedger_name(purchase.getLedger().getLedgerName());
