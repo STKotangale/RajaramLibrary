@@ -9,17 +9,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.model.Ledger;
 import com.raja.lib.invt.request.LedgerRequest;
+import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.service.LedgerServiceImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -57,7 +59,6 @@ public class LedgerControlller {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?> getLedgerById(@PathVariable int id) {
 		Optional<Ledger> ledgerOptional = ledgerService.getLedgerById(id);
 		if (!ledgerOptional.isPresent()) {
@@ -67,6 +68,26 @@ public class LedgerControlller {
 		}
 		return new ResponseEntity<>(ledgerOptional.get(), HttpStatus.OK);
 	}
+	
+	
+	@PutMapping("/{id}")
+    public ResponseEntity<Ledger> updateLedger(@PathVariable int id, @RequestBody LedgerRequest ledgerRequest) {
+        try {
+            Ledger updatedLedger = ledgerService.updateLedger(id, ledgerRequest);
+            return new ResponseEntity<>(updatedLedger, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+	 @DeleteMapping("/{id}")
+	    public ResponseEntity<ApiResponseDTO<Void>> deleteLedger(@PathVariable int id) {
+	        ApiResponseDTO<Void> response = ledgerService.deleteLedgerById(id);
+	        HttpStatus status = HttpStatus.valueOf(response.getStatusCode());
+	        return new ResponseEntity<>(response, status);
+	    }
 	
 
 }
