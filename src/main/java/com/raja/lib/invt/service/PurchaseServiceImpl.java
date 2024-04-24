@@ -10,14 +10,14 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.raja.lib.acc.model.Ledger;
+import com.raja.lib.acc.repository.LedgerRepository;
 import com.raja.lib.invt.model.BookDetails;
-import com.raja.lib.invt.model.Ledger;
 import com.raja.lib.invt.model.Purchase;
 import com.raja.lib.invt.model.PurchaseDetail;
 import com.raja.lib.invt.objects.BookName;
 import com.raja.lib.invt.objects.BookRate;
 import com.raja.lib.invt.repository.BookDetailsRepository;
-import com.raja.lib.invt.repository.LedgerRepository;
 import com.raja.lib.invt.repository.PurchaseDetailRepository;
 import com.raja.lib.invt.repository.PurchaseRepository;
 import com.raja.lib.invt.request.PurchaseDetailDto;
@@ -61,15 +61,19 @@ public class PurchaseServiceImpl {
 
 		List<PurchaseDetail> purchaseDetails = new ArrayList<>();
 
+
+		
 		for (PurchaseDetailDto detailDto : requestDto.getPurchaseDetails()) {
-			PurchaseDetail purchaseDetail = new PurchaseDetail();
-			purchaseDetail.setBookName(detailDto.getBookName());
-			purchaseDetail.setQty(detailDto.getQty());
-			purchaseDetail.setRate(detailDto.getRate());
-			purchaseDetail.setAmount(detailDto.getAmount());
-			purchaseDetail.setPurchase(purchase);
-			purchaseDetails.add(purchaseDetail);
+		    PurchaseDetail purchaseDetail = new PurchaseDetail();
+		    purchaseDetail.setBookName(detailDto.getBookName());
+		    purchaseDetail.setQty(detailDto.getQty());
+		    purchaseDetail.setRate(detailDto.getRate());
+		    purchaseDetail.setAmount(detailDto.getAmount());
+		    purchaseDetail.setPurchase(purchase);
+		    purchaseDetails.add(purchaseDetail);
 		}
+
+
 		purchaseDetailRepository.saveAll(purchaseDetails);
 		List<BookDetails> bookDetailsList = new ArrayList<>();
 		Map<Long, Integer> purchaseCopyMap = new HashMap<>();
@@ -135,7 +139,7 @@ public class PurchaseServiceImpl {
 	    responseDto.setGstPercent(purchase.getGstPercent());
 	    responseDto.setGstAmount(purchase.getGstAmount());
 	    responseDto.setGrandTotal(purchase.getGrandTotal());
-	    responseDto.setLedger_id(purchase.getLedger().getLedgerId());
+	    responseDto.setLedger_id(purchase.getLedger().getLedgerID());
 
 	    if (purchase.getLedger() != null) {
 	        responseDto.setLedger_name(purchase.getLedger().getLedgerName());

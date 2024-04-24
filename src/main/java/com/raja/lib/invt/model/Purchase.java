@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.raja.lib.acc.model.Ledger;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
