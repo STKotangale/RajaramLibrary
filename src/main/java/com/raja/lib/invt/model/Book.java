@@ -1,4 +1,4 @@
-package com.raja.lib.invt.model;
+	package com.raja.lib.invt.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,7 +20,7 @@ public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int bookId;
+    private Integer  bookId;
 
     private String bookName;
 

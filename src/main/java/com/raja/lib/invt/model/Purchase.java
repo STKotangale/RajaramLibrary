@@ -40,15 +40,12 @@ public class Purchase {
 	private int gstPercent;
 	private int gstAmount;
 	private int grandTotal;
-
+	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ledger_idF")
+    @JoinColumn(name = "ledger_idF", nullable = false)
 	private Ledger ledger;
 
 	@OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL)
 	private List<PurchaseDetail> purchaseDetails;
-	
-	
-	
 	
 }

@@ -27,4 +27,5 @@ public class GetPurchaseReponseDto {
 	private double gstAmount;
 	private double grandTotal;
 	private List<PurchaseDetailDto> purchaseDetails;
+	
 }

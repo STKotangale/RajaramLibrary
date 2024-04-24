@@ -9,8 +9,9 @@ import lombok.Setter;
 @NoArgsConstructor
 
 public class PurchaseDetailDto {
-	private String bookName;
-	private int qty;
-	private int rate;
-	private int amount;
+	
+	 private int bookId;
+	    private int qty;
+	    private int rate;
+	    private int amount;
 }

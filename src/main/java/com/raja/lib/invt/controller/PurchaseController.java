@@ -24,8 +24,8 @@ import com.raja.lib.invt.objects.BookRate;
 import com.raja.lib.invt.request.PurchaseRequestDto;
 import com.raja.lib.invt.request.UpdateBookDetailsRequest;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
-import com.raja.lib.invt.resposne.GetPurchaseReponseDto;
 import com.raja.lib.invt.resposne.PurchaseResponseDto;
+import com.raja.lib.invt.resposne.PurchaseResponseDtos;
 import com.raja.lib.invt.service.BookDetailsService;
 import com.raja.lib.invt.service.PurchaseServiceImpl;
 
@@ -48,18 +48,19 @@ public class PurchaseController {
 	}
 
 	@GetMapping("/{purchaseId}")
-	public ResponseEntity<GetPurchaseReponseDto> getPurchaseDetails(@PathVariable Long purchaseId) {
-		GetPurchaseReponseDto responseDto = purchaseService.getPurchaseDetails(purchaseId);
-		if (responseDto != null) {
-			return ResponseEntity.ok(responseDto);
-		} else {
-			return ResponseEntity.notFound().build();
+	public ResponseEntity<PurchaseResponseDtos> getPurchaseById(@PathVariable Long purchaseId) {
+		try {
+			PurchaseResponseDtos purchaseResponse = purchaseService.getPurchaseById(purchaseId);
+			return ResponseEntity.ok(purchaseResponse); // Return 200 OK with the PurchaseResponseDtos object
+		} catch (RuntimeException e) {
+			return ResponseEntity.notFound().build(); // Return 404 Not Found if Purchase is not found
 		}
 	}
 
-	@GetMapping("all")
-	public List<GetPurchaseReponseDto> getAllPurchaseDetails() {
-		return purchaseService.getAllPurchaseDetails();
+	@GetMapping("")
+	public ResponseEntity<List<PurchaseResponseDtos>> getAllPurchases() {
+		List<PurchaseResponseDtos> purchases = purchaseService.getAllPurchases();
+		return ResponseEntity.ok(purchases); // Return 200 OK with the list of purchases
 	}
 
 	@PutMapping("/{purchaseId}")
@@ -69,11 +70,11 @@ public class PurchaseController {
 		return ResponseEntity.ok(responseDto);
 	}
 
-	 @DeleteMapping("/{purchaseId}")
-	    public ResponseEntity<ApiResponseDTO<Object>> deletePurchase(@PathVariable Long purchaseId) {
-	        ApiResponseDTO<Object> response = purchaseService.deletePurchase(purchaseId);
-	        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
-	    }
+	@DeleteMapping("/{purchaseId}")
+	public ResponseEntity<ApiResponseDTO<Object>> deletePurchase(@PathVariable Long purchaseId) {
+		ApiResponseDTO<Object> response = purchaseService.deletePurchase(purchaseId);
+		return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
+	}
 
 	@GetMapping("/book/{bookname}")
 	public ResponseEntity<BookRate> getBookRate(@PathVariable("bookname") String bookName) {
