@@ -220,46 +220,67 @@ public class PurchaseServiceImpl {
 	
 	// Upadte Api
 	public PurchaseResponseDto updatePurchase(Long purchaseId, PurchaseRequestDto requestDto) {
-		Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
-		if (optionalPurchase.isPresent()) {
-			Purchase purchase = optionalPurchase.get();
-			purchase.setInvoiceNo(requestDto.getInvoiceNo());
-			purchase.setInvoiceDate(requestDto.getInvoiceDate());
-			purchase.setBillTotal(requestDto.getBillTotal());
-			purchase.setDiscountPercent(requestDto.getDiscountPercent());
-			purchase.setDiscountAmount(requestDto.getDiscountAmount());
-			purchase.setTotalAfterDiscount(requestDto.getTotalAfterDiscount());
-			purchase.setGstPercent(requestDto.getGstPercent());
-			purchase.setGstAmount(requestDto.getGstAmount());
-			purchase.setGrandTotal(requestDto.getGrandTotal());
-			Ledger ledger = ledgerRepository.findById(requestDto.getLedgerId())
-					.orElseThrow(() -> new RuntimeException("Ledger not found with id: " + requestDto.getLedgerId()));
-			purchase.setLedger(ledger);
-			List<PurchaseDetail> purchaseDetails = purchase.getPurchaseDetails();
-			for (int i = 0; i < requestDto.getPurchaseDetails().size(); i++) {
-			    PurchaseDetailDto detailDto = requestDto.getPurchaseDetails().get(i);
-			    PurchaseDetail purchaseDetail = purchaseDetails.get(i);
-			    
-			    // Assuming you have access to the bookId in the PurchaseDetailDto
-			    purchaseDetail.setBook_idf(bookRepository.findById(detailDto.getBookId()).orElse(null));
-			    
-			    purchaseDetail.setQty(detailDto.getQty());
-			    purchaseDetail.setRate(detailDto.getRate());
-			    purchaseDetail.setAmount(detailDto.getAmount());
-			}
+	    Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
+	    if (optionalPurchase.isPresent()) {
+	        Purchase purchase = optionalPurchase.get();
+	        purchase.setInvoiceNo(requestDto.getInvoiceNo());
+	        purchase.setInvoiceDate(requestDto.getInvoiceDate());
+	        purchase.setBillTotal(requestDto.getBillTotal());
+	        purchase.setDiscountPercent(requestDto.getDiscountPercent());
+	        purchase.setDiscountAmount(requestDto.getDiscountAmount());
+	        purchase.setTotalAfterDiscount(requestDto.getTotalAfterDiscount());
+	        purchase.setGstPercent(requestDto.getGstPercent());
+	        purchase.setGstAmount(requestDto.getGstAmount());
+	        purchase.setGrandTotal(requestDto.getGrandTotal());
+	        Ledger ledger = ledgerRepository.findById(requestDto.getLedgerId())
+	                .orElseThrow(() -> new RuntimeException("Ledger not found with id: " + requestDto.getLedgerId()));
+	        purchase.setLedger(ledger);
 
-			purchase = purchaseRepository.save(purchase);
-			PurchaseResponseDto responseDto = new PurchaseResponseDto();
-			responseDto.setPurchaseId(purchase.getPurchaseId());
-			responseDto.setInvoiceNo(purchase.getInvoiceNo());
-			responseDto.setMessage("Purchase updated successfully");
-			responseDto.setStatusCode(HttpStatus.OK.value());
-			responseDto.setSuccess(true);
-			return responseDto;
-		} else {
-			throw new RuntimeException("Purchase not found with id: " + purchaseId);
-		}
+	        // Sync existing purchase details with request details
+	        List<PurchaseDetail> existingPurchaseDetails = purchase.getPurchaseDetails();
+	        List<PurchaseDetailDto> requestPurchaseDetails = requestDto.getPurchaseDetails();
+
+	        // Update existing purchase details
+	        for (int i = 0; i < existingPurchaseDetails.size(); i++) {
+	            if (i < requestPurchaseDetails.size()) {
+	                PurchaseDetailDto detailDto = requestPurchaseDetails.get(i);
+	                PurchaseDetail purchaseDetail = existingPurchaseDetails.get(i);
+	                purchaseDetail.setBook_idf(bookRepository.findById(detailDto.getBookId()).orElse(null));
+	                purchaseDetail.setQty(detailDto.getQty());
+	                purchaseDetail.setRate(detailDto.getRate());
+	                purchaseDetail.setAmount(detailDto.getAmount());
+	            } else {
+	                // If there are more existing details than in the request, remove them
+	                purchaseDetailRepository.delete(existingPurchaseDetails.get(i));
+	            }
+	        }
+
+	        // Add new purchase details
+	        for (int i = existingPurchaseDetails.size(); i < requestPurchaseDetails.size(); i++) {
+	            PurchaseDetailDto detailDto = requestPurchaseDetails.get(i);
+	            PurchaseDetail purchaseDetail = new PurchaseDetail();
+	            purchaseDetail.setBook_idf(bookRepository.findById(detailDto.getBookId()).orElse(null));
+	            purchaseDetail.setQty(detailDto.getQty());
+	            purchaseDetail.setRate(detailDto.getRate());
+	            purchaseDetail.setAmount(detailDto.getAmount());
+	            purchaseDetail.setPurchase(purchase);
+	            existingPurchaseDetails.add(purchaseDetail);
+	        }
+
+	        purchase = purchaseRepository.save(purchase);
+
+	        PurchaseResponseDto responseDto = new PurchaseResponseDto();
+	        responseDto.setPurchaseId(purchase.getPurchaseId());
+	        responseDto.setInvoiceNo(purchase.getInvoiceNo());
+	        responseDto.setMessage("Purchase updated successfully");
+	        responseDto.setStatusCode(HttpStatus.OK.value());
+	        responseDto.setSuccess(true);
+	        return responseDto;
+	    } else {
+	        throw new RuntimeException("Purchase not found with id: " + purchaseId);
+	    }
 	}
+
 
 	public ApiResponseDTO<Object> deletePurchase(Long purchaseId) {
 	    Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);

@@ -3,25 +3,45 @@ package com.raja.lib.auth.request;
 import jakarta.validation.constraints.NotBlank;
 
 public class LoginRequest {
-	@NotBlank
-  private String username;
+    @NotBlank
+    private String username;
 
-	@NotBlank
-	private String password;
+    @NotBlank
+    private String password;
 
-	public String getUsername() {
-		return username;
-	}
+    private boolean isBlock;
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    private String memberIdf;
 
-	public String getPassword() {
-		return password;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isBlock() {
+        return isBlock;
+    }
+
+    public void setBlock(boolean isBlock) {
+        this.isBlock = isBlock;
+    }
+
+    public String getMemberIdf() {
+        return memberIdf;
+    }
+
+    public void setMemberIdf(String memberIdf) {
+        this.memberIdf = memberIdf;
+    }
 }

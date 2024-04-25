@@ -32,6 +32,12 @@ public class User {
   @Size(max = 120)
   private String password;
 
+  @Column(name = "is_block")
+  private boolean isBlock;
+
+  @Column(name = "member_idf")
+  private String memberIdf;
+
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(  name = "user_roles", 
         joinColumns = @JoinColumn(name = "user_id"), 
@@ -41,10 +47,12 @@ public class User {
   public User() {
   }
 
-  public User(String username, String email, String password) {
+  public User(String username, String email, String password, boolean isBlock, String memberIdf) {
     this.username = username;
     this.email = email;
     this.password = password;
+    this.isBlock = isBlock;
+    this.memberIdf = memberIdf;
   }
 
   public Long getId() {
@@ -77,6 +85,22 @@ public class User {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public boolean isBlock() {
+    return isBlock;
+  }
+
+  public void setBlock(boolean isBlock) {
+    this.isBlock = isBlock;
+  }
+
+  public String getMemberIdf() {
+    return memberIdf;
+  }
+
+  public void setMemberIdf(String memberIdf) {
+    this.memberIdf = memberIdf;
   }
 
   public Set<Role> getRoles() {

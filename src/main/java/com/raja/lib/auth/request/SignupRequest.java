@@ -14,11 +14,15 @@ public class SignupRequest {
   @Email
   private String email;
 
-  private Set<String> role;
-
   @NotBlank
   @Size(min = 6, max = 40)
   private String password;
+
+  private Set<String> role;
+
+  private boolean isBlock;
+
+  private String memberIdf;
 
   public String getUsername() {
     return username;
@@ -50,5 +54,21 @@ public class SignupRequest {
 
   public void setRole(Set<String> role) {
     this.role = role;
+  }
+
+  public boolean isBlock() {
+    return isBlock;
+  }
+
+  public void setBlock(boolean isBlock) {
+    this.isBlock = isBlock;
+  }
+
+  public String getMemberIdf() {
+    return memberIdf;
+  }
+
+  public void setMemberIdf(String memberIdf) {
+    this.memberIdf = memberIdf;
   }
 }
