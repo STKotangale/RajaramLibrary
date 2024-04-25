@@ -33,7 +33,7 @@ public class User {
   private String password;
 
   @Column(name = "is_block", columnDefinition = "char(1) default 'N'")
-  private boolean isBlock;
+  private char isBlock;
 
 
   @Column(name = "member_idf")
@@ -48,7 +48,7 @@ public class User {
   public User() {
   }
 
-  public User(String username, String email, String password, boolean isBlock, String memberIdf) {
+  public User(String username, String email, String password, char isBlock, String memberIdf) {
     this.username = username;
     this.email = email;
     this.password = password;
@@ -88,11 +88,11 @@ public class User {
     this.password = password;
   }
 
-  public boolean isBlock() {
+  public char isBlock() {
     return isBlock;
   }
 
-  public void setBlock(boolean isBlock) {
+  public void setBlock(char isBlock) {
     this.isBlock = isBlock;
   }
 
@@ -113,7 +113,7 @@ public class User {
   }
   
   
-  public User(String username, String email, String password, boolean isBlock, String memberIdf, Set<Role> roles) {
+  public User(String username, String email, String password, char isBlock, String memberIdf, Set<Role> roles) {
 	    this.username = username;
 	    this.email = email;
 	    this.password = password;

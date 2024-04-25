@@ -61,8 +61,10 @@ public class GeneralMemberService {
             .orElseThrow(() -> new NoSuchElementException("Role not found with ID 2"));
         Set<Role> roles = new HashSet<>();
         roles.add(memberRole);
+        
+        char t=' ';
 
-        User user = new User(username, email, password, false, String.valueOf(generalMember.getMemberId()), roles);
+        User user = new User(username, email, password, t , String.valueOf(generalMember.getMemberId()), roles);
 
         userrepository.save(user);
     }
