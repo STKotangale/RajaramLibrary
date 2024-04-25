@@ -19,4 +19,6 @@ public class GeneralMemberRequestDTO {
     private String confirmDate;
     private char isBlock;
     private String password;
+    private String username;
+
 }

@@ -27,11 +27,7 @@ public class GeneralMember{
     private String memberEducation;
     private String memberOccupation;
     private long mobileNo;
-    private String memberEmailId;
     private String confirmDate;
-    private String password;
-
-
     @Column(columnDefinition = "char(1) default 'N'")
     private char isBlock;
 }

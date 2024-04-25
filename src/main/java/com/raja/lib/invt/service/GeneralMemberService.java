@@ -47,23 +47,23 @@ public class GeneralMemberService {
 
         GeneralMember savedMember = generalMemberRepository.save(generalMember);
 
-        createUserFromGeneralMember(savedMember);
+        createUserFromGeneralMember(savedMember, requestDTO);
 
         return savedMember;
     }
 
-    private void createUserFromGeneralMember(GeneralMember generalMember) {
-        String username = generalMember.getMemberEmailId();
-        String password = passwordEncoder.encode(generalMember.getPassword()); 
-        String email = generalMember.getMemberEmailId();
-        
+    private void createUserFromGeneralMember(GeneralMember generalMember, GeneralMemberRequestDTO requestDTO) {
+        String username = requestDTO.getUsername();
+        String password = passwordEncoder.encode(requestDTO.getPassword());
+        String email = requestDTO.getMemberEmailId();
+
         Role memberRole = roleRepository.findById((long) 2)
             .orElseThrow(() -> new NoSuchElementException("Role not found with ID 2"));
         Set<Role> roles = new HashSet<>();
         roles.add(memberRole);
 
         User user = new User(username, email, password, false, String.valueOf(generalMember.getMemberId()), roles);
-        
+
         userrepository.save(user);
     }
 
@@ -93,7 +93,6 @@ public class GeneralMemberService {
         existingMember.setMemberEducation(requestDTO.getMemberEducation());
         existingMember.setMemberOccupation(requestDTO.getMemberOccupation());
         existingMember.setMobileNo(requestDTO.getMobileNo());
-        existingMember.setMemberEmailId(requestDTO.getMemberEmailId());
         existingMember.setConfirmDate(requestDTO.getConfirmDate());
         existingMember.setIsBlock(requestDTO.getIsBlock());
 
@@ -119,10 +118,8 @@ public class GeneralMemberService {
         member.setMemberEducation(requestDTO.getMemberEducation());
         member.setMemberOccupation(requestDTO.getMemberOccupation());
         member.setMobileNo(requestDTO.getMobileNo());
-        member.setMemberEmailId(requestDTO.getMemberEmailId());
         member.setConfirmDate(requestDTO.getConfirmDate());
         member.setIsBlock(requestDTO.getIsBlock());
-        member.setPassword(requestDTO.getPassword());
         return member;
     }
 }

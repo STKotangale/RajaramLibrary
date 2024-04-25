@@ -32,8 +32,9 @@ public class User {
   @Size(max = 120)
   private String password;
 
-  @Column(name = "is_block")
+  @Column(name = "is_block", columnDefinition = "char(1) default 'N'")
   private boolean isBlock;
+
 
   @Column(name = "member_idf")
   private String memberIdf;

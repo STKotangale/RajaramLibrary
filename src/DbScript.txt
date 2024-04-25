@@ -1,9 +1,8 @@
 CREATE SCHEMA `rajalib` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
 
-INSERT INTO `roles` (`id`, `name`) VALUES 
-(1, 'ROLE_USER'),
-(2, 'ROLE_MODERATOR'),
-(3, 'ROLE_ADMIN');
+INSERT INTO roles (id, name) VALUES 
+(1, 'ADMIN'),
+(2, 'MEMBER');
 
 INSERT INTO book_type (book_type_name, is_block) VALUES
 ('Literary', 0),

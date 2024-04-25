@@ -41,7 +41,6 @@ public class PurchaseController {
 	BookDetailsService bookDetailsService;
 
 	@PostMapping
-	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<PurchaseResponseDto> createPurchase(@RequestBody PurchaseRequestDto requestDto) {
 		PurchaseResponseDto responseDto = purchaseService.createPurchase(requestDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
