@@ -188,9 +188,12 @@ public class AuthController {
           User user = optionalUser.get();
           user.setUsername(updatedUser.getUsername());
           user.setEmail(updatedUser.getEmail());
-          user.setPassword(updatedUser.getPassword());
           user.setBlock(updatedUser.isBlock());
           user.setMemberIdf(updatedUser.getMemberIdf());
+
+          if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+              user.setPassword(encoder.encode(updatedUser.getPassword()));
+          }
 
           userRepository.save(user);
           return ResponseEntity.ok(new MessageResponse("User updated successfully"));
@@ -198,5 +201,6 @@ public class AuthController {
           return ResponseEntity.notFound().build();
       }
   }
+
   
 }

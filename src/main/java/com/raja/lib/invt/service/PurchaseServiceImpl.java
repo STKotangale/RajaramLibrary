@@ -2,6 +2,7 @@ package com.raja.lib.invt.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -232,39 +233,34 @@ public class PurchaseServiceImpl {
 	        purchase.setGstPercent(requestDto.getGstPercent());
 	        purchase.setGstAmount(requestDto.getGstAmount());
 	        purchase.setGrandTotal(requestDto.getGrandTotal());
+	        
 	        Ledger ledger = ledgerRepository.findById(requestDto.getLedgerId())
 	                .orElseThrow(() -> new RuntimeException("Ledger not found with id: " + requestDto.getLedgerId()));
 	        purchase.setLedger(ledger);
 
-	        // Sync existing purchase details with request details
-	        List<PurchaseDetail> existingPurchaseDetails = purchase.getPurchaseDetails();
-	        List<PurchaseDetailDto> requestPurchaseDetails = requestDto.getPurchaseDetails();
+	        // Collect IDs of existing purchase details that are not in the updated list
+	        List<Long> existingDetailIds = purchase.getPurchaseDetails().stream()
+	                .map(PurchaseDetail::getPurchaseDetail)
+	                .collect(Collectors.toList());
 
-	        // Update existing purchase details
-	        for (int i = 0; i < existingPurchaseDetails.size(); i++) {
-	            if (i < requestPurchaseDetails.size()) {
-	                PurchaseDetailDto detailDto = requestPurchaseDetails.get(i);
-	                PurchaseDetail purchaseDetail = existingPurchaseDetails.get(i);
-	                purchaseDetail.setBook_idf(bookRepository.findById(detailDto.getBookId()).orElse(null));
-	                purchaseDetail.setQty(detailDto.getQty());
-	                purchaseDetail.setRate(detailDto.getRate());
-	                purchaseDetail.setAmount(detailDto.getAmount());
-	            } else {
-	                // If there are more existing details than in the request, remove them
-	                purchaseDetailRepository.delete(existingPurchaseDetails.get(i));
-	            }
-	        }
+	        // Clear existing purchase details
+	        purchase.getPurchaseDetails().clear();
 
 	        // Add new purchase details
-	        for (int i = existingPurchaseDetails.size(); i < requestPurchaseDetails.size(); i++) {
-	            PurchaseDetailDto detailDto = requestPurchaseDetails.get(i);
+	        List<PurchaseDetailDto> requestPurchaseDetails = requestDto.getPurchaseDetails();
+	        for (PurchaseDetailDto detailDto : requestPurchaseDetails) {
 	            PurchaseDetail purchaseDetail = new PurchaseDetail();
 	            purchaseDetail.setBook_idf(bookRepository.findById(detailDto.getBookId()).orElse(null));
 	            purchaseDetail.setQty(detailDto.getQty());
 	            purchaseDetail.setRate(detailDto.getRate());
 	            purchaseDetail.setAmount(detailDto.getAmount());
 	            purchaseDetail.setPurchase(purchase);
-	            existingPurchaseDetails.add(purchaseDetail);
+	            purchase.getPurchaseDetails().add(purchaseDetail);
+	        }
+
+	        // Delete old purchase details that are not in the updated list
+	        for (Long detailId : existingDetailIds) {
+	            purchaseDetailRepository.deleteById(detailId);
 	        }
 
 	        purchase = purchaseRepository.save(purchase);
@@ -280,6 +276,9 @@ public class PurchaseServiceImpl {
 	        throw new RuntimeException("Purchase not found with id: " + purchaseId);
 	    }
 	}
+
+
+
 
 
 	public ApiResponseDTO<Object> deletePurchase(Long purchaseId) {
