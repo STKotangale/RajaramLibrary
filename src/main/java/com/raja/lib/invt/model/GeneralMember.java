@@ -29,6 +29,8 @@ public class GeneralMember{
     private long mobileNo;
     private String memberEmailId;
     private String confirmDate;
+    private String password;
+
 
     @Column(columnDefinition = "char(1) default 'N'")
     private char isBlock;

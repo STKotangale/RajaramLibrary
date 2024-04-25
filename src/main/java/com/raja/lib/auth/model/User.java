@@ -110,4 +110,15 @@ public class User {
   public void setRoles(Set<Role> roles) {
     this.roles = roles;
   }
+  
+  
+  public User(String username, String email, String password, boolean isBlock, String memberIdf, Set<Role> roles) {
+	    this.username = username;
+	    this.email = email;
+	    this.password = password;
+	    this.isBlock = isBlock;
+	    this.memberIdf = memberIdf;
+	    this.roles = roles;
+	}
+
 }

@@ -1,13 +1,21 @@
 package com.raja.lib.invt.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.raja.lib.auth.model.Role;
+import com.raja.lib.auth.model.User;
+import com.raja.lib.auth.repository.RoleRepository;
+import com.raja.lib.auth.repository.UserRepository;
 import com.raja.lib.invt.model.GeneralMember;
 import com.raja.lib.invt.repository.GeneralMemberRepository;
 import com.raja.lib.invt.request.GeneralMemberRequestDTO;
@@ -17,6 +25,15 @@ import com.raja.lib.invt.resposne.ApiResponseDTO;
 public class GeneralMemberService {
 
     private final GeneralMemberRepository generalMemberRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    
+    @Autowired
+    UserRepository userrepository;
+    @Autowired
+    RoleRepository roleRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(GeneralMemberService.class);
 
     public GeneralMemberService(GeneralMemberRepository generalMemberRepository) {
@@ -25,9 +42,32 @@ public class GeneralMemberService {
 
     public GeneralMember createGeneralMember(GeneralMemberRequestDTO requestDTO) {
         LOGGER.info("Creating general member");
+
         GeneralMember generalMember = convertToEntity(requestDTO);
-        return generalMemberRepository.save(generalMember);
+
+        GeneralMember savedMember = generalMemberRepository.save(generalMember);
+
+        createUserFromGeneralMember(savedMember);
+
+        return savedMember;
     }
+
+    private void createUserFromGeneralMember(GeneralMember generalMember) {
+        String username = generalMember.getMemberEmailId();
+        String password = passwordEncoder.encode(generalMember.getPassword()); 
+        String email = generalMember.getMemberEmailId();
+        
+        Role memberRole = roleRepository.findById((long) 2)
+            .orElseThrow(() -> new NoSuchElementException("Role not found with ID 2"));
+        Set<Role> roles = new HashSet<>();
+        roles.add(memberRole);
+
+        User user = new User(username, email, password, false, String.valueOf(generalMember.getMemberId()), roles);
+        
+        userrepository.save(user);
+    }
+
+
 
     public GeneralMember getGeneralMemberById(int id) {
         LOGGER.info("Fetching general member by id: {}", id);
@@ -82,6 +122,7 @@ public class GeneralMemberService {
         member.setMemberEmailId(requestDTO.getMemberEmailId());
         member.setConfirmDate(requestDTO.getConfirmDate());
         member.setIsBlock(requestDTO.getIsBlock());
+        member.setPassword(requestDTO.getPassword());
         return member;
     }
 }

@@ -72,23 +72,16 @@ public class AuthController {
           .map(item -> item.getAuthority())
           .collect(Collectors.toList());
 
-      // Retrieve user details from the database
       User user = userRepository.findByUsername(loginRequest.getUsername())
               .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + loginRequest.getUsername()));
 
-      // Check if the user is blocked
       if (user.isBlock()) {
           return ResponseEntity
               .badRequest()
               .body(new MessageResponse("Error: Your account is blocked!"));
       }
 
-//      // Check memberIdf if needed
-//      if (user.getMemberIdf() != null && !user.getMemberIdf().equals(loginRequest.getMemberIdf())) {
-//          return ResponseEntity
-//              .badRequest()
-//              .body(new MessageResponse("Error: Invalid memberIdf!"));
-//      }
+
 
       return ResponseEntity.ok(new JwtResponse(jwt, 
                            userDetails.getId(), 
@@ -112,48 +105,24 @@ public class AuthController {
               .body(new MessageResponse("Error: Email is already in use!"));
       }
 
-      // Create new user's account
       User user = new User(signUpRequest.getUsername(), 
                            signUpRequest.getEmail(),
                            encoder.encode(signUpRequest.getPassword()),
-                           false, // Default value for isBlock
-                           null); // Default value for memberIdf
+                           false, 
+                           null); 
 
-      // Set isBlock value if provided
       user.setBlock(signUpRequest.isBlock());
 
-
-      // Set memberIdf value if provided
-      if (signUpRequest.getMemberIdf() != null) {
-          user.setMemberIdf(signUpRequest.getMemberIdf());
-      }
-
-      Set<String> strRoles = signUpRequest.getRole();
+      Role defaultRole = roleRepository.findByName(ERole.ADMIN)
+          .orElseThrow(() -> new RuntimeException("Error: Default role is not found."));
       Set<Role> roles = new HashSet<>();
+      roles.add(defaultRole);
 
-      if (strRoles == null) {
-          Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+      if (signUpRequest.getRole() != null && signUpRequest.getRole().contains("member")) {
+          Role memberRole = roleRepository.findByName(ERole.MEMBER)
               .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-          roles.add(userRole);
-      } else {
-          strRoles.forEach(role -> {
-              switch (role) {
-                  case "admin":
-                      Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                          .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                      roles.add(adminRole);
-                      break;
-                  case "mod":
-                      Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-                          .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                      roles.add(modRole);
-                      break;
-                  default:
-                      Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                          .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                      roles.add(userRole);
-              }
-          });
+          roles.clear(); 
+          roles.add(memberRole);
       }
 
       user.setRoles(roles);
@@ -161,6 +130,7 @@ public class AuthController {
 
       return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
   }
+
 
 
   @GetMapping("/users")

@@ -56,6 +56,7 @@ public class PermanentMemberService {
         existingMember.setMemberEmailId(requestDTO.getMemberEmailId());
         existingMember.setConfirmDate(requestDTO.getConfirmDate());
         existingMember.setIsBlock(requestDTO.getIsBlock());
+        
 
         return permanentMemberRepository.save(existingMember);
     }
