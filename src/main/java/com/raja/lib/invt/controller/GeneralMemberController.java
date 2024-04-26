@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.model.GeneralMember;
+import com.raja.lib.invt.objects.GenralMember;
 import com.raja.lib.invt.request.GeneralMemberRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.service.GeneralMemberService;
@@ -45,9 +46,9 @@ public class GeneralMemberController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponseDTO<List<GeneralMember>>> getAllGeneralMembers() {
-        List<GeneralMember> members = generalMemberService.getAllGeneralMembers();
-        ApiResponseDTO<List<GeneralMember>> responseDTO = new ApiResponseDTO<>(true, "All general members retrieved", members, HttpStatus.OK.value());
+    public ResponseEntity<ApiResponseDTO<List<GenralMember>>> getAllGeneralMembers() {
+        List<GenralMember> members = generalMemberService.getAllGeneralMembers();
+        ApiResponseDTO<List<GenralMember>> responseDTO = new ApiResponseDTO<>(true, "All general members retrieved", members, HttpStatus.OK.value());
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 

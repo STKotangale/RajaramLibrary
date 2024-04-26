@@ -3,6 +3,7 @@ package com.raja.lib.invt.service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import com.raja.lib.auth.model.User;
 import com.raja.lib.auth.repository.RoleRepository;
 import com.raja.lib.auth.repository.UserRepository;
 import com.raja.lib.invt.model.GeneralMember;
+import com.raja.lib.invt.objects.GenralMember;
 import com.raja.lib.invt.repository.GeneralMemberRepository;
 import com.raja.lib.invt.request.GeneralMemberRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
@@ -77,9 +79,9 @@ public class GeneralMemberService {
                 .orElseThrow(() -> new NoSuchElementException("General member not found with id: " + id));
     }
 
-    public List<GeneralMember> getAllGeneralMembers() {
+    public List<GenralMember> getAllGeneralMembers() {
         LOGGER.info("Fetching all general members");
-        return generalMemberRepository.findAll();
+        return generalMemberRepository.getAllGenralMember();
     }
 
     public GeneralMember updateGeneralMember(int id, GeneralMemberRequestDTO requestDTO) {
@@ -97,9 +99,21 @@ public class GeneralMemberService {
         existingMember.setMobileNo(requestDTO.getMobileNo());
         existingMember.setConfirmDate(requestDTO.getConfirmDate());
         existingMember.setIsBlock(requestDTO.getIsBlock());
-
+        
+        Optional<User> optionalUser = userrepository.findByMemberIdf(String.valueOf(existingMember.getMemberId()));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setUsername(requestDTO.getUsername());
+            user.setEmail(requestDTO.getMemberEmailId());
+            user.setPassword(passwordEncoder.encode(requestDTO.getPassword()));
+            userrepository.save(user);
+        }else {
+            LOGGER.error("User not found for general member with id: {}", id);
+        }
+        
         return generalMemberRepository.save(existingMember);
     }
+
 
     public ApiResponseDTO<String> deleteGeneralMember(int id) {
         LOGGER.info("Deleting general member with id: {}", id);
