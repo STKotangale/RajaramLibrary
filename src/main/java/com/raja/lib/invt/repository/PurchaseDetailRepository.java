@@ -17,5 +17,8 @@ public interface PurchaseDetailRepository extends JpaRepository<PurchaseDetail, 
 
 	@Query(value = "SELECT DISTINCT book_name FROM purchase_detail;", nativeQuery = true)
 	List<BookName> getBookName();
+	
+	 @Query(value="SELECT MAX(p.srno) FROM Purchase_Detail p",nativeQuery = true)
+	    Integer findMaxSrno();
 
 }

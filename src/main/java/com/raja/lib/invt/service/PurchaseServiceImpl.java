@@ -2,7 +2,6 @@ package com.raja.lib.invt.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,6 +29,8 @@ import com.raja.lib.invt.resposne.PurchaseDetailResponseDto;
 import com.raja.lib.invt.resposne.PurchaseResponseDto;
 import com.raja.lib.invt.resposne.PurchaseResponseDtos;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class PurchaseServiceImpl {
 
@@ -51,57 +52,61 @@ public class PurchaseServiceImpl {
 	    this.bookRepository = bookRepository;
 	}
 
-	// Create Purchase
 	
 	
-	public PurchaseResponseDto createPurchase(PurchaseRequestDto requestDto) {
-	    Ledger ledger = ledgerRepository.findById(requestDto.getLedgerId())
-	            .orElseThrow(() -> new RuntimeException("Ledger not found with id: " + requestDto.getLedgerId()));
+	 @Transactional
+	    public PurchaseResponseDto createPurchase(PurchaseRequestDto requestDto) {
+	        Ledger ledger = ledgerRepository.findById(requestDto.getLedgerId())
+	                .orElseThrow(() -> new RuntimeException("Ledger not found with id: " + requestDto.getLedgerId()));
 
-	    Purchase purchase = new Purchase();
-	    purchase.setInvoiceNo(requestDto.getInvoiceNo());
-	    purchase.setInvoiceDate(requestDto.getInvoiceDate());
-	    purchase.setBillTotal(requestDto.getBillTotal());
-	    purchase.setDiscountPercent(requestDto.getDiscountPercent());
-	    purchase.setDiscountAmount(requestDto.getDiscountAmount());
-	    purchase.setTotalAfterDiscount(requestDto.getTotalAfterDiscount());
-	    purchase.setGstPercent(requestDto.getGstPercent());
-	    purchase.setGstAmount(requestDto.getGstAmount());
-	    purchase.setGrandTotal(requestDto.getGrandTotal());
-	    purchase.setLedger(ledger);
+	        Purchase purchase = new Purchase();
+	        purchase.setInvoiceNo(requestDto.getInvoiceNo());
+	        purchase.setInvoiceDate(requestDto.getInvoiceDate());
+	        purchase.setBillTotal(requestDto.getBillTotal());
+	        purchase.setDiscountPercent(requestDto.getDiscountPercent());
+	        purchase.setDiscountAmount(requestDto.getDiscountAmount());
+	        purchase.setTotalAfterDiscount(requestDto.getTotalAfterDiscount());
+	        purchase.setGstPercent(requestDto.getGstPercent());
+	        purchase.setGstAmount(requestDto.getGstAmount());
+	        purchase.setGrandTotal(requestDto.getGrandTotal());
+	        purchase.setLedger(ledger);
 
-	    List<PurchaseDetail> purchaseDetails = new ArrayList<>();
+	        // Fetch the maximum srno from the PurchaseDetail records
+	        Integer maxSrno = purchaseDetailRepository.findMaxSrno();
+	        int nextSrno = (maxSrno == null ? 0 : maxSrno) + 1;
 
-	    for (PurchaseDetailDto detailDto : requestDto.getPurchaseDetails()) {
-	        Book book = bookRepository.findById(detailDto.getBookId())
-	                .orElseThrow(() -> new IllegalArgumentException("Book not found with id: " + detailDto.getBookId()));
+	        List<PurchaseDetail> purchaseDetails = new ArrayList<>();
 
-	        PurchaseDetail purchaseDetail = new PurchaseDetail();
-	        purchaseDetail.setBook_idf(book);
-	        purchaseDetail.setQty(detailDto.getQty());
-	        purchaseDetail.setRate(detailDto.getRate());
-	        purchaseDetail.setAmount(detailDto.getAmount());
-	        purchaseDetail.setPurchase(purchase);
-	        purchaseDetails.add(purchaseDetail);
+	        for (PurchaseDetailDto detailDto : requestDto.getPurchaseDetails()) {
+	            Book book = bookRepository.findById(detailDto.getBookId())
+	                    .orElseThrow(() -> new IllegalArgumentException("Book not found with id: " + detailDto.getBookId()));
+
+	            PurchaseDetail purchaseDetail = new PurchaseDetail();
+	            purchaseDetail.setBook_idf(book);
+	            purchaseDetail.setQty(detailDto.getQty());
+	            purchaseDetail.setRate(detailDto.getRate());
+	            purchaseDetail.setAmount(detailDto.getAmount());
+	            purchaseDetail.setPurchase(purchase);
+	            purchaseDetail.setSrno(nextSrno++);  // Increment srno for each detail
+	            purchaseDetails.add(purchaseDetail);
+	        }
+
+	        // Save purchase and related entities
+	        purchase = purchaseRepository.save(purchase);
+	        purchaseDetailRepository.saveAll(purchaseDetails);
+
+	        List<BookDetails> bookDetailsList = generateBookDetails(purchaseDetails);
+	        bookDetailsRepository.saveAll(bookDetailsList);
+
+	        PurchaseResponseDto responseDto = new PurchaseResponseDto();
+	        responseDto.setPurchaseId(purchase.getPurchaseId());
+	        responseDto.setInvoiceNo(purchase.getInvoiceNo());
+	        responseDto.setMessage("Purchase created successfully");
+	        responseDto.setStatusCode(HttpStatus.CREATED.value());
+	        responseDto.setSuccess(true);
+
+	        return responseDto;
 	    }
-
-	    // Validation completed, save purchase and related entities
-	    purchase = purchaseRepository.save(purchase);
-	    purchaseDetailRepository.saveAll(purchaseDetails);
-
-	    // Generate book details and save
-	    List<BookDetails> bookDetailsList = generateBookDetails(purchaseDetails);
-	    bookDetailsRepository.saveAll(bookDetailsList);
-
-	    PurchaseResponseDto responseDto = new PurchaseResponseDto();
-	    responseDto.setPurchaseId(purchase.getPurchaseId());
-	    responseDto.setInvoiceNo(purchase.getInvoiceNo());
-	    responseDto.setMessage("Purchase created successfully");
-	    responseDto.setStatusCode(HttpStatus.CREATED.value());
-	    responseDto.setSuccess(true);
-
-	    return responseDto;
-	}
 
 	private List<BookDetails> generateBookDetails(List<PurchaseDetail> purchaseDetails) {
 	    List<BookDetails> bookDetailsList = new ArrayList<>();
