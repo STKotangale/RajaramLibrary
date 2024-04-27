@@ -130,7 +130,7 @@ public class AuthController {
 			user.setUsername(updatedUser.getUsername());
 			user.setEmail(updatedUser.getEmail());
 			user.setBlock(updatedUser.isBlock());
-			user.setMemberIdf(updatedUser.getMemberIdf());
+//			user.setMemberIdf(updatedUser.getMemberIdf());
 
 			if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
 				user.setPassword(encoder.encode(updatedUser.getPassword()));
