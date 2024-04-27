@@ -109,7 +109,7 @@ public class AuthController {
 
 	@GetMapping("/users")
 	List<User> getAllUser() {
-		return userRepository.findAll();
+		return userRepository.getAllAdminUsers();
 	}
 
 	@GetMapping("/{id}")

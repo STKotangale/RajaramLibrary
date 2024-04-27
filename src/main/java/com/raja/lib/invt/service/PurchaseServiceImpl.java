@@ -71,7 +71,6 @@ public class PurchaseServiceImpl {
 	        purchase.setGrandTotal(requestDto.getGrandTotal());
 	        purchase.setLedger(ledger);
 
-	        // Fetch the maximum srno from the PurchaseDetail records
 	        Integer maxSrno = purchaseDetailRepository.findMaxSrno();
 	        int nextSrno = (maxSrno == null ? 0 : maxSrno) + 1;
 
@@ -87,11 +86,10 @@ public class PurchaseServiceImpl {
 	            purchaseDetail.setRate(detailDto.getRate());
 	            purchaseDetail.setAmount(detailDto.getAmount());
 	            purchaseDetail.setPurchase(purchase);
-	            purchaseDetail.setSrno(nextSrno++);  // Increment srno for each detail
+	            purchaseDetail.setSrno(nextSrno++);  
 	            purchaseDetails.add(purchaseDetail);
 	        }
 
-	        // Save purchase and related entities
 	        purchase = purchaseRepository.save(purchase);
 	        purchaseDetailRepository.saveAll(purchaseDetails);
 
