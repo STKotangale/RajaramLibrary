@@ -60,13 +60,13 @@ public class BookDetails {
     private String fullCallNumber;
     private String copyNo;
     private String accessionNo;
-    
+    private String typeofbook;
     private int purchaseCopyNo;
     private int rate;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "purchase_idf")
-    private Purchase purchase;
+//
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "purchase_idf")
+//    private Purchase purchase;
     
     
 }

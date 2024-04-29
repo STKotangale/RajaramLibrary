@@ -218,6 +218,8 @@ public class PurchaseServiceImpl {
 
 	    List<PurchaseDetail> newDetails = new ArrayList<>();
 	    List<BookDetails> newBookDetailsList = new ArrayList<>();
+	    Integer maxSrno = purchaseDetailRepository.findMaxSrno();
+	    int nextSrno = (maxSrno == null ? 0 : maxSrno) + 1;
 
 	    for (PurchaseDetailDto detailDto : requestDto.getPurchaseDetails()) {
 	        PurchaseDetail newDetail = new PurchaseDetail();
@@ -228,6 +230,7 @@ public class PurchaseServiceImpl {
 	        newDetail.setQty(detailDto.getQty());
 	        newDetail.setRate(detailDto.getRate());
 	        newDetail.setAmount(detailDto.getAmount());
+	        newDetail.setSrno(nextSrno++); 
 
 	        newDetails.add(newDetail);
 
@@ -260,18 +263,6 @@ public class PurchaseServiceImpl {
 	    return responseDto;
 	}
 
-
-	public ApiResponseDTO<Object> deletePurchase(Long purchaseId) {
-	    Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
-	    if (optionalPurchase.isPresent()) {
-	        Purchase purchase = optionalPurchase.get();
-	        purchaseDetailRepository.deleteAll(purchase.getPurchaseDetails());
-	        purchaseRepository.delete(purchase);
-	        return new ApiResponseDTO<>(true, "Purchase deleted successfully", null, HttpStatus.OK.value());
-	    } else {
-	        throw new RuntimeException("Purchase not found with id: " + purchaseId);
-	    }
-	}
 
 
 	public BookRate getBookRate(String bookName) {

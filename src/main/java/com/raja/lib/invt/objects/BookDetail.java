@@ -10,4 +10,6 @@ public interface BookDetail {
 	int setpurchase_copy_no();
 	int getrate();
 	int setrate();
+	String getauthor();
+	
 }

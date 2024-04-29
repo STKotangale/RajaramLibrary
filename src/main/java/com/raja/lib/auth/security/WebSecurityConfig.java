@@ -95,6 +95,7 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
               .requestMatchers("/api/permanent-members/**").permitAll()
               .requestMatchers("/api/general-members/**").permitAll()
               .requestMatchers("/api/user-members/**").permitAll()
+              .requestMatchers("/api/bookdetails/**").permitAll()
               .anyRequest().authenticated()
         );
     

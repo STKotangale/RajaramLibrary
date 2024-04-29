@@ -28,7 +28,7 @@ public class BookDetailsController {
 	BookDetailsService bookDetailsService;
     
     
-    @GetMapping("/book-details")
+    @GetMapping("")
     List<BookDetail> findBooksByNullIsbn()
     {
     	return bookDetailsService.findBooksByNullIsbn();

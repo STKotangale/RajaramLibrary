@@ -17,10 +17,22 @@ import jakarta.transaction.Transactional;
 @Repository
 public interface BookDetailsRepository extends JpaRepository<BookDetails, Long> {
 
-	@Query(value = "SELECT " + "    book_details.book_detail_id AS id, " + "    book_details.purchase_copy_no, "
-			+ "    book_details.rate, " + "    purchase_detail.book_name " + "FROM " + "    book_details " + "JOIN "
-			+ "    purchase_detail " + "ON " + "    book_details.book_name = purchase_detail.purchase_detail_id "
-			+ "WHERE " + "    book_details.isbn IS NULL", nativeQuery = true)
+	@Query(value = "SELECT \r\n"
+			+ "    bd.book_detail_id AS id,\r\n"
+			+ "    bd.purchase_copy_no,\r\n"
+			+ "    bd.rate,\r\n"
+			+ "    bd.author ,\r\n"
+			+ "    b.book_name  AS book_name\r\n"
+			+ "FROM \r\n"
+			+ "    book_details bd\r\n"
+			+ "JOIN \r\n"
+			+ "    purchase_detail pd ON bd.book_name = pd.purchase_detail_id\r\n"
+			+ "JOIN \r\n"
+			+ "    book b ON pd.book_idf = b.book_id\r\n"
+			+ "WHERE \r\n"
+			+ "    bd.isbn IS NULL;\r\n"
+			+ ""
+			+ "", nativeQuery = true)
 	List<BookDetail> findBooksByNullIsbn();
 
 	@Transactional
