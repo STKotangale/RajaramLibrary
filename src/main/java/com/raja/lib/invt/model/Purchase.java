@@ -45,7 +45,7 @@ public class Purchase {
     @JoinColumn(name = "ledger_idF", nullable = false)
 	private Ledger ledger;
 
-	@OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL)
-	private List<PurchaseDetail> purchaseDetails;
+	@OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PurchaseDetail> purchaseDetails;
 	
 }

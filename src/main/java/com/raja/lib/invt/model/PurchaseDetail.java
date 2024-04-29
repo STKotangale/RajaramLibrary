@@ -30,7 +30,6 @@ public class PurchaseDetail {
 
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_idf")
-    
     private Book book_idf;
     
 	private int qty;

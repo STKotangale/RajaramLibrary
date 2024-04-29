@@ -127,10 +127,21 @@ public class GeneralMemberService {
 
     public ApiResponseDTO<String> deleteGeneralMember(int id) {
         LOGGER.info("Deleting general member with id: {}", id);
+        
         GeneralMember existingMember = getGeneralMemberById(id);
+        
+        User user = userrepository.findByGeneralMember_MemberId(id).orElse(null);
+        
+        if (user != null) {
+            userrepository.delete(user);
+        }
+        
         generalMemberRepository.delete(existingMember);
-        return new ApiResponseDTO<>(true, "General member deleted successfully", "General member with ID " + id + " has been deleted", HttpStatus.OK.value());
+        
+        return new ApiResponseDTO<>(true, "General member deleted successfully", 
+            "General member with ID " + id + " has been deleted", HttpStatus.OK.value());
     }
+
 
     private GeneralMember convertToEntity(GeneralMemberRequestDTO requestDTO) {
         GeneralMember member = new GeneralMember();

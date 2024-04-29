@@ -134,20 +134,18 @@ public class PurchaseServiceImpl {
 	}
 
 
-	
-	//
-	
+		
 	public PurchaseResponseDtos getPurchaseById(Long purchaseId) {
 	    Purchase purchase = purchaseRepository.findById(purchaseId)
 	        .orElseThrow(() -> new RuntimeException("Purchase not found with id: " + purchaseId));
 
 	    List<PurchaseDetailResponseDto> detailResponseDtos = purchase.getPurchaseDetails().stream()
 	    	    .map(detail -> new PurchaseDetailResponseDto(
-	    	        detail.getPurchaseDetail(),  // Corrected to use the getter that exists
-	    	        detail.getBook_idf().getBookId(),  // Ensure Book entity has getBookId()
+	    	        detail.getPurchaseDetail(),  
+	    	        detail.getBook_idf().getBookId(),  
 	    	        bookRepository.findById(detail.getBook_idf().getBookId())
 	    	            .map(Book::getBookName)
-	    	            .orElse("Book name not available"),  // Handling potentially missing book names
+	    	            .orElse("Book name not available"),  
 	    	        detail.getQty(),
 	    	        detail.getRate(),
 	    	        detail.getAmount()
@@ -181,7 +179,7 @@ public class PurchaseServiceImpl {
 	    return purchases.stream().map(purchase -> {
 	        List<PurchaseDetailResponseDto> detailResponseDtos = purchase.getPurchaseDetails().stream()
 	            .map(detail -> new PurchaseDetailResponseDto(
-	                detail.getPurchaseDetail(),  // Make sure this getter is correctly named
+	                detail.getPurchaseDetail(), 
 	                detail.getBook_idf().getBookId(),
 	                bookRepository.findById(detail.getBook_idf().getBookId())
 	                    .map(Book::getBookName)
@@ -212,76 +210,55 @@ public class PurchaseServiceImpl {
 
 
 
-	
 
-	
-	
-
-	  
-	
-	
-	
-	
-	// Upadte Api
+	@Transactional
 	public PurchaseResponseDto updatePurchase(Long purchaseId, PurchaseRequestDto requestDto) {
-	    Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
-	    if (optionalPurchase.isPresent()) {
-	        Purchase purchase = optionalPurchase.get();
-	        purchase.setInvoiceNo(requestDto.getInvoiceNo());
-	        purchase.setInvoiceDate(requestDto.getInvoiceDate());
-	        purchase.setBillTotal(requestDto.getBillTotal());
-	        purchase.setDiscountPercent(requestDto.getDiscountPercent());
-	        purchase.setDiscountAmount(requestDto.getDiscountAmount());
-	        purchase.setTotalAfterDiscount(requestDto.getTotalAfterDiscount());
-	        purchase.setGstPercent(requestDto.getGstPercent());
-	        purchase.setGstAmount(requestDto.getGstAmount());
-	        purchase.setGrandTotal(requestDto.getGrandTotal());
-	        
-	        Ledger ledger = ledgerRepository.findById(requestDto.getLedgerId())
-	                .orElseThrow(() -> new RuntimeException("Ledger not found with id: " + requestDto.getLedgerId()));
-	        purchase.setLedger(ledger);
+	    Purchase purchase = purchaseRepository.findById(purchaseId)
+	            .orElseThrow(() -> new RuntimeException("Purchase not found with id: " + purchaseId));
 
-	        // Collect IDs of existing purchase details that are not in the updated list
-	        List<Long> existingDetailIds = purchase.getPurchaseDetails().stream()
-	                .map(PurchaseDetail::getPurchaseDetail)
-	                .collect(Collectors.toList());
+	    List<PurchaseDetail> newDetails = new ArrayList<>();
+	    List<BookDetails> newBookDetailsList = new ArrayList<>();
 
-	        // Clear existing purchase details
-	        purchase.getPurchaseDetails().clear();
+	    for (PurchaseDetailDto detailDto : requestDto.getPurchaseDetails()) {
+	        PurchaseDetail newDetail = new PurchaseDetail();
+	        newDetail.setPurchase(purchase);
+	        Book book = bookRepository.findById(detailDto.getBookId())
+	                                  .orElseThrow(() -> new RuntimeException("Book not found with id: " + detailDto.getBookId()));
+	        newDetail.setBook_idf(book);
+	        newDetail.setQty(detailDto.getQty());
+	        newDetail.setRate(detailDto.getRate());
+	        newDetail.setAmount(detailDto.getAmount());
 
-	        // Add new purchase details
-	        List<PurchaseDetailDto> requestPurchaseDetails = requestDto.getPurchaseDetails();
-	        for (PurchaseDetailDto detailDto : requestPurchaseDetails) {
-	            PurchaseDetail purchaseDetail = new PurchaseDetail();
-	            purchaseDetail.setBook_idf(bookRepository.findById(detailDto.getBookId()).orElse(null));
-	            purchaseDetail.setQty(detailDto.getQty());
-	            purchaseDetail.setRate(detailDto.getRate());
-	            purchaseDetail.setAmount(detailDto.getAmount());
-	            purchaseDetail.setPurchase(purchase);
-	            purchase.getPurchaseDetails().add(purchaseDetail);
+	        newDetails.add(newDetail);
+
+	        for (int i = 0; i < detailDto.getQty(); i++) {
+	            BookDetails bookDetail = new BookDetails();
+	            bookDetail.setPurchaseDetail(newDetail);
+	            bookDetail.setRate(detailDto.getRate());
+	            bookDetail.setPurchaseCopyNo(i + 1);
+	            bookDetail.setPurchaseDetailIdf(newDetail);
+	            newBookDetailsList.add(bookDetail);
 	        }
-
-	        // Delete old purchase details that are not in the updated list
-	        for (Long detailId : existingDetailIds) {
-	            purchaseDetailRepository.deleteById(detailId);
-	        }
-
-	        purchase = purchaseRepository.save(purchase);
-
-	        PurchaseResponseDto responseDto = new PurchaseResponseDto();
-	        responseDto.setPurchaseId(purchase.getPurchaseId());
-	        responseDto.setInvoiceNo(purchase.getInvoiceNo());
-	        responseDto.setMessage("Purchase updated successfully");
-	        responseDto.setStatusCode(HttpStatus.OK.value());
-	        responseDto.setSuccess(true);
-	        return responseDto;
-	    } else {
-	        throw new RuntimeException("Purchase not found with id: " + purchaseId);
 	    }
+
+	    purchase.getPurchaseDetails().clear();
+	    purchaseDetailRepository.deleteByPurchase(purchase);
+
+	    purchase.getPurchaseDetails().addAll(newDetails);
+	    purchaseDetailRepository.saveAll(newDetails);
+	    bookDetailsRepository.saveAll(newBookDetailsList);
+
+	    purchaseRepository.save(purchase);
+
+	    PurchaseResponseDto responseDto = new PurchaseResponseDto();
+	    responseDto.setPurchaseId(purchase.getPurchaseId());
+	    responseDto.setInvoiceNo(purchase.getInvoiceNo());
+	    responseDto.setMessage("Purchase updated successfully");
+	    responseDto.setStatusCode(HttpStatus.OK.value());
+	    responseDto.setSuccess(true);
+
+	    return responseDto;
 	}
-
-
-
 
 
 	public ApiResponseDTO<Object> deletePurchase(Long purchaseId) {
