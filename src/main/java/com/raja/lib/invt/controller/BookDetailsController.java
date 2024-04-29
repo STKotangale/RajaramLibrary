@@ -18,9 +18,9 @@ import com.raja.lib.invt.objects.BookDetail;
 import com.raja.lib.invt.request.UpdateBookDetailsRequest;
 import com.raja.lib.invt.service.BookDetailsService;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/bookdetails")
-@CrossOrigin(origins = "*", maxAge = 3600)
 
 public class BookDetailsController {
 

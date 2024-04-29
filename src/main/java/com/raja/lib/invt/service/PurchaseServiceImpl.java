@@ -263,7 +263,18 @@ public class PurchaseServiceImpl {
 	    return responseDto;
 	}
 
-
+	public ApiResponseDTO<Object> deletePurchase(Long purchaseId) {
+	    Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
+	    if (optionalPurchase.isPresent()) {
+	        Purchase purchase = optionalPurchase.get();
+	        purchaseDetailRepository.deleteAll(purchase.getPurchaseDetails());
+	        purchaseRepository.delete(purchase);
+	        return new ApiResponseDTO<>(true, "Purchase deleted successfully", null, HttpStatus.OK.value());
+	    } else {
+	        throw new RuntimeException("Purchase not found with id: " + purchaseId);
+	    }
+	}
+	
 
 	public BookRate getBookRate(String bookName) {
 		BookRate bookRate = purchaseDetailRepository.getBookRate(bookName);

@@ -2,6 +2,7 @@ package com.raja.lib.invt.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,6 +26,7 @@ import com.raja.lib.invt.service.GeneralMemberService;
 @RequestMapping("/api/general-members")
 public class GeneralMemberController {
 
+	@Autowired
     private final GeneralMemberService generalMemberService;
 
     public GeneralMemberController(GeneralMemberService generalMemberService) {
