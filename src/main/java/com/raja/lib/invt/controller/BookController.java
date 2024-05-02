@@ -31,10 +31,10 @@ public class BookController {
 
     @PostMapping("/book")
     public ResponseEntity<ApiResponseDTO<Book>> createBook(@Valid @RequestBody BookRequest request) {
-        ApiResponseDTO<Book> response = bookService.createBook(request);
+        ApiResponseDTO<Book> response = bookService.createBook(request, request.getAuthorId(), request.getPublicationId());
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
-
+    
     @GetMapping("/book") 
     public ResponseEntity<ApiResponseDTO<List<Book>>> getAllBooks() {
         ApiResponseDTO<List<Book>> response = bookService.getAllBooks();

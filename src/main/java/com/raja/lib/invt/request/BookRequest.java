@@ -10,4 +10,8 @@ public class BookRequest {
     private String bookName;
 
     private String isBlock;
+
+    private Long authorId;
+
+    private Long publicationId;
 }
