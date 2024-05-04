@@ -15,8 +15,7 @@ public class PermanentMember {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int memberId;
-
+    private int permanentMemberId;
     private String firstName;
     private String middleName;
     private String lastName;

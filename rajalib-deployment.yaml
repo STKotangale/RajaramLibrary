@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rajalib-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rajalib
+  template:
+    metadata:
+      labels:
+        app: rajalib
+    spec:
+      containers:
+        - name: rajalib
+          image: rajalib:v1
+          ports:
+            - containerPort: 8080

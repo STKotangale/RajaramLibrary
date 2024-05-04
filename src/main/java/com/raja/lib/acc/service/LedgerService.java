@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.raja.lib.acc.model.Ledger;
 import com.raja.lib.acc.repository.LedgerRepository;
 import com.raja.lib.acc.request.LedgerRequestDTO;
+import com.raja.lib.invt.resposne.ApiResponseDTO;
 
 @Service
 public class LedgerService {
@@ -46,7 +47,13 @@ public class LedgerService {
     }
 
     
-    public void deleteLedger(int ledgerId) {
-        ledgerRepository.deleteById(ledgerId);
+    public ApiResponseDTO<Void> deleteLedger(int ledgerId) {
+        try {
+            ledgerRepository.deleteById(ledgerId);
+            return new ApiResponseDTO<>(true, "Ledger deleted successfully", null, 200);
+        } catch (Exception e) {
+            return new ApiResponseDTO<>(false, "Failed to delete ledger", null, 500);
+        }
     }
+    
 }

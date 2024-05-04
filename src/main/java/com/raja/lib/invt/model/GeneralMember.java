@@ -15,6 +15,7 @@ public class GeneralMember{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    
     private int memberId;
 
     private String firstName;

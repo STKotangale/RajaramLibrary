@@ -26,7 +26,7 @@ public class BookDetails {
     private Long bookDetailId;
     
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "book_name") 
+    @JoinColumn(name = "book_idF") 
     private PurchaseDetail purchaseDetail;
     
     @ManyToOne(fetch = FetchType.EAGER)
@@ -63,10 +63,7 @@ public class BookDetails {
     private String typeofbook;
     private int purchaseCopyNo;
     private int rate;
-//
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "purchase_idf")
-//    private Purchase purchase;
+
     
     
 }

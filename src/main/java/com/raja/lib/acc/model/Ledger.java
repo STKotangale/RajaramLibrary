@@ -16,7 +16,7 @@ public class Ledger {
     
     private String ledgerName;
     
-    private char isBlock = 'N'; 
+    private char isBlock; 
 
     public Ledger(String ledgerName) {
         this.ledgerName = ledgerName;

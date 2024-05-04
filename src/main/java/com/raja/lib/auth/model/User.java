@@ -50,7 +50,7 @@ public class User {
     private char isBlock;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "member_idf", referencedColumnName = "memberId")
+    @JoinColumn(name = "genral_member_idf", referencedColumnName = "memberId")
     private GeneralMember generalMember;
 
     @ManyToMany(fetch = FetchType.LAZY)

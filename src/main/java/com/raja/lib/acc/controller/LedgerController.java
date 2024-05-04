@@ -69,8 +69,15 @@ public class LedgerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLedger(@PathVariable("id") int ledgerId) {
-        ledgerService.deleteLedger(ledgerId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    public ResponseEntity<ApiResponseDTO<Void>> deleteLedger(@PathVariable("id") int ledgerId) {
+        ApiResponseDTO<Void> response;
+        try {
+            ledgerService.deleteLedger(ledgerId);
+            response = new ApiResponseDTO<>(true, "Ledger deleted successfully", null, 200);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            response = new ApiResponseDTO<>(false, "Failed to delete ledger", null, 500);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 }
