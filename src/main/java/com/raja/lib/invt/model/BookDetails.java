@@ -27,11 +27,12 @@ public class BookDetails {
     
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "book_idF") 
-    private PurchaseDetail purchaseDetail;
+    private Book bookIdF;
     
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "purchase_detail_idf") 
-    private PurchaseDetail purchaseDetailIdf;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "purchase_detail_idf")
+    private PurchaseDetail purchaseDetail;
+
     
     
     private String isbn;

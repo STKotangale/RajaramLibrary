@@ -29,15 +29,19 @@ public class BookService {
     private BookPublicationRepository publicationRepository;
 
     
-    public ApiResponseDTO<Book> createBook(BookRequest request, Long authorId, Long publicationId) {
-        Optional<BookAuthor> optionalAuthor = authorRepository.findById(authorId);
-        Optional<BookPublication> optionalPublication = publicationRepository.findById(publicationId);
+    public ApiResponseDTO<Book> createBook(BookRequest request) {
+        Optional<BookAuthor> optionalAuthor = authorRepository.findById(request.getAuthorId());
+        Optional<BookPublication> optionalPublication = publicationRepository.findById(request.getPublicationId());
 
         if (optionalAuthor.isPresent() && optionalPublication.isPresent()) {
             BookAuthor author = optionalAuthor.get();
             BookPublication publication = optionalPublication.get();
 
-            Book book = new Book(request.getBookName(), request.getIsBlock(), author, publication);
+            Book book = new Book();
+            book.setBookName(request.getBookName());
+            book.setIsBlock(request.getIsBlock());
+            book.setAuthor(author);
+            book.setPublication(publication);
             Book savedBook = bookRepository.save(book);
             return new ApiResponseDTO<>(true, "Book created successfully", savedBook, HttpStatus.CREATED.value());
         } else {
@@ -52,7 +56,7 @@ public class BookService {
 
     
 
-    public ApiResponseDTO<Book> getBookById(int id) {
+    public ApiResponseDTO<Book> getBookById(Long id) {
         Optional<Book> optionalBook = bookRepository.findById(id);
         if (optionalBook.isPresent()) {
             return new ApiResponseDTO<>(true, "Book found", optionalBook.get(), HttpStatus.OK.value());
@@ -63,7 +67,7 @@ public class BookService {
 
     
 
-    public ApiResponseDTO<Book> updateBook(int id, BookRequest request) {
+    public ApiResponseDTO<Book> updateBook(Long id, BookRequest request) {
         Optional<Book> optionalBook = bookRepository.findById(id);
         if (optionalBook.isPresent()) {
             Optional<BookAuthor> optionalAuthor = authorRepository.findById(request.getAuthorId());
@@ -88,7 +92,7 @@ public class BookService {
     }
 
     
-    public ApiResponseDTO<Void> deleteBook(int id) {
+    public ApiResponseDTO<Void> deleteBook(Long id) {
         Optional<Book> optionalBook = bookRepository.findById(id);
         if (optionalBook.isPresent()) {
             bookRepository.deleteById(id);

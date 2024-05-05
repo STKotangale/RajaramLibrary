@@ -19,7 +19,7 @@ public class PurchaseRequestDto {
 	private int gstPercent;
 	private int gstAmount;
 	private int grandTotal;
-	private int ledgerId;
+	private Long ledgerId;
 	private List<PurchaseDetailDto> purchaseDetails;
 	
 }

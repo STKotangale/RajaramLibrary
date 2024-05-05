@@ -105,33 +105,34 @@ public class PurchaseServiceImpl {
 
 	        return responseDto;
 	    }
+	 private List<BookDetails> generateBookDetails(List<PurchaseDetail> purchaseDetails) {
+		    List<BookDetails> bookDetailsList = new ArrayList<>();
+		    Map<Long, Integer> purchaseCopyMap = new HashMap<>();
 
-	private List<BookDetails> generateBookDetails(List<PurchaseDetail> purchaseDetails) {
-	    List<BookDetails> bookDetailsList = new ArrayList<>();
-	    Map<Long, Integer> purchaseCopyMap = new HashMap<>();
+		    for (PurchaseDetail purchaseDetail : purchaseDetails) {
+		        int quantity = purchaseDetail.getQty();
+		        int rate = purchaseDetail.getRate();
+		        Long purchaseDetailId = purchaseDetail.getPurchaseDetail();
+		        purchaseCopyMap.putIfAbsent(purchaseDetailId, 1);
 
-	    for (PurchaseDetail purchaseDetail : purchaseDetails) {
-	        int quantity = purchaseDetail.getQty();
-	        int rate = purchaseDetail.getRate();
-	        Long purchaseDetailId = purchaseDetail.getPurchaseDetail();
-	        purchaseCopyMap.putIfAbsent(purchaseDetailId, 1);
+		        Book book = purchaseDetail.getBook_idf(); 
+		        for (int i = 0; i < quantity; i++) {
+		            BookDetails bookDetails = new BookDetails();
+		            bookDetails.setBookIdF(book); 
+		            bookDetails.setPurchaseDetail(purchaseDetail);
+		            bookDetails.setRate(rate);
 
-	        for (int i = 0; i < quantity; i++) {
-	            BookDetails bookDetails = new BookDetails();
-	            bookDetails.setPurchaseDetail(purchaseDetail);
-	            bookDetails.setPurchaseDetailIdf(purchaseDetail);
-	            bookDetails.setRate(rate);
+		            int purchaseCopyNo = purchaseCopyMap.get(purchaseDetailId);
+		            bookDetails.setPurchaseCopyNo(purchaseCopyNo);
 
-	            int purchaseCopyNo = purchaseCopyMap.get(purchaseDetailId);
-	            bookDetails.setPurchaseCopyNo(purchaseCopyNo);
+		            bookDetailsList.add(bookDetails);
 
-	            bookDetailsList.add(bookDetails);
+		            purchaseCopyMap.put(purchaseDetailId, purchaseCopyNo + 1);
+		        }
+		    }
+		    return bookDetailsList;
+		}
 
-	            purchaseCopyMap.put(purchaseDetailId, purchaseCopyNo + 1);
-	        }
-	    }
-	    return bookDetailsList;
-	}
 
 
 		
@@ -239,7 +240,8 @@ public class PurchaseServiceImpl {
 	            bookDetail.setPurchaseDetail(newDetail);
 	            bookDetail.setRate(detailDto.getRate());
 	            bookDetail.setPurchaseCopyNo(i + 1);
-	            bookDetail.setPurchaseDetailIdf(newDetail);
+	            bookDetail.setPurchaseDetail(newDetail);
+	            bookDetail.setBookIdF(book);
 	            newBookDetailsList.add(bookDetail);
 	        }
 	    }

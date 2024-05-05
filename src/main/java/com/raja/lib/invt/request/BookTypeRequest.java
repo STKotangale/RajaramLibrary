@@ -9,5 +9,5 @@ public class BookTypeRequest {
 
     private String bookTypeName;
 
-    private String isBlock;
+    private char isBlock;
 }

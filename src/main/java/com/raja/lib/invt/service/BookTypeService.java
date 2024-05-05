@@ -18,7 +18,9 @@ public class BookTypeService {
 
     
     public ApiResponseDTO<BookType> createBookType(BookTypeRequest request) {
-        BookType bookType = new BookType(request.getBookTypeName(), request.getIsBlock());
+        BookType bookType = new BookType();
+        bookType.setBookTypeName(request.getBookTypeName());
+        bookType.setIsBlock(request.getIsBlock());
         BookType savedBookType = bookTypeRepository.save(bookType);
         return new ApiResponseDTO<>(true, "Book type created successfully", savedBookType, HttpStatus.CREATED.value());
     }
@@ -30,7 +32,7 @@ public class BookTypeService {
     }
 
     
-    public ApiResponseDTO<BookType> getBookTypeById(int id) {
+    public ApiResponseDTO<BookType> getBookTypeById(Long id) {
         Optional<BookType> optionalBookType = bookTypeRepository.findById(id);
         if (optionalBookType.isPresent()) {
             return new ApiResponseDTO<>(true, "Book type found", optionalBookType.get(), HttpStatus.OK.value());
@@ -40,7 +42,7 @@ public class BookTypeService {
     }
 
     
-    public ApiResponseDTO<BookType> updateBookType(int id, BookTypeRequest request) {
+    public ApiResponseDTO<BookType> updateBookType(Long id, BookTypeRequest request) {
         Optional<BookType> optionalBookType = bookTypeRepository.findById(id);
         if (optionalBookType.isPresent()) {
             BookType existingBookType = optionalBookType.get();
@@ -54,7 +56,7 @@ public class BookTypeService {
     }
 
     
-    public ApiResponseDTO<Void> deleteBookType(int id) {
+    public ApiResponseDTO<Void> deleteBookType(Long id) {
         Optional<BookType> optionalBookType = bookTypeRepository.findById(id);
         if (optionalBookType.isPresent()) {
             bookTypeRepository.deleteById(id);

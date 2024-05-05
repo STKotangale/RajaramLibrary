@@ -9,7 +9,7 @@ public class BookRequest {
 
     private String bookName;
 
-    private String isBlock;
+    private char isBlock;
 
     private Long authorId;
 

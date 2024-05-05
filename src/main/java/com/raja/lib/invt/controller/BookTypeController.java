@@ -41,19 +41,19 @@ public class BookTypeController {
     }
 
     @GetMapping("/book-types/{id}")
-    public ResponseEntity<ApiResponseDTO<BookType>> getBookTypeById(@PathVariable int id) {
+    public ResponseEntity<ApiResponseDTO<BookType>> getBookTypeById(@PathVariable Long id) {
         ApiResponseDTO<BookType> response = bookTypeService.getBookTypeById(id);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
     @PutMapping("/book-types/{id}")
-    public ResponseEntity<ApiResponseDTO<BookType>> updateBookType(@PathVariable int id, @Validated @RequestBody BookTypeRequest request) {
+    public ResponseEntity<ApiResponseDTO<BookType>> updateBookType(@PathVariable Long id, @Validated @RequestBody BookTypeRequest request) {
         ApiResponseDTO<BookType> response = bookTypeService.updateBookType(id, request);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
     @DeleteMapping("/book-types/{id}")
-    public ResponseEntity<ApiResponseDTO<Void>> deleteBookType(@PathVariable int id) {
+    public ResponseEntity<ApiResponseDTO<Void>> deleteBookType(@PathVariable Long id) {
         ApiResponseDTO<Void> response = bookTypeService.deleteBookType(id);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }

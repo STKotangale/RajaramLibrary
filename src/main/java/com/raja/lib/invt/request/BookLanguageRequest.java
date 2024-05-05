@@ -9,6 +9,6 @@ public class BookLanguageRequest {
 
     private String bookLangName;
 
-    private Boolean isBlock;
+    private char isBlock;
 
 }

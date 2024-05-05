@@ -18,7 +18,9 @@ public class BookLanguageService  {
 
     
     public ApiResponseDTO<BookLanguage> createBookLanguage(BookLanguageRequest request) {
-        BookLanguage bookLanguage = new BookLanguage(request.getBookLangName(), request.getIsBlock());
+        BookLanguage bookLanguage = new BookLanguage();
+        bookLanguage.setBookLangName(request.getBookLangName());
+        bookLanguage.setIsBlock(request.getIsBlock());
         BookLanguage savedBookLanguage = bookLanguageRepository.save(bookLanguage);
         return new ApiResponseDTO<>(true, "Book language created successfully", savedBookLanguage, HttpStatus.CREATED.value());
     }

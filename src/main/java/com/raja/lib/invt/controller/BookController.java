@@ -31,7 +31,7 @@ public class BookController {
 
     @PostMapping("/book")
     public ResponseEntity<ApiResponseDTO<Book>> createBook(@Valid @RequestBody BookRequest request) {
-        ApiResponseDTO<Book> response = bookService.createBook(request, request.getAuthorId(), request.getPublicationId());
+        ApiResponseDTO<Book> response = bookService.createBook(request);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
     
@@ -42,19 +42,19 @@ public class BookController {
     }
 
     @GetMapping("/book/{id}") 
-    public ResponseEntity<ApiResponseDTO<Book>> getBookById(@PathVariable int id) {
+    public ResponseEntity<ApiResponseDTO<Book>> getBookById(@PathVariable Long id) {
         ApiResponseDTO<Book> response = bookService.getBookById(id);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
     @PutMapping("/book/{id}") 
-    public ResponseEntity<ApiResponseDTO<Book>> updateBook(@PathVariable int id, @Valid @RequestBody BookRequest request) {
+    public ResponseEntity<ApiResponseDTO<Book>> updateBook(@PathVariable Long id, @Valid @RequestBody BookRequest request) {
         ApiResponseDTO<Book> response = bookService.updateBook(id, request);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
     @DeleteMapping("/book/{id}") 
-    public ResponseEntity<ApiResponseDTO<Void>> deleteBook(@PathVariable int id) {
+    public ResponseEntity<ApiResponseDTO<Void>> deleteBook(@PathVariable Long id) {
         ApiResponseDTO<Void> response = bookService.deleteBook(id);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
