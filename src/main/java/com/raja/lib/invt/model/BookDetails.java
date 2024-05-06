@@ -1,5 +1,9 @@
 package com.raja.lib.invt.model;
 
+import java.io.Serializable;
+
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
@@ -9,44 +13,45 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.ToString;
 
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
+@ToString
 @AllArgsConstructor
+@NoArgsConstructor
+@Component
+@Data
+@Entity
+@Table(name="invt_book_details")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class BookDetails {
-    @Id
+public class BookDetails implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long bookDetailId;
+    private int bookDetailId;
+	private int purchaseDetailIdF;
+    private int bookIdF;
     
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "book_idF") 
-    private PurchaseDetail purchaseDetail;
-    
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "purchase_detail_idf") 
-    private PurchaseDetail purchaseDetailIdf;
-    
-    
+    @NotBlank
+    @Size(max = 25)
     private String isbn;
-    private double price;
-    private String language;
     private String classificationNumber;
     private String itemNumber;
-    private String author;
     private String editor;
     private String title;
     private String secondTitle;
     private String seriesTitle;
     private int edition;
-    private String placeOfPublication;
-    private String nameOfPublisher;
     private int publicationYear;
     private int numberOfPages;
     private String subjectHeading;
@@ -62,8 +67,9 @@ public class BookDetails {
     private String accessionNo;
     private String typeofbook;
     private int purchaseCopyNo;
-    private int rate;
 
-    
+    private char bookIssue;
+    private char bookWorkingStart;
+    private char bookLostScrap;
     
 }

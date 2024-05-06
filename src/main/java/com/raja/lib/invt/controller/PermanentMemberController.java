@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.raja.lib.invt.model.PermanentMember;
+import com.raja.lib.auth.model.PermanentMember;
 import com.raja.lib.invt.request.PermanentMemberRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.service.PermanentMemberService;

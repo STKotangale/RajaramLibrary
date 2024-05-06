@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.raja.lib.invt.model.GeneralMember;
+import com.raja.lib.auth.model.GeneralMember;
 import com.raja.lib.invt.objects.GenralMember;
 import com.raja.lib.invt.request.GeneralMemberRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;

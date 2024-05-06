@@ -1,39 +1,38 @@
 package com.raja.lib.auth.model;
 
-import jakarta.persistence.*;
+import java.io.Serializable;
 
+import org.springframework.stereotype.Component;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@Component
+@Data
 @Entity
-@Table(name = "roles")
-public class Role {
+@Table(name = "auth_roles")
+public class Role implements Serializable {
+
+  /*** 
+  */
+  private static final long serialVersionUID = 1L;
+ 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+  private int roleId;
 
-  @Enumerated(EnumType.STRING)
-  @Column(length = 20)
-  private ERole name;
+  @NotBlank
+  @Size(max = 100)
+  private String roleName;
 
-  public Role() {
+  @Column(name = "isBlock", columnDefinition = "char(1) default 'N'")
+  private char isBlock;
 
-  }
-
-  public Role(ERole name) {
-    this.name = name;
-  }
-
-  public Integer getId() {
-    return id;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  public ERole getName() {
-    return name;
-  }
-
-  public void setName(ERole name) {
-    this.name = name;
-  }
 }

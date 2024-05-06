@@ -13,11 +13,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.raja.lib.auth.model.GeneralMember;
 import com.raja.lib.auth.model.Role;
 import com.raja.lib.auth.model.User;
 import com.raja.lib.auth.repository.RoleRepository;
 import com.raja.lib.auth.repository.UserRepository;
-import com.raja.lib.invt.model.GeneralMember;
 import com.raja.lib.invt.objects.GenralMember;
 import com.raja.lib.invt.repository.GeneralMemberRepository;
 import com.raja.lib.invt.request.GeneralMemberRequestDTO;

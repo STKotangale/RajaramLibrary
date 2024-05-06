@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.raja.lib.invt.model.PermanentMember;
+import com.raja.lib.auth.model.PermanentMember;
 import com.raja.lib.invt.repository.PermanentMemberRepository;
 import com.raja.lib.invt.request.PermanentMemberRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;

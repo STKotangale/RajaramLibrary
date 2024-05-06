@@ -1,45 +1,44 @@
 package com.raja.lib.invt.model;
 
+import java.io.Serializable;
+import org.springframework.stereotype.Component;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.ToString;
 
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
+@ToString
 @AllArgsConstructor
-@Table(name = "book")
-public class Book {
+@NoArgsConstructor
+@Component
+@Data
+@Entity
+@Table(name = "invt_book")
+public class Book implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer bookId;
+    private int bookId;
 
+    @NotBlank
+    @Size(max = 100)
     private String bookName;
 
+    private int bookTypeIdF;
+    private int bookLangIdF;
+    private int publicationIdF;
+    private int authorIdF;
     private String isBlock;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id", referencedColumnName = "authorId")
-    private BookAuthor author;
-
-    @ManyToOne
-    @JoinColumn(name = "publication_id", referencedColumnName = "publicationId")
-    private BookPublication publication;
-
-    public Book(String bookName, String isBlock, BookAuthor author, BookPublication publication) {
-        this.bookName = bookName;
-        this.isBlock = isBlock;
-        this.author = author;
-        this.publication = publication;
-    }
 }
