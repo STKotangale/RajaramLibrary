@@ -41,9 +41,9 @@ public class GeneralMemberController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO<GeneralMember>> getGeneralMemberById(@PathVariable int id) {
-        GeneralMember member = generalMemberService.getGeneralMemberById(id);
-        ApiResponseDTO<GeneralMember> responseDTO = new ApiResponseDTO<>(true, "General member found", member, HttpStatus.OK.value());
+    public ResponseEntity<ApiResponseDTO<GenralMember>> getGeneralMemberById(@PathVariable int id) {
+    	GenralMember member = generalMemberService.getGeneralMemberById(id);
+        ApiResponseDTO<GenralMember> responseDTO = new ApiResponseDTO<>(true, "General member found", member, HttpStatus.OK.value());
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 

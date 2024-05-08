@@ -3,7 +3,6 @@ package com.raja.lib.invt.service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -23,140 +22,125 @@ import com.raja.lib.invt.repository.GeneralMemberRepository;
 import com.raja.lib.invt.request.GeneralMemberRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class GeneralMemberService {
 
-    private final GeneralMemberRepository generalMemberRepository;
-    
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+	private final GeneralMemberRepository generalMemberRepository;
 
-    
-    @Autowired
-    UserRepository userrepository;
-    @Autowired
-    RoleRepository roleRepository;
-    private static final Logger LOGGER = LoggerFactory.getLogger(GeneralMemberService.class);
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
-    public GeneralMemberService(GeneralMemberRepository generalMemberRepository) {
-        this.generalMemberRepository = generalMemberRepository;
-    }
+	@Autowired
+	UserRepository userrepository;
+	@Autowired
+	RoleRepository roleRepository;
+	private static final Logger LOGGER = LoggerFactory.getLogger(GeneralMemberService.class);
 
-    public GeneralMember createGeneralMember(GeneralMemberRequestDTO requestDTO) {
-        LOGGER.info("Creating general member");
-        GeneralMember generalMember = convertToEntity(requestDTO);
-        GeneralMember savedMember = generalMemberRepository.save(generalMember);
+	public GeneralMemberService(GeneralMemberRepository generalMemberRepository) {
+		this.generalMemberRepository = generalMemberRepository;
+	}
 
-        createUserFromGeneralMember(savedMember, requestDTO);
+	@Transactional
+	public GeneralMember createGeneralMember(GeneralMemberRequestDTO requestDTO) {
+		LOGGER.info("Creating general member");
+		GeneralMember generalMember = convertToEntity(requestDTO);
+		GeneralMember savedMember = generalMemberRepository.save(generalMember);
+		createUserFromGeneralMember(savedMember, requestDTO);
+		return savedMember;
+	}
 
-        return savedMember;
-    }
+	private void createUserFromGeneralMember(GeneralMember generalMember, GeneralMemberRequestDTO requestDTO) {
+		String username = requestDTO.getUsername();
+		String password = passwordEncoder.encode(requestDTO.getPassword());
+		String email = requestDTO.getMemberEmailId();
+		Role memberRole = roleRepository.findById((long) 2)
+				.orElseThrow(() -> new NoSuchElementException("Role not found with ID 2"));
+		Set<Role> roles = new HashSet<>();
+		roles.add(memberRole);
+		User user = new User(username, email, password, 'N');
+		user.setGeneralMember(generalMember);
+		user.setRoles(roles);
+		userrepository.save(user);
+	}
 
-    private void createUserFromGeneralMember(GeneralMember generalMember, GeneralMemberRequestDTO requestDTO) {
-        String username = requestDTO.getUsername();
-        String password = passwordEncoder.encode(requestDTO.getPassword());
-        String email = requestDTO.getMemberEmailId();
-        Role memberRole = roleRepository.findById((long) 2)
-            .orElseThrow(() -> new NoSuchElementException("Role not found with ID 2"));
-        Set<Role> roles = new HashSet<>();
-        roles.add(memberRole);
+	public GenralMember getGeneralMemberById(int id) {
+		LOGGER.info("Fetching general member by id: {}", id);
+		return generalMemberRepository.getGeneralMemberById(id);
+	}
 
-        User user = new User(username, email, password, 'N', roles);
-        user.setGeneralMember(generalMember); // Link User to GeneralMember
-        userrepository.save(user);
-    }
+	public List<GenralMember> getAllGeneralMembers() {
+		LOGGER.info("Fetching all general members");
+		return generalMemberRepository.getAllGenralMember();
+	}
 
+	public GeneralMember updateGeneralMember(int memberId, GeneralMemberRequestDTO requestDTO) {
+		LOGGER.info("Updating general member with memberId: {}", memberId);
+		GeneralMember existingMember = generalMemberRepository.findById(memberId)
+				.orElseThrow(() -> new NoSuchElementException("General member not found with memberId: " + memberId));
+		updateGeneralMemberDetails(existingMember, requestDTO);
+		User user = userrepository.findByGeneralMember_MemberId(memberId).orElse(new User());
+		updateUserDetails(user, requestDTO);
+		user.setGeneralMember(existingMember);
+		userrepository.save(user);
+		return generalMemberRepository.save(existingMember);
+	}
 
-    public GeneralMember getGeneralMemberById(int id) {
-        LOGGER.info("Fetching general member by id: {}", id);
-        return generalMemberRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("General member not found with id: " + id));
-    }
+	private void updateGeneralMemberDetails(GeneralMember member, GeneralMemberRequestDTO requestDTO) {
+		member.setFirstName(requestDTO.getFirstName());
+		member.setMiddleName(requestDTO.getMiddleName());
+		member.setLastName(requestDTO.getLastName());
+		member.setRegisterDate(requestDTO.getRegisterDate());
+		member.setAdharCard(requestDTO.getAdharCard());
+		member.setMemberAddress(requestDTO.getMemberAddress());
+		member.setDateOfBirth(requestDTO.getDateOfBirth());
+		member.setMemberEducation(requestDTO.getMemberEducation());
+		member.setMemberOccupation(requestDTO.getMemberOccupation());
+		member.setMobileNo(requestDTO.getMobileNo());
+		member.setConfirmDate(requestDTO.getConfirmDate());
+		member.setIsBlock(requestDTO.getIsBlock());
+	}
 
-    public List<GenralMember> getAllGeneralMembers() {
-        LOGGER.info("Fetching all general members");
-        return generalMemberRepository.getAllGenralMember();
-    }
+	private void updateUserDetails(User user, GeneralMemberRequestDTO requestDTO) {
+		user.setUsername(requestDTO.getUsername());
+		user.setUseremail(requestDTO.getMemberEmailId());
+		user.setUserpassword(passwordEncoder.encode(requestDTO.getPassword()));
 
-    public GeneralMember updateGeneralMember(int memberId, GeneralMemberRequestDTO requestDTO) {
-        LOGGER.info("Updating general member with memberId: {}", memberId);
-        GeneralMember existingMember = generalMemberRepository.findById(memberId)
-            .orElseThrow(() -> new NoSuchElementException("General member not found with memberId: " + memberId));
+		Role defaultRole = roleRepository.findById((long) 2)
+				.orElseThrow(() -> new NoSuchElementException("Default Role not found"));
+		Set<Role> roles = new HashSet<>();
+		roles.add(defaultRole);
+		user.setRoles(roles);
+	}
 
-        updateGeneralMemberDetails(existingMember, requestDTO);
+	public ApiResponseDTO<String> deleteGeneralMember(int id) {
+		LOGGER.info("Deleting general member with id: {}", id);
+		GeneralMember existingMember = generalMemberRepository.findById(id)
+				.orElseThrow(() -> new NoSuchElementException("General member not found with id: " + id));
+		User user = userrepository.findByGeneralMember_MemberId(id).orElse(null);
+		if (user != null) {
+			userrepository.delete(user);
+		}
+		generalMemberRepository.delete(existingMember);
+		return new ApiResponseDTO<>(true, "General member deleted successfully",
+				"General member with ID " + id + " has been deleted", HttpStatus.OK.value());
+	}
 
-        User user = userrepository.findByGeneralMember_MemberId(memberId)
-                      .orElse(new User());  
-
-        updateUserDetails(user, requestDTO);
-
-        user.setGeneralMember(existingMember);
-
-        userrepository.save(user);
-
-        return generalMemberRepository.save(existingMember);
-    }
-
-    private void updateGeneralMemberDetails(GeneralMember member, GeneralMemberRequestDTO requestDTO) {
-        member.setFirstName(requestDTO.getFirstName());
-        member.setMiddleName(requestDTO.getMiddleName());
-        member.setLastName(requestDTO.getLastName());
-        member.setRegisterDate(requestDTO.getRegisterDate());
-        member.setAdharCard(requestDTO.getAdharCard());
-        member.setMemberAddress(requestDTO.getMemberAddress());
-        member.setDateOfBirth(requestDTO.getDateOfBirth());
-        member.setMemberEducation(requestDTO.getMemberEducation());
-        member.setMemberOccupation(requestDTO.getMemberOccupation());
-        member.setMobileNo(requestDTO.getMobileNo());
-        member.setConfirmDate(requestDTO.getConfirmDate());
-        member.setIsBlock(requestDTO.getIsBlock());
-    }
-
-    private void updateUserDetails(User user, GeneralMemberRequestDTO requestDTO) {
-        user.setUsername(requestDTO.getUsername());
-        user.setEmail(requestDTO.getMemberEmailId());
-        user.setPassword(passwordEncoder.encode(requestDTO.getPassword()));
-
-        Role defaultRole = roleRepository.findById((long) 2) 
-            .orElseThrow(() -> new NoSuchElementException("Default Role not found"));
-        Set<Role> roles = new HashSet<>();
-        roles.add(defaultRole);
-        user.setRoles(roles);
-    }
-
-
-    public ApiResponseDTO<String> deleteGeneralMember(int id) {
-        LOGGER.info("Deleting general member with id: {}", id);
-        
-        GeneralMember existingMember = getGeneralMemberById(id);
-        
-        User user = userrepository.findByGeneralMember_MemberId(id).orElse(null);
-        
-        if (user != null) {
-            userrepository.delete(user);
-        }
-        
-        generalMemberRepository.delete(existingMember);
-        
-        return new ApiResponseDTO<>(true, "General member deleted successfully", 
-            "General member with ID " + id + " has been deleted", HttpStatus.OK.value());
-    }
-
-
-    private GeneralMember convertToEntity(GeneralMemberRequestDTO requestDTO) {
-        GeneralMember member = new GeneralMember();
-        member.setFirstName(requestDTO.getFirstName());
-        member.setMiddleName(requestDTO.getMiddleName());
-        member.setLastName(requestDTO.getLastName());
-        member.setRegisterDate(requestDTO.getRegisterDate());
-        member.setAdharCard(requestDTO.getAdharCard());
-        member.setMemberAddress(requestDTO.getMemberAddress());
-        member.setDateOfBirth(requestDTO.getDateOfBirth());
-        member.setMemberEducation(requestDTO.getMemberEducation());
-        member.setMemberOccupation(requestDTO.getMemberOccupation());
-        member.setMobileNo(requestDTO.getMobileNo());
-        member.setConfirmDate(requestDTO.getConfirmDate());
-        member.setIsBlock(requestDTO.getIsBlock());
-        return member;
-    }
+	private GeneralMember convertToEntity(GeneralMemberRequestDTO requestDTO) {
+		GeneralMember member = new GeneralMember();
+		member.setFirstName(requestDTO.getFirstName());
+		member.setMiddleName(requestDTO.getMiddleName());
+		member.setLastName(requestDTO.getLastName());
+		member.setRegisterDate(requestDTO.getRegisterDate());
+		member.setAdharCard(requestDTO.getAdharCard());
+		member.setMemberAddress(requestDTO.getMemberAddress());
+		member.setDateOfBirth(requestDTO.getDateOfBirth());
+		member.setMemberEducation(requestDTO.getMemberEducation());
+		member.setMemberOccupation(requestDTO.getMemberOccupation());
+		member.setMobileNo(requestDTO.getMobileNo());
+		member.setConfirmDate(requestDTO.getConfirmDate());
+		member.setIsBlock(requestDTO.getIsBlock());
+		return member;
+	}
 }

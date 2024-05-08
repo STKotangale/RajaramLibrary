@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.raja.lib.auth.model.ERole;
 import com.raja.lib.auth.model.Role;
 import com.raja.lib.auth.model.User;
 import com.raja.lib.auth.repository.RoleRepository;
@@ -78,34 +77,38 @@ public class AuthController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
-		}
+	    if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+	        return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+	    }
 
-		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
-		}
+	    if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+	        return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+	    }
 
-		User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
-				encoder.encode(signUpRequest.getPassword()), ' ', null);
+	    User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
+	            encoder.encode(signUpRequest.getPassword()), 'N');
 
-		Role defaultRole = roleRepository.findByName(ERole.ADMIN)
-				.orElseThrow(() -> new RuntimeException("Error: Default role is not found."));
-		Set<Role> roles = new HashSet<>();
-		roles.add(defaultRole);
+	    Set<Role> roles = new HashSet<>();
 
-		if (signUpRequest.getRole() != null && signUpRequest.getRole().contains("member")) {
-			Role memberRole = roleRepository.findByName(ERole.MEMBER)
-					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-			roles.clear();
-			roles.add(memberRole);
-		}
+	    if (signUpRequest.getRole() != null && !signUpRequest.getRole().isEmpty()) {
+	        signUpRequest.getRole().forEach(roleName -> {
+	            Role role = roleRepository.findByRoleName(roleName)
+	                    .orElseThrow(() -> new RuntimeException("Error: Role '" + roleName + "' not found."));
+	            roles.add(role);
+	        });
+	    } else {
+	        Role defaultRole = roleRepository.findByRoleName("admin")
+	                .orElseThrow(() -> new RuntimeException("Error: Default role 'admin' not found."));
+	        roles.add(defaultRole);
+	    }
 
-		user.setRoles(roles);
-		userRepository.save(user);
+	    user.setRoles(roles);
+	    userRepository.save(user);
 
-		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+	    return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
+
+
 
 	@GetMapping("/users")
 	List<User> getAllUser() {
@@ -124,23 +127,29 @@ public class AuthController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateUserById(@PathVariable Long id, @Valid @RequestBody User updatedUser) {
-		Optional<User> optionalUser = userRepository.findById(id);
-		if (optionalUser.isPresent()) {
-			User user = optionalUser.get();
-			user.setUsername(updatedUser.getUsername());
-			user.setEmail(updatedUser.getEmail());
-			user.setBlock(updatedUser.isBlock());
-//			user.setMemberIdf(updatedUser.getMemberIdf());
+	    Optional<User> optionalUser = userRepository.findById(id);
+	    if (optionalUser.isPresent()) {
+	        User user = optionalUser.get();
+	        user.setUsername(updatedUser.getUsername());
+	        
+	        if (updatedUser.getUseremail() != null) {
+	            user.setUseremail(updatedUser.getUseremail());
+	        }
+	        
+	        user.setIsBlock(updatedUser.getIsBlock());
+	        user.setGeneralMember(updatedUser.getGeneralMember());
 
-			if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
-				user.setPassword(encoder.encode(updatedUser.getPassword()));
-			}
+	        if (updatedUser.getUserpassword() != null) {
+	            user.setUserpassword(encoder.encode(updatedUser.getUserpassword()));
+	        }
 
-			userRepository.save(user);
-			return ResponseEntity.ok(new MessageResponse("User updated successfully"));
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+	        userRepository.save(user);
+	        return ResponseEntity.ok(new MessageResponse("User updated successfully"));
+	    } else {
+	        return ResponseEntity.notFound().build();
+	    }
 	}
+
+
 
 }

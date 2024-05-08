@@ -1,5 +1,7 @@
 package com.raja.lib.invt.model;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,25 +12,49 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "permanent_members")
-public class PermanentMember {
+@Table(name = "auth_permanent_members")
+public class PermanentMember implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int permanentMemberId;
-    private String firstName;
-    private String middleName;
-    private String lastName;
-    private String registerDate;
-    private String adharCard;
-    private String memberAddress;
-    private String dateOfBirth;
-    private String memberEducation;
-    private String memberOccupation;
-    private long mobileNo;
-    private String memberEmailId;
-    private String confirmDate;
+    @Column(name="permanentMemberId")
+    private int memberId;
 
-    @Column(columnDefinition = "char(1) default 'N'")
+    @Column(name="firstName")
+    private String firstName;
+    
+    @Column(name="middleName")
+    private String middleName;
+    
+    @Column(name="lastName")
+    private String lastName;
+    
+    @Column(name="registerDate")
+    private String registerDate;
+    
+    @Column(name="adharCard")
+    private String adharCard;
+    
+    @Column(name="memberAddress")
+    private String memberAddress;
+    
+    @Column(name="dateOfBirth")
+    private String dateOfBirth;
+    
+    @Column(name="memberEducation")
+    private String memberEducation;
+    
+    @Column(name="memberOccupation")
+    private String memberOccupation;
+    
+    @Column(name="mobileNo")
+    private long mobileNo;
+    
+    @Column(name="confirmDate")
+    private String confirmDate;
+    
+	@Column(name = "isBlock", columnDefinition = "char(1) default 'N'")
     private char isBlock;
 }

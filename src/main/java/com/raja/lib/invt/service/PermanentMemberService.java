@@ -53,7 +53,6 @@ public class PermanentMemberService {
         existingMember.setMemberEducation(requestDTO.getMemberEducation());
         existingMember.setMemberOccupation(requestDTO.getMemberOccupation());
         existingMember.setMobileNo(requestDTO.getMobileNo());
-        existingMember.setMemberEmailId(requestDTO.getMemberEmailId());
         existingMember.setConfirmDate(requestDTO.getConfirmDate());
         existingMember.setIsBlock(requestDTO.getIsBlock());
         
@@ -81,7 +80,6 @@ public class PermanentMemberService {
         member.setMemberEducation(requestDTO.getMemberEducation());
         member.setMemberOccupation(requestDTO.getMemberOccupation());
         member.setMobileNo(requestDTO.getMobileNo());
-        member.setMemberEmailId(requestDTO.getMemberEmailId());
         member.setConfirmDate(requestDTO.getConfirmDate());
         member.setIsBlock(requestDTO.getIsBlock());
         return member;

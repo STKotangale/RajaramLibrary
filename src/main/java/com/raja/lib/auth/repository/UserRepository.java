@@ -5,21 +5,22 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.raja.lib.auth.model.User;
 
-
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-  Optional<User> findByUsername(String username);
+    Optional<User> findByUsername(String username);
 
-  Boolean existsByUsername(String username);
+    Boolean existsByUsername(String username);
 
-  Boolean existsByEmail(String email);
+    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.useremail = :email")
+    boolean existsByEmail(@Param("email") String email);
     
-  @Query(value = "SELECT * FROM users u WHERE u.member_idf  IS NULL", nativeQuery = true)
-  List<User> getAllAdminUsers();
+    @Query(value = "SELECT * FROM auth_users WHERE memberIdF IS NULL", nativeQuery = true)
+    List<User> getAllAdminUsers();
 
-  Optional<User> findByGeneralMember_MemberId(int memberId);
+    Optional<User> findByGeneralMember_MemberId(int memberId);
 }
