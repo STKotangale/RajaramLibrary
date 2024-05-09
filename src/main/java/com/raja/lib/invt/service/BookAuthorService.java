@@ -43,10 +43,10 @@ public class BookAuthorService {
         LOGGER.info("Creating book author");
         BookAuthor bookAuthor = new BookAuthor();
         bookAuthor.setAuthorName(requestDTO.getAuthorName());
-        bookAuthor.setAddress(requestDTO.getAddress());
-        bookAuthor.setContactNo1(requestDTO.getContactNo1());
-        bookAuthor.setContactNo2(requestDTO.getContactNo2());
-        bookAuthor.setEmailId(requestDTO.getEmailId());
+        bookAuthor.setAuthorAddress(requestDTO.getAddress());
+        bookAuthor.setAuthorContactNo1(requestDTO.getContactNo1());
+        bookAuthor.setAuthorContactNo2(requestDTO.getContactNo2());
+        bookAuthor.setAuthorEmailId(requestDTO.getEmailId());
 
         BookAuthor savedBookAuthor = bookAuthorRepository.save(bookAuthor);
         LOGGER.debug("Book author created with id {}", savedBookAuthor.getAuthorId());
@@ -60,10 +60,10 @@ public class BookAuthorService {
             LOGGER.debug("Book author found with id {}", authorId);
             BookAuthor existingBookAuthor = optionalBookAuthor.get();
             existingBookAuthor.setAuthorName(requestDTO.getAuthorName());
-            existingBookAuthor.setAddress(requestDTO.getAddress());
-            existingBookAuthor.setContactNo1(requestDTO.getContactNo1());
-            existingBookAuthor.setContactNo2(requestDTO.getContactNo2());
-            existingBookAuthor.setEmailId(requestDTO.getEmailId());
+            existingBookAuthor.setAuthorAddress(requestDTO.getAddress());
+            existingBookAuthor.setAuthorContactNo1(requestDTO.getContactNo1());
+            existingBookAuthor.setAuthorContactNo2(requestDTO.getContactNo2());
+            existingBookAuthor.setAuthorEmailId(requestDTO.getEmailId());
 
             BookAuthor updatedBookAuthor = bookAuthorRepository.save(existingBookAuthor);
             LOGGER.debug("Book author updated with id {}", authorId);
