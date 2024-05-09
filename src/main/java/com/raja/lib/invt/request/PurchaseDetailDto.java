@@ -10,7 +10,7 @@ import lombok.Setter;
 
 public class PurchaseDetailDto {
 	
-	 private Long bookId;
+	 private int bookId;
 	    private int qty;
 	    private int rate;
 	    private int amount;

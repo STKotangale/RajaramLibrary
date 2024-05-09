@@ -14,4 +14,8 @@ public class BookRequest {
     private int authorId;
 
     private int publicationId;
+    
+    private int bookTypeId;
+
+    private int bookLangId;
 }
