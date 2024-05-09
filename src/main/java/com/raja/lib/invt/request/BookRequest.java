@@ -11,7 +11,7 @@ public class BookRequest {
 
     private char isBlock;
 
-    private Long authorId;
+    private int authorId;
 
-    private Long publicationId;
+    private int publicationId;
 }

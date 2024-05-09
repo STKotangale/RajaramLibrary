@@ -34,7 +34,7 @@ public class BookPublicationController {
     }
 
     @GetMapping("/{publicationId}")
-    public ResponseEntity<ApiResponseDTO<BookPublication>> getBookPublicationById(@PathVariable Long publicationId) {
+    public ResponseEntity<ApiResponseDTO<BookPublication>> getBookPublicationById(@PathVariable int publicationId) {
         return ResponseEntity.ok(bookPublicationService.getBookPublicationById(publicationId));
     }
 
@@ -44,12 +44,12 @@ public class BookPublicationController {
     }
 
     @PutMapping("/{publicationId}")
-    public ResponseEntity<ApiResponseDTO<BookPublication>> updateBookPublication(@PathVariable Long publicationId, @RequestBody BookPublicationRequestDTO requestDTO) {
+    public ResponseEntity<ApiResponseDTO<BookPublication>> updateBookPublication(@PathVariable int publicationId, @RequestBody BookPublicationRequestDTO requestDTO) {
         return ResponseEntity.ok(bookPublicationService.updateBookPublication(publicationId, requestDTO));
     }
 
     @DeleteMapping("/{publicationId}")
-    public ResponseEntity<ApiResponseDTO<Void>> deleteBookPublication(@PathVariable Long publicationId) {
+    public ResponseEntity<ApiResponseDTO<Void>> deleteBookPublication(@PathVariable int publicationId) {
         return ResponseEntity.ok(bookPublicationService.deleteBookPublication(publicationId));
     }
 }

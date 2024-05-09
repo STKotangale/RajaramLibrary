@@ -8,6 +8,6 @@ import com.raja.lib.auth.model.Role;
 
 
 @Repository
-public interface RoleRepository extends JpaRepository<Role, Long> {
+public interface RoleRepository extends JpaRepository<Role, Integer> {
     Optional<Role> findByRoleName(String roleName);
 }

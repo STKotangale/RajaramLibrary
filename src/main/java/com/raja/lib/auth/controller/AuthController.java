@@ -116,17 +116,17 @@ public class AuthController {
 	}
 
 	@GetMapping("/{id}")
-	Optional<User> getUserById(@PathVariable Long id) {
+	Optional<User> getUserById(@PathVariable int id) {
 		return userRepository.findById(id);
 	}
 
 	@DeleteMapping("/{id}")
-	void deleteUserById(@PathVariable Long id) {
+	void deleteUserById(@PathVariable int id) {
 		userRepository.deleteById(id);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateUserById(@PathVariable Long id, @Valid @RequestBody User updatedUser) {
+	public ResponseEntity<?> updateUserById(@PathVariable int id, @Valid @RequestBody User updatedUser) {
 	    Optional<User> optionalUser = userRepository.findById(id);
 	    if (optionalUser.isPresent()) {
 	        User user = optionalUser.get();

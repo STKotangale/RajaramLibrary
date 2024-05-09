@@ -1,16 +1,20 @@
 package com.raja.lib.invt.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.Optional;
 
 import com.raja.lib.invt.model.BookAuthor;
 import com.raja.lib.invt.repository.BookAuthorRepository;
 import com.raja.lib.invt.request.BookAuthorRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class BookAuthorService {
@@ -27,7 +31,7 @@ public class BookAuthorService {
         return new ApiResponseDTO<>(true, "All book authors retrieved successfully.", bookAuthors, 200);
     }
 
-    public ApiResponseDTO<BookAuthor> getBookAuthorById(Long authorId) {
+    public ApiResponseDTO<BookAuthor> getBookAuthorById(int authorId) {
         LOGGER.info("Fetching book author with id {}", authorId);
         Optional<BookAuthor> optionalBookAuthor = bookAuthorRepository.findById(authorId);
         if (optionalBookAuthor.isPresent()) {
@@ -48,17 +52,28 @@ public class BookAuthorService {
         bookAuthor.setAuthorContactNo2(requestDTO.getContactNo2());
         bookAuthor.setAuthorEmailId(requestDTO.getEmailId());
 
-        BookAuthor savedBookAuthor = bookAuthorRepository.save(bookAuthor);
-        LOGGER.debug("Book author created with id {}", savedBookAuthor.getAuthorId());
-        return new ApiResponseDTO<>(true, "Book author created successfully.", savedBookAuthor, 201);
+        try {
+            BookAuthor savedBookAuthor = bookAuthorRepository.save(bookAuthor);
+            LOGGER.debug("Book author created with id {}", savedBookAuthor.getAuthorId());
+            return new ApiResponseDTO<>(true, "Book author created successfully.", savedBookAuthor, 201);
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.error("Failed to create book author due to auther name is already Exist");
+            return new ApiResponseDTO<>(false, "Failed to create book author due to auther name is already Exist.", null, 400);
+        }
     }
 
-    public ApiResponseDTO<BookAuthor> updateBookAuthor(Long authorId, BookAuthorRequestDTO requestDTO) {
+    public ApiResponseDTO<BookAuthor> updateBookAuthor(int authorId, BookAuthorRequestDTO requestDTO) {
         LOGGER.info("Updating book author with id {}", authorId);
         Optional<BookAuthor> optionalBookAuthor = bookAuthorRepository.findById(authorId);
         if (optionalBookAuthor.isPresent()) {
             LOGGER.debug("Book author found with id {}", authorId);
             BookAuthor existingBookAuthor = optionalBookAuthor.get();
+            
+            if (!existingBookAuthor.getAuthorName().equals(requestDTO.getAuthorName()) &&
+                bookAuthorRepository.existsByAuthorName(requestDTO.getAuthorName())) {
+                return new ApiResponseDTO<>(false, "Error: Author name already exists.", null, 400);
+            }
+
             existingBookAuthor.setAuthorName(requestDTO.getAuthorName());
             existingBookAuthor.setAuthorAddress(requestDTO.getAddress());
             existingBookAuthor.setAuthorContactNo1(requestDTO.getContactNo1());
@@ -74,7 +89,8 @@ public class BookAuthorService {
         }
     }
 
-    public ApiResponseDTO<Void> deleteBookAuthor(Long authorId) {
+
+    public ApiResponseDTO<Void> deleteBookAuthor(int authorId) {
         LOGGER.info("Deleting book author with id {}", authorId);
         if (bookAuthorRepository.existsById(authorId)) {
             bookAuthorRepository.deleteById(authorId);

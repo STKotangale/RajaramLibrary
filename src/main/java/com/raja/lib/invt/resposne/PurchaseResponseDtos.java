@@ -25,7 +25,7 @@ public class PurchaseResponseDtos {
     private int gstAmount;
     private int grandTotal;
     private String ledgerName; 
-    private Long ledgerId;  
+    private int ledgerId;  
     private List<PurchaseDetailResponseDto> purchaseDetails;
     
    

@@ -29,12 +29,12 @@ public class Ledger implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ledgerID")
-    private Long ledgerID;
+    private int ledgerID;
     
     @Column(name="ledgerName")
     private String ledgerName;
     
-    @Column(name="isBlock")
+    @Column(name = "isBlock", columnDefinition = "char(1) default 'N'")
     private char isBlock; 
 
    

@@ -34,7 +34,7 @@ public class BookAuthorController {
     }
 
     @GetMapping("/{authorId}")
-    public ResponseEntity<ApiResponseDTO<BookAuthor>> getBookAuthorById(@PathVariable Long authorId) {
+    public ResponseEntity<ApiResponseDTO<BookAuthor>> getBookAuthorById(@PathVariable int authorId) {
         return ResponseEntity.ok(bookAuthorService.getBookAuthorById(authorId));
     }
 
@@ -44,12 +44,12 @@ public class BookAuthorController {
     }
 
     @PutMapping("/{authorId}")
-    public ResponseEntity<ApiResponseDTO<BookAuthor>> updateBookAuthor(@PathVariable Long authorId, @RequestBody BookAuthorRequestDTO requestDTO) {
+    public ResponseEntity<ApiResponseDTO<BookAuthor>> updateBookAuthor(@PathVariable int authorId, @RequestBody BookAuthorRequestDTO requestDTO) {
         return ResponseEntity.ok(bookAuthorService.updateBookAuthor(authorId, requestDTO));
     }
 
     @DeleteMapping("/{authorId}")
-    public ResponseEntity<ApiResponseDTO<Void>> deleteBookAuthor(@PathVariable Long authorId) {
+    public ResponseEntity<ApiResponseDTO<Void>> deleteBookAuthor(@PathVariable int authorId) {
         return ResponseEntity.ok(bookAuthorService.deleteBookAuthor(authorId));
     }
 }

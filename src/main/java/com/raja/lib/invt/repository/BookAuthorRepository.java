@@ -6,5 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.raja.lib.invt.model.BookAuthor;
 
 @Repository
-public interface BookAuthorRepository extends JpaRepository<BookAuthor, Long> {
-	}
+public interface BookAuthorRepository extends JpaRepository<BookAuthor, Integer> {
+	
+	boolean existsByAuthorName(String authorName);
+}

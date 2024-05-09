@@ -25,7 +25,7 @@ public class LedgerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO<Ledger>> getLedgerById(@PathVariable("id") Long ledgerId) {
+    public ResponseEntity<ApiResponseDTO<Ledger>> getLedgerById(@PathVariable("id") int ledgerId) {
         return ResponseEntity.ok(ledgerService.getLedgerById(ledgerId));
     }
 
@@ -35,12 +35,12 @@ public class LedgerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO<Ledger>> updateLedger(@PathVariable("id") Long ledgerId, @RequestBody LedgerRequestDTO request) {
+    public ResponseEntity<ApiResponseDTO<Ledger>> updateLedger(@PathVariable("id") int ledgerId, @RequestBody LedgerRequestDTO request) {
         return ResponseEntity.ok(ledgerService.updateLedger(ledgerId, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO<Void>> deleteLedger(@PathVariable("id") Long ledgerId) {
+    public ResponseEntity<ApiResponseDTO<Void>> deleteLedger(@PathVariable("id") int ledgerId) {
         return ResponseEntity.ok(ledgerService.deleteLedger(ledgerId));
     }
 }

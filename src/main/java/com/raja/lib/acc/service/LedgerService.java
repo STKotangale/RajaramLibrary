@@ -30,7 +30,7 @@ public class LedgerService {
         return new ApiResponseDTO<>(true, "Ledger created successfully", savedLedger, 201);
     }
 
-    public ApiResponseDTO<Ledger> getLedgerById(Long ledgerId) {
+    public ApiResponseDTO<Ledger> getLedgerById(int ledgerId) {
         LOGGER.info("Fetching ledger with id {}", ledgerId);
         Optional<Ledger> optionalLedger = ledgerRepository.findById(ledgerId);
         if (optionalLedger.isPresent()) {
@@ -50,7 +50,7 @@ public class LedgerService {
         return new ApiResponseDTO<>(true, "All ledgers retrieved successfully", ledgers, 200);
     }
 
-    public ApiResponseDTO<Ledger> updateLedger(Long ledgerId, LedgerRequestDTO request) {
+    public ApiResponseDTO<Ledger> updateLedger(int ledgerId, LedgerRequestDTO request) {
         LOGGER.info("Updating ledger with id {}", ledgerId);
         Optional<Ledger> optionalLedger = ledgerRepository.findById(ledgerId);
         if (optionalLedger.isPresent()) {
@@ -66,7 +66,7 @@ public class LedgerService {
         }
     }
 
-    public ApiResponseDTO<Void> deleteLedger(Long ledgerId) {
+    public ApiResponseDTO<Void> deleteLedger(int ledgerId) {
         LOGGER.info("Deleting ledger with id {}", ledgerId);
         if (ledgerRepository.existsById(ledgerId)) {
             try {

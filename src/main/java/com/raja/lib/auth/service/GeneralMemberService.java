@@ -55,7 +55,7 @@ public class GeneralMemberService {
 		String username = requestDTO.getUsername();
 		String password = passwordEncoder.encode(requestDTO.getPassword());
 		String email = requestDTO.getMemberEmailId();
-		Role memberRole = roleRepository.findById((long) 2)
+		Role memberRole = roleRepository.findById(2)
 				.orElseThrow(() -> new NoSuchElementException("Role not found with ID 2"));
 		Set<Role> roles = new HashSet<>();
 		roles.add(memberRole);
@@ -107,7 +107,7 @@ public class GeneralMemberService {
 		user.setUseremail(requestDTO.getMemberEmailId());
 		user.setUserpassword(passwordEncoder.encode(requestDTO.getPassword()));
 
-		Role defaultRole = roleRepository.findById((long) 2)
+		Role defaultRole = roleRepository.findById(2)
 				.orElseThrow(() -> new NoSuchElementException("Default Role not found"));
 		Set<Role> roles = new HashSet<>();
 		roles.add(defaultRole);

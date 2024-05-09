@@ -1,12 +1,12 @@
 package com.raja.lib.invt.service;
 
-
 import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.raja.lib.invt.model.BookPublication;
@@ -29,7 +29,7 @@ public class BookPublicationService {
         return new ApiResponseDTO<>(true, "All book publications retrieved successfully.", bookPublications, 200);
     }
 
-    public ApiResponseDTO<BookPublication> getBookPublicationById(Long publicationId) {
+    public ApiResponseDTO<BookPublication> getBookPublicationById(Integer publicationId) {
         LOGGER.info("Fetching book publication with id {}", publicationId);
         Optional<BookPublication> optionalBookPublication = bookPublicationRepository.findById(publicationId);
         if (optionalBookPublication.isPresent()) {
@@ -43,31 +43,45 @@ public class BookPublicationService {
 
     public ApiResponseDTO<BookPublication> createBookPublication(BookPublicationRequestDTO requestDTO) {
         LOGGER.info("Creating book publication");
-        BookPublication bookPublication = new BookPublication();
-        bookPublication.setPublicationName(requestDTO.getPublicationName());
-        bookPublication.setContactPerson(requestDTO.getContactPerson());
-        bookPublication.setAddress(requestDTO.getAddress());
-        bookPublication.setContactNo1(requestDTO.getContactNo1());
-        bookPublication.setContactNo2(requestDTO.getContactNo2());
-        bookPublication.setEmailId(requestDTO.getEmailId());
+        
+        try {
+            BookPublication bookPublication = new BookPublication();
+            bookPublication.setPublicationName(requestDTO.getPublicationName());
+            bookPublication.setPublicationContactPerson(requestDTO.getContactPerson());
+            bookPublication.setPublicationAddress(requestDTO.getAddress());
+            bookPublication.setPublicationContactNo1(requestDTO.getContactNo1());
+            bookPublication.setPublicationContactNo2(requestDTO.getContactNo2());
+            bookPublication.setPublicationEmailId(requestDTO.getEmailId());
 
-        BookPublication savedBookPublication = bookPublicationRepository.save(bookPublication);
-        LOGGER.debug("Book publication created with id {}", savedBookPublication.getPublicationId());
-        return new ApiResponseDTO<>(true, "Book publication created successfully.", savedBookPublication, 201);
+
+            BookPublication savedBookPublication = bookPublicationRepository.save(bookPublication);
+            LOGGER.debug("Book publication created with id {}", savedBookPublication.getPublicationId());
+            return new ApiResponseDTO<>(true, "Book publication created successfully.", savedBookPublication, 201);
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.error("Failed to create book publication due to duplicate publication name");
+            return new ApiResponseDTO<>(false, "Failed to create book publication. Publication name already exists.", null, 400);
+        }
     }
 
-    public ApiResponseDTO<BookPublication> updateBookPublication(Long publicationId, BookPublicationRequestDTO requestDTO) {
+
+    public ApiResponseDTO<BookPublication> updateBookPublication(int publicationId, BookPublicationRequestDTO requestDTO) {
         LOGGER.info("Updating book publication with id {}", publicationId);
         Optional<BookPublication> optionalBookPublication = bookPublicationRepository.findById(publicationId);
         if (optionalBookPublication.isPresent()) {
             LOGGER.debug("Book publication found with id {}", publicationId);
             BookPublication existingBookPublication = optionalBookPublication.get();
+            
+            if (!existingBookPublication.getPublicationName().equals(requestDTO.getPublicationName()) &&
+                bookPublicationRepository.existsByPublicationName(requestDTO.getPublicationName())) {
+                return new ApiResponseDTO<>(false, "Error: Publication name already exists.", null, 400);
+            }
+
             existingBookPublication.setPublicationName(requestDTO.getPublicationName());
-            existingBookPublication.setContactPerson(requestDTO.getContactPerson());
-            existingBookPublication.setAddress(requestDTO.getAddress());
-            existingBookPublication.setContactNo1(requestDTO.getContactNo1());
-            existingBookPublication.setContactNo2(requestDTO.getContactNo2());
-            existingBookPublication.setEmailId(requestDTO.getEmailId());
+            existingBookPublication.setPublicationContactPerson(requestDTO.getAddress());
+            existingBookPublication.setPublicationAddress(requestDTO.getAddress());
+            existingBookPublication.setPublicationContactNo1(requestDTO.getContactNo1());
+            existingBookPublication.setPublicationContactNo2(requestDTO.getContactNo2());
+            existingBookPublication.setPublicationEmailId(requestDTO.getEmailId());
 
             BookPublication updatedBookPublication = bookPublicationRepository.save(existingBookPublication);
             LOGGER.debug("Book publication updated with id {}", publicationId);
@@ -78,7 +92,8 @@ public class BookPublicationService {
         }
     }
 
-    public ApiResponseDTO<Void> deleteBookPublication(Long publicationId) {
+
+    public ApiResponseDTO<Void> deleteBookPublication(int publicationId) {
         LOGGER.info("Deleting book publication with id {}", publicationId);
         if (bookPublicationRepository.existsById(publicationId)) {
             bookPublicationRepository.deleteById(publicationId);

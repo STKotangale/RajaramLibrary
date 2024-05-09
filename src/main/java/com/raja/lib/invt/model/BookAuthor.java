@@ -31,7 +31,7 @@ public class BookAuthor implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "authorId")
-	private Long authorId;
+	private int authorId;
 
 	@NotBlank
 	@Size(max = 100)
@@ -52,7 +52,7 @@ public class BookAuthor implements Serializable {
 	@Column(name = "authorEmailId")
 	private String authorEmailId;
 
-	@Column(name = "isblock")
+    @Column(name = "isblock", columnDefinition = "char(1) default 'N'")
 	private char isblock;
 
 }
