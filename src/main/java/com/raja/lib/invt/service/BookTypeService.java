@@ -2,9 +2,12 @@ package com.raja.lib.invt.service;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
 import com.raja.lib.invt.model.BookType;
 import com.raja.lib.invt.repository.BookTypeRepository;
 import com.raja.lib.invt.request.BookTypeRequest;
@@ -16,23 +19,24 @@ public class BookTypeService {
     @Autowired
     private BookTypeRepository bookTypeRepository;
 
-    
     public ApiResponseDTO<BookType> createBookType(BookTypeRequest request) {
-        BookType bookType = new BookType();
-        bookType.setBookTypeName(request.getBookTypeName());
-        bookType.setIsBlock(request.getIsBlock());
-        BookType savedBookType = bookTypeRepository.save(bookType);
-        return new ApiResponseDTO<>(true, "Book type created successfully", savedBookType, HttpStatus.CREATED.value());
+        try {
+            BookType bookType = new BookType();
+            bookType.setBookTypeName(request.getBookTypeName());
+            bookType.setIsBlock(request.getIsBlock());
+            BookType savedBookType = bookTypeRepository.save(bookType);
+            return new ApiResponseDTO<>(true, "Book type created successfully", savedBookType, HttpStatus.CREATED.value());
+        } catch (DataIntegrityViolationException e) {
+            return new ApiResponseDTO<>(false, "Failed to create book type. Type name already exists.", null, HttpStatus.BAD_REQUEST.value());
+        }
     }
 
-    
     public ApiResponseDTO<List<BookType>> getAllBookTypes() {
         List<BookType> bookTypes = bookTypeRepository.findAll();
         return new ApiResponseDTO<>(true, "List of book types", bookTypes, HttpStatus.OK.value());
     }
 
-    
-    public ApiResponseDTO<BookType> getBookTypeById(Long id) {
+    public ApiResponseDTO<BookType> getBookTypeById(int id) {
         Optional<BookType> optionalBookType = bookTypeRepository.findById(id);
         if (optionalBookType.isPresent()) {
             return new ApiResponseDTO<>(true, "Book type found", optionalBookType.get(), HttpStatus.OK.value());
@@ -41,22 +45,24 @@ public class BookTypeService {
         }
     }
 
-    
-    public ApiResponseDTO<BookType> updateBookType(Long id, BookTypeRequest request) {
-        Optional<BookType> optionalBookType = bookTypeRepository.findById(id);
-        if (optionalBookType.isPresent()) {
-            BookType existingBookType = optionalBookType.get();
-            existingBookType.setBookTypeName(request.getBookTypeName());
-            existingBookType.setIsBlock(request.getIsBlock());
-            BookType updatedBookType = bookTypeRepository.save(existingBookType);
-            return new ApiResponseDTO<>(true, "Book type updated successfully", updatedBookType, HttpStatus.OK.value());
-        } else {
-            return new ApiResponseDTO<>(false, "Book type not found", null, HttpStatus.NOT_FOUND.value());
+    public ApiResponseDTO<BookType> updateBookType(int id, BookTypeRequest request) {
+        try {
+            Optional<BookType> optionalBookType = bookTypeRepository.findById(id);
+            if (optionalBookType.isPresent()) {
+                BookType existingBookType = optionalBookType.get();
+                existingBookType.setBookTypeName(request.getBookTypeName());
+                existingBookType.setIsBlock(request.getIsBlock());
+                BookType updatedBookType = bookTypeRepository.save(existingBookType);
+                return new ApiResponseDTO<>(true, "Book type updated successfully", updatedBookType, HttpStatus.OK.value());
+            } else {
+                return new ApiResponseDTO<>(false, "Book type not found", null, HttpStatus.NOT_FOUND.value());
+            }
+        } catch (DataIntegrityViolationException e) {
+            return new ApiResponseDTO<>(false, "Failed to update book type. Type name already exists.", null, HttpStatus.BAD_REQUEST.value());
         }
     }
 
-    
-    public ApiResponseDTO<Void> deleteBookType(Long id) {
+    public ApiResponseDTO<Void> deleteBookType(int id) {
         Optional<BookType> optionalBookType = bookTypeRepository.findById(id);
         if (optionalBookType.isPresent()) {
             bookTypeRepository.deleteById(id);
