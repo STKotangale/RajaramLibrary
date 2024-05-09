@@ -1,4 +1,4 @@
-package com.raja.lib.invt.repository;
+package com.raja.lib.auth.repository;
 
 import java.util.List;
 
@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.raja.lib.invt.model.GeneralMember;
-import com.raja.lib.invt.objects.GenralMember;
+import com.raja.lib.auth.model.GeneralMember;
+import com.raja.lib.auth.objects.GenralMember;
 
 @Repository
 public interface GeneralMemberRepository extends JpaRepository<GeneralMember, Integer> {

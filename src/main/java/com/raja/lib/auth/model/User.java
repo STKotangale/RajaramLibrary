@@ -6,8 +6,6 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import com.raja.lib.invt.model.GeneralMember;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

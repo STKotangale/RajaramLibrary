@@ -1,4 +1,4 @@
-package com.raja.lib.invt.objects;
+package com.raja.lib.auth.objects;
 
 
 public interface GenralMember {

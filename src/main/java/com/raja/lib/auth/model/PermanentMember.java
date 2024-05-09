@@ -1,4 +1,4 @@
-package com.raja.lib.invt.model;
+package com.raja.lib.auth.model;
 
 import java.io.Serializable;
 

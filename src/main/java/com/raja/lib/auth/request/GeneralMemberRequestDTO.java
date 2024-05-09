@@ -1,4 +1,4 @@
-package com.raja.lib.invt.request;
+package com.raja.lib.auth.request;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.raja.lib.invt.controller;
+package com.raja.lib.auth.controller;
 
 import java.util.List;
 
@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.raja.lib.invt.model.GeneralMember;
-import com.raja.lib.invt.objects.GenralMember;
-import com.raja.lib.invt.request.GeneralMemberRequestDTO;
+import com.raja.lib.auth.model.GeneralMember;
+import com.raja.lib.auth.objects.GenralMember;
+import com.raja.lib.auth.request.GeneralMemberRequestDTO;
+import com.raja.lib.auth.service.GeneralMemberService;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
-import com.raja.lib.invt.service.GeneralMemberService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController

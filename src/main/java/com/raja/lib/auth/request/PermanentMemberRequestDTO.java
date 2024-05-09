@@ -1,15 +1,10 @@
-package com.raja.lib.invt.resposne;
+package com.raja.lib.auth.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class GeneralMemberResponseDTO {
+public class PermanentMemberRequestDTO {
 
-    private int memberId;
     private String firstName;
     private String middleName;
     private String lastName;
@@ -22,7 +17,5 @@ public class GeneralMemberResponseDTO {
     private long mobileNo;
     private String confirmDate;
     private char isBlock;
-    private String username;
-    private String email;
-
 }
+
