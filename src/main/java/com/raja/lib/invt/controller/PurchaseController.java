@@ -74,23 +74,23 @@ public class PurchaseController {
 		return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
 	}
 
-	@GetMapping("/book/{bookname}")
-	public ResponseEntity<BookRate> getBookRate(@PathVariable("bookname") String bookName) {
-		BookRate bookRate = purchaseService.getBookRate(bookName);
-		if (bookRate == null) {
-			return ResponseEntity.notFound().build();
-		}
-		return ResponseEntity.ok(bookRate);
-	}
-
-	@GetMapping("/books")
-	public ResponseEntity<List<BookName>> getBookNames() {
-		List<BookName> bookNames = purchaseService.getBookNames();
-		if (bookNames.isEmpty()) {
-			return ResponseEntity.notFound().build();
-		}
-		return ResponseEntity.ok(bookNames);
-	}
+//	@GetMapping("/book/{bookname}")
+//	public ResponseEntity<BookRate> getBookRate(@PathVariable("bookname") String bookName) {
+//		BookRate bookRate = purchaseService.getBookRate(bookName);
+//		if (bookRate == null) {
+//			return ResponseEntity.notFound().build();
+//		}
+//		return ResponseEntity.ok(bookRate);
+//	}
+//
+//	@GetMapping("/books")
+//	public ResponseEntity<List<BookName>> getBookNames() {
+//		List<BookName> bookNames = purchaseService.getBookNames();
+//		if (bookNames.isEmpty()) {
+//			return ResponseEntity.notFound().build();
+//		}
+//		return ResponseEntity.ok(bookNames);
+//	}
 
 	@GetMapping("/book-details")
 	List<BookDetail> findBooksByNullIsbn() {

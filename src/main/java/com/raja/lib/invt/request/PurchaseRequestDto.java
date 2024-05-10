@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PurchaseRequestDto {
 	private String invoiceNo;
-	private Date invoiceDate;
+	private String invoiceDate;
 	private int billTotal;
 	private int discountPercent;
 	private int discountAmount;

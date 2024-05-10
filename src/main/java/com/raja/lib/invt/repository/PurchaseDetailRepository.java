@@ -18,17 +18,16 @@ import jakarta.transaction.Transactional;
 @Repository
 public interface PurchaseDetailRepository extends JpaRepository<PurchaseDetail, Long> {
 
-	@Query(value = "SELECT p.rate FROM purchase_detail AS p WHERE p.book_name = :bookName LIMIT 1", nativeQuery = true)
-	BookRate getBookRate(@Param("bookName") String bookName);
-
-	@Query(value = "SELECT DISTINCT book_name FROM purchase_detail;", nativeQuery = true)
-	List<BookName> getBookName();
-	
-	 @Query(value="SELECT MAX(p.srno) FROM Purchase_Detail p",nativeQuery = true)
+//	@Query(value = "SELECT p.rate FROM purchase_detail AS p WHERE p.book_name = :bookName LIMIT 1", nativeQuery = true)
+//	BookRate getBookRate(@Param("bookName") String bookName);
+//
+//	@Query(value = "SELECT DISTINCT book_name FROM purchase_detail;", nativeQuery = true)
+//	List<BookName> getBookName();
+//	
+	 @Query(value="SELECT MAX(ipd.srno) FROM invt_purchase_detail ipd ",nativeQuery = true)
 	    Integer findMaxSrno();
 	 
 	 @Modifying
-	    @Transactional
 	    @Query("DELETE FROM PurchaseDetail pd WHERE pd.purchase = :purchase")
 	    void deleteByPurchase(@Param("purchase") Purchase purchase);
 

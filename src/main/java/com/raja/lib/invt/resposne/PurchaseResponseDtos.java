@@ -16,7 +16,7 @@ import lombok.Setter;
 public class PurchaseResponseDtos {
     private Long purchaseId;
     private String invoiceNo;
-    private Date invoiceDate;
+    private String invoiceDate;
     private int billTotal;
     private int discountPercent;
     private int discountAmount;

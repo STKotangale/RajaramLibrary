@@ -53,7 +53,6 @@ public class PurchaseServiceImpl {
 	}
 
 	
-	
 	 @Transactional
 	    public PurchaseResponseDto createPurchase(PurchaseRequestDto requestDto) {
 	        Ledger ledger = ledgerRepository.findById(requestDto.getLedgerId())
@@ -81,7 +80,7 @@ public class PurchaseServiceImpl {
 	                    .orElseThrow(() -> new IllegalArgumentException("Book not found with id: " + detailDto.getBookId()));
 
 	            PurchaseDetail purchaseDetail = new PurchaseDetail();
-	            purchaseDetail.setBook_idf(book);
+	            purchaseDetail.setBook(book);
 	            purchaseDetail.setQty(detailDto.getQty());
 	            purchaseDetail.setRate(detailDto.getRate());
 	            purchaseDetail.setAmount(detailDto.getAmount());
@@ -105,166 +104,167 @@ public class PurchaseServiceImpl {
 
 	        return responseDto;
 	    }
+
 	 private List<BookDetails> generateBookDetails(List<PurchaseDetail> purchaseDetails) {
-		    List<BookDetails> bookDetailsList = new ArrayList<>();
-		    Map<Long, Integer> purchaseCopyMap = new HashMap<>();
+	        List<BookDetails> bookDetailsList = new ArrayList<>();
+	        Map<Long, Integer> purchaseCopyMap = new HashMap<>();
 
-		    for (PurchaseDetail purchaseDetail : purchaseDetails) {
-		        int quantity = purchaseDetail.getQty();
-		        int rate = purchaseDetail.getRate();
-		        Long purchaseDetailId = purchaseDetail.getPurchaseDetail();
-		        purchaseCopyMap.putIfAbsent(purchaseDetailId, 1);
+	        for (PurchaseDetail purchaseDetail : purchaseDetails) {
+	            int quantity = purchaseDetail.getQty();
+	            double rate = purchaseDetail.getRate();
+	            Long purchaseDetailId = purchaseDetail.getPurchaseDetailId();
+	            purchaseCopyMap.putIfAbsent(purchaseDetailId, 1);
 
-		        Book book = purchaseDetail.getBook_idf(); 
-		        for (int i = 0; i < quantity; i++) {
-		            BookDetails bookDetails = new BookDetails();
-		            bookDetails.setBookIdF(book); 
-		            bookDetails.setPurchaseDetail(purchaseDetail);
-		            bookDetails.setRate(rate);
+	            Book book = purchaseDetail.getBook(); 
+	            for (int i = 0; i < quantity; i++) {
+	                BookDetails bookDetails = new BookDetails();
+	                bookDetails.setBookIdF(book); 
+	                bookDetails.setPurchaseDetail(purchaseDetail);
 
-		            int purchaseCopyNo = purchaseCopyMap.get(purchaseDetailId);
-		            bookDetails.setPurchaseCopyNo(purchaseCopyNo);
+	                int purchaseCopyNo = purchaseCopyMap.get(purchaseDetailId);
+	                bookDetails.setPurchaseCopyNo(purchaseCopyNo);
 
-		            bookDetailsList.add(bookDetails);
+	                bookDetailsList.add(bookDetails);
 
-		            purchaseCopyMap.put(purchaseDetailId, purchaseCopyNo + 1);
-		        }
-		    }
-		    return bookDetailsList;
-		}
+	                purchaseCopyMap.put(purchaseDetailId, purchaseCopyNo + 1);
+	            }
+	        }
+	        return bookDetailsList;
+	    }
 
 
 
 		
-	public PurchaseResponseDtos getPurchaseById(Long purchaseId) {
-	    Purchase purchase = purchaseRepository.findById(purchaseId)
-	        .orElseThrow(() -> new RuntimeException("Purchase not found with id: " + purchaseId));
+	 public PurchaseResponseDtos getPurchaseById(Long purchaseId) {
+		    Purchase purchase = purchaseRepository.findById(purchaseId)
+		        .orElseThrow(() -> new RuntimeException("Purchase not found with id: " + purchaseId));
 
-	    List<PurchaseDetailResponseDto> detailResponseDtos = purchase.getPurchaseDetails().stream()
-	    	    .map(detail -> new PurchaseDetailResponseDto(
-	    	        detail.getPurchaseDetail(),  
-	    	        detail.getBook_idf().getBookId(),  
-	    	        bookRepository.findById(detail.getBook_idf().getBookId())
-	    	            .map(Book::getBookName)
-	    	            .orElse("Book name not available"),  
-	    	        detail.getQty(),
-	    	        detail.getRate(),
-	    	        detail.getAmount()
-	    	    ))
-	    	    .collect(Collectors.toList());
+		    List<PurchaseDetailResponseDto> detailResponseDtos = purchase.getPurchaseDetails().stream()
+		        .map(detail -> new PurchaseDetailResponseDto(
+		            detail.getPurchaseDetailId(),
+		            detail.getBook().getBookId(),
+		            bookRepository.findById(detail.getBook().getBookId())
+		                .map(Book::getBookName)
+		                .orElse("Book name not available"),
+		            detail.getQty(),
+		            (int) detail.getRate(), // Adjusted to cast to int
+		            (int) detail.getAmount() // Adjusted to cast to int
+		        ))
+		        .collect(Collectors.toList());
 
+		    PurchaseResponseDtos responseDto = new PurchaseResponseDtos(
+		        purchase.getPurchaseId(),
+		        purchase.getInvoiceNo(),
+		        purchase.getInvoiceDate(),
+		        purchase.getBillTotal(),
+		        purchase.getDiscountPercent(),
+		        purchase.getDiscountAmount(),
+		        purchase.getTotalAfterDiscount(),
+		        purchase.getGstPercent(),
+		        purchase.getGstAmount(),
+		        purchase.getGrandTotal(),
+		        purchase.getLedger().getLedgerName(),
+		        purchase.getLedger().getLedgerID(),
+		        detailResponseDtos
+		    );
 
-	    PurchaseResponseDtos responseDto = new PurchaseResponseDtos(
-	    	    purchase.getPurchaseId(),
-	    	    purchase.getInvoiceNo(),
-	    	    purchase.getInvoiceDate(),
-	    	    purchase.getBillTotal(),
-	    	    purchase.getDiscountPercent(),
-	    	    purchase.getDiscountAmount(),
-	    	    purchase.getTotalAfterDiscount(),
-	    	    purchase.getGstPercent(),
-	    	    purchase.getGstAmount(),
-	    	    purchase.getGrandTotal(),
-	    	    purchase.getLedger().getLedgerName(),  
-	    	    purchase.getLedger().getLedgerID(),          
-	    	    detailResponseDtos
-	    	);
-
-	    return responseDto;
-	}
-
-
-
-	public List<PurchaseResponseDtos> getAllPurchases() {
-	    List<Purchase> purchases = purchaseRepository.findAll();
-	    return purchases.stream().map(purchase -> {
-	        List<PurchaseDetailResponseDto> detailResponseDtos = purchase.getPurchaseDetails().stream()
-	            .map(detail -> new PurchaseDetailResponseDto(
-	                detail.getPurchaseDetail(), 
-	                detail.getBook_idf().getBookId(),
-	                bookRepository.findById(detail.getBook_idf().getBookId())
-	                    .map(Book::getBookName)
-	                    .orElse("Book name not available"),
-	                detail.getQty(),
-	                detail.getRate(),
-	                detail.getAmount()
-	            ))
-	            .collect(Collectors.toList());
-
-	        return new PurchaseResponseDtos(
-	            purchase.getPurchaseId(),
-	            purchase.getInvoiceNo(),
-	            purchase.getInvoiceDate(),
-	            purchase.getBillTotal(),
-	            purchase.getDiscountPercent(),
-	            purchase.getDiscountAmount(),
-	            purchase.getTotalAfterDiscount(),
-	            purchase.getGstPercent(),
-	            purchase.getGstAmount(),
-	            purchase.getGrandTotal(),
-	            purchase.getLedger().getLedgerName(),
-	            purchase.getLedger().getLedgerID(),
-	            detailResponseDtos
-	        );
-	    }).collect(Collectors.toList());
-	}
+		    return responseDto;
+		}
 
 
 
 
-	@Transactional
-	public PurchaseResponseDto updatePurchase(Long purchaseId, PurchaseRequestDto requestDto) {
-	    Purchase purchase = purchaseRepository.findById(purchaseId)
-	            .orElseThrow(() -> new RuntimeException("Purchase not found with id: " + purchaseId));
+	 public List<PurchaseResponseDtos> getAllPurchases() {
+		    List<Purchase> purchases = purchaseRepository.findAll();
+		    return purchases.stream().map(purchase -> {
+		        List<PurchaseDetailResponseDto> detailResponseDtos = purchase.getPurchaseDetails().stream()
+		        		.map(detail -> new PurchaseDetailResponseDto(
+		        			    detail.getPurchaseDetailId(),
+		        			    detail.getBook().getBookId(),
+		        			    bookRepository.findById(detail.getBook().getBookId())
+		        			        .map(Book::getBookName)
+		        			        .orElse("Book name not available"),
+		        			    detail.getQty(),
+		        			    (int) detail.getRate(), // Assuming detail.getRate() returns a double, cast it to int if it's supposed to be an int
+		        			    (int) detail.getAmount() // Assuming detail.getAmount() returns a double, cast it to int if it's supposed to be an int
+		        			))
+		        			.collect(Collectors.toList());
 
-	    List<PurchaseDetail> newDetails = new ArrayList<>();
-	    List<BookDetails> newBookDetailsList = new ArrayList<>();
-	    Integer maxSrno = purchaseDetailRepository.findMaxSrno();
-	    int nextSrno = (maxSrno == null ? 0 : maxSrno) + 1;
 
-	    for (PurchaseDetailDto detailDto : requestDto.getPurchaseDetails()) {
-	        PurchaseDetail newDetail = new PurchaseDetail();
-	        newDetail.setPurchase(purchase);
-	        Book book = bookRepository.findById(detailDto.getBookId())
-	                                  .orElseThrow(() -> new RuntimeException("Book not found with id: " + detailDto.getBookId()));
-	        newDetail.setBook_idf(book);
-	        newDetail.setQty(detailDto.getQty());
-	        newDetail.setRate(detailDto.getRate());
-	        newDetail.setAmount(detailDto.getAmount());
-	        newDetail.setSrno(nextSrno++); 
+		        return new PurchaseResponseDtos(
+		            purchase.getPurchaseId(),
+		            purchase.getInvoiceNo(),
+		            purchase.getInvoiceDate(),
+		            purchase.getBillTotal(),
+		            purchase.getDiscountPercent(),
+		            purchase.getDiscountAmount(),
+		            purchase.getTotalAfterDiscount(),
+		            purchase.getGstPercent(),
+		            purchase.getGstAmount(),
+		            purchase.getGrandTotal(),
+		            purchase.getLedger().getLedgerName(),
+		            purchase.getLedger().getLedgerID(),
+		            detailResponseDtos
+		        );
+		    }).collect(Collectors.toList());
+		}
 
-	        newDetails.add(newDetail);
 
-	        for (int i = 0; i < detailDto.getQty(); i++) {
-	            BookDetails bookDetail = new BookDetails();
-	            bookDetail.setPurchaseDetail(newDetail);
-	            bookDetail.setRate(detailDto.getRate());
-	            bookDetail.setPurchaseCopyNo(i + 1);
-	            bookDetail.setPurchaseDetail(newDetail);
-	            bookDetail.setBookIdF(book);
-	            newBookDetailsList.add(bookDetail);
-	        }
-	    }
 
-	    purchase.getPurchaseDetails().clear();
-	    purchaseDetailRepository.deleteByPurchase(purchase);
 
-	    purchase.getPurchaseDetails().addAll(newDetails);
-	    purchaseDetailRepository.saveAll(newDetails);
-	    bookDetailsRepository.saveAll(newBookDetailsList);
+	 @Transactional
+	 public PurchaseResponseDto updatePurchase(Long purchaseId, PurchaseRequestDto requestDto) {
+	     Purchase purchase = purchaseRepository.findById(purchaseId)
+	             .orElseThrow(() -> new RuntimeException("Purchase not found with id: " + purchaseId));
 
-	    purchaseRepository.save(purchase);
+	     List<PurchaseDetail> newDetails = new ArrayList<>();
+	     List<BookDetails> newBookDetailsList = new ArrayList<>();
+	     Integer maxSrno = purchaseDetailRepository.findMaxSrno();
+	     int nextSrno = (maxSrno == null ? 0 : maxSrno) + 1;
 
-	    PurchaseResponseDto responseDto = new PurchaseResponseDto();
-	    responseDto.setPurchaseId(purchase.getPurchaseId());
-	    responseDto.setInvoiceNo(purchase.getInvoiceNo());
-	    responseDto.setMessage("Purchase updated successfully");
-	    responseDto.setStatusCode(HttpStatus.OK.value());
-	    responseDto.setSuccess(true);
+	     for (PurchaseDetailDto detailDto : requestDto.getPurchaseDetails()) {
+	         PurchaseDetail newDetail = new PurchaseDetail();
+	         newDetail.setPurchase(purchase);
+	         Book book = bookRepository.findById(detailDto.getBookId())
+	                                   .orElseThrow(() -> new RuntimeException("Book not found with id: " + detailDto.getBookId()));
+	         newDetail.setBook(book);
+	         newDetail.setQty(detailDto.getQty());
+	         newDetail.setRate(detailDto.getRate());
+	         newDetail.setAmount(detailDto.getAmount());
+	         newDetail.setSrno(1); 
 
-	    return responseDto;
-	}
+	         newDetails.add(newDetail);
 
+	         for (int i = 0; i < detailDto.getQty(); i++) {
+	             BookDetails bookDetail = new BookDetails();
+	             bookDetail.setPurchaseDetail(newDetail);
+//	             bookDetail.setRate(detailDto.getRate());
+	             bookDetail.setPurchaseCopyNo(i + 1);
+	             bookDetail.setBookIdF(book);
+	             newBookDetailsList.add(bookDetail);
+	         }
+	     }
+
+	     purchase.getPurchaseDetails().clear();
+//	     purchaseDetailRepository.deleteByPurchase(purchase);
+
+	     purchase.getPurchaseDetails().addAll(newDetails);
+	     purchaseDetailRepository.saveAll(newDetails);
+	     bookDetailsRepository.saveAll(newBookDetailsList);
+
+	     purchaseRepository.save(purchase);
+
+	     PurchaseResponseDto responseDto = new PurchaseResponseDto();
+	     responseDto.setPurchaseId(purchase.getPurchaseId());
+	     responseDto.setInvoiceNo(purchase.getInvoiceNo());
+	     responseDto.setMessage("Purchase updated successfully");
+	     responseDto.setStatusCode(HttpStatus.OK.value());
+	     responseDto.setSuccess(true);
+
+	     return responseDto;
+	 }
+	 
+	 
 	public ApiResponseDTO<Object> deletePurchase(Long purchaseId) {
 	    Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
 	    if (optionalPurchase.isPresent()) {
@@ -278,17 +278,6 @@ public class PurchaseServiceImpl {
 	}
 	
 
-	public BookRate getBookRate(String bookName) {
-		BookRate bookRate = purchaseDetailRepository.getBookRate(bookName);
-		if (bookRate == null) {
-			return null;
-		}
-		return bookRate;
-	}
 
-	public List<BookName> getBookNames() {
-		List<BookName> bookNames = purchaseDetailRepository.getBookName();
-		return bookNames;
-	}
 
 }

@@ -35,17 +35,17 @@ public class BookDetailsService {
             }
 
             existingBookDetails.setIsbn(request.getIsbn());
-            existingBookDetails.setLanguage(request.getLanguage());
+//            existingBookDetails.setLanguage(request.getLanguage());
             existingBookDetails.setClassificationNumber(request.getClassificationNumber());
             existingBookDetails.setItemNumber(request.getItemNumber());
-            existingBookDetails.setAuthor(request.getAuthor());
+//            existingBookDetails.setAuthor(request.getAuthor());
             existingBookDetails.setEditor(request.getEditor());
             existingBookDetails.setTitle(request.getTitle());
             existingBookDetails.setSecondTitle(request.getSecondTitle());
             existingBookDetails.setSeriesTitle(request.getSeriesTitle());
             existingBookDetails.setEdition(request.getEdition());
-            existingBookDetails.setPlaceOfPublication(request.getPlaceOfPublication());
-            existingBookDetails.setNameOfPublisher(request.getNameOfPublisher());
+//            existingBookDetails.setPlaceOfPublication(request.getPlaceOfPublication());
+//            existingBookDetails.setNameOfPublisher(request.getNameOfPublisher());
             existingBookDetails.setPublicationYear(request.getPublicationYear());
             existingBookDetails.setNumberOfPages(request.getNumberOfPages());
             existingBookDetails.setSubjectHeading(request.getSubjectHeading());
