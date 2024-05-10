@@ -8,14 +8,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class PurchaseDetailResponseDto {
-    private Long purchaseDetailId;
+    private int purchaseDetailId;
     private int bookId;  
     private String bookName;
     private int qty;
     private int rate;
     private int amount;
 
-    public PurchaseDetailResponseDto(Long purchaseDetailId, int bookId, String bookName, int qty, int rate, int amount) {
+    public PurchaseDetailResponseDto(int purchaseDetailId, int bookId, String bookName, int qty, int rate, int amount) {
         this.purchaseDetailId = purchaseDetailId;
         this.bookId = bookId;
         this.bookName = bookName;

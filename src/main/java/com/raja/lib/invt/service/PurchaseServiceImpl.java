@@ -16,8 +16,6 @@ import com.raja.lib.invt.model.Book;
 import com.raja.lib.invt.model.BookDetails;
 import com.raja.lib.invt.model.Purchase;
 import com.raja.lib.invt.model.PurchaseDetail;
-import com.raja.lib.invt.objects.BookName;
-import com.raja.lib.invt.objects.BookRate;
 import com.raja.lib.invt.repository.BookDetailsRepository;
 import com.raja.lib.invt.repository.BookRepository;
 import com.raja.lib.invt.repository.PurchaseDetailRepository;
@@ -68,7 +66,7 @@ public class PurchaseServiceImpl {
 	        purchase.setGstPercent(requestDto.getGstPercent());
 	        purchase.setGstAmount(requestDto.getGstAmount());
 	        purchase.setGrandTotal(requestDto.getGrandTotal());
-	        purchase.setLedger(ledger);
+	        purchase.setLedgerIDF(ledger);
 
 	        Integer maxSrno = purchaseDetailRepository.findMaxSrno();
 	        int nextSrno = (maxSrno == null ? 0 : maxSrno) + 1;
@@ -81,10 +79,10 @@ public class PurchaseServiceImpl {
 
 	            PurchaseDetail purchaseDetail = new PurchaseDetail();
 	            purchaseDetail.setBook(book);
-	            purchaseDetail.setQty(detailDto.getQty());
-	            purchaseDetail.setRate(detailDto.getRate());
-	            purchaseDetail.setAmount(detailDto.getAmount());
-	            purchaseDetail.setPurchase(purchase);
+	            purchaseDetail.setBook_qty(detailDto.getQty());
+	            purchaseDetail.setBook_rate(detailDto.getRate());
+	            purchaseDetail.setBook_amount(detailDto.getAmount());
+	            purchaseDetail.setPurchaseIdF(purchase);
 	            purchaseDetail.setSrno(nextSrno++);  
 	            purchaseDetails.add(purchaseDetail);
 	        }
@@ -106,49 +104,58 @@ public class PurchaseServiceImpl {
 	    }
 
 	 private List<BookDetails> generateBookDetails(List<PurchaseDetail> purchaseDetails) {
-	        List<BookDetails> bookDetailsList = new ArrayList<>();
-	        Map<Long, Integer> purchaseCopyMap = new HashMap<>();
+		    List<BookDetails> bookDetailsList = new ArrayList<>();
+		    Map<Long, Integer> purchaseCopyMap = new HashMap<>();
 
-	        for (PurchaseDetail purchaseDetail : purchaseDetails) {
-	            int quantity = purchaseDetail.getQty();
-	            double rate = purchaseDetail.getRate();
-	            Long purchaseDetailId = purchaseDetail.getPurchaseDetailId();
-	            purchaseCopyMap.putIfAbsent(purchaseDetailId, 1);
+		    for (PurchaseDetail purchaseDetail : purchaseDetails) {
+		        int quantity = purchaseDetail.getBook_qty();
+		        Integer purchaseDetailId = purchaseDetail.getPurchaseDetailId();
+		        Long purchaseDetailIdLong = purchaseDetailId != null ? purchaseDetailId.longValue() : null;
 
-	            Book book = purchaseDetail.getBook(); 
-	            for (int i = 0; i < quantity; i++) {
-	                BookDetails bookDetails = new BookDetails();
-	                bookDetails.setBookIdF(book); 
-	                bookDetails.setPurchaseDetail(purchaseDetail);
+		        // Check if purchaseDetailId is not null before adding to map
+		        if (purchaseDetailId != null) {
+		            purchaseCopyMap.putIfAbsent(purchaseDetailId.longValue(), 1);
+		        }
 
-	                int purchaseCopyNo = purchaseCopyMap.get(purchaseDetailId);
-	                bookDetails.setPurchaseCopyNo(purchaseCopyNo);
+		        Book book = purchaseDetail.getBook_idF(); // Corrected field reference
+		        for (int i = 0; i < quantity; i++) {
+		            BookDetails bookDetails = new BookDetails();
+		            bookDetails.setBookIdF(book);
+		            bookDetails.setPurchaseDetail(purchaseDetail);
 
-	                bookDetailsList.add(bookDetails);
+		            Integer purchaseCopyNo = purchaseCopyMap.get(purchaseDetailId); // Changed type to Integer
+		            if (purchaseCopyNo == null) {
+		                purchaseCopyNo = 1; // Set default value if purchaseCopyNo is null
+		            }
+		            bookDetails.setPurchaseCopyNo(purchaseCopyNo);
 
-	                purchaseCopyMap.put(purchaseDetailId, purchaseCopyNo + 1);
-	            }
-	        }
-	        return bookDetailsList;
-	    }
+		            bookDetailsList.add(bookDetails);
+
+		            // Increment purchaseCopyNo in the map
+		            purchaseCopyMap.put(purchaseDetailId.longValue(), Integer.valueOf(purchaseCopyNo + 1));
+		        }
+		    }
+		    return bookDetailsList;
+		}
+
 
 
 
 		
-	 public PurchaseResponseDtos getPurchaseById(Long purchaseId) {
+	 public PurchaseResponseDtos getPurchaseById(int purchaseId) {
 		    Purchase purchase = purchaseRepository.findById(purchaseId)
 		        .orElseThrow(() -> new RuntimeException("Purchase not found with id: " + purchaseId));
 
 		    List<PurchaseDetailResponseDto> detailResponseDtos = purchase.getPurchaseDetails().stream()
 		        .map(detail -> new PurchaseDetailResponseDto(
 		            detail.getPurchaseDetailId(),
-		            detail.getBook().getBookId(),
-		            bookRepository.findById(detail.getBook().getBookId())
+		            detail.getBook_idF().getBookId(),
+		            bookRepository.findById(detail.getBook_idF().getBookId())
 		                .map(Book::getBookName)
 		                .orElse("Book name not available"),
-		            detail.getQty(),
-		            (int) detail.getRate(), // Adjusted to cast to int
-		            (int) detail.getAmount() // Adjusted to cast to int
+		            detail.getBook_qty(),
+		            (int) detail.getBook_rate(), // Adjusted to cast to int
+		            (int) detail.getBook_amount() // Adjusted to cast to int
 		        ))
 		        .collect(Collectors.toList());
 
@@ -163,8 +170,8 @@ public class PurchaseServiceImpl {
 		        purchase.getGstPercent(),
 		        purchase.getGstAmount(),
 		        purchase.getGrandTotal(),
-		        purchase.getLedger().getLedgerName(),
-		        purchase.getLedger().getLedgerID(),
+		        purchase.getLedgerIDF().getLedgerName(),
+		        purchase.getLedgerIDF().getLedgerID(),
 		        detailResponseDtos
 		    );
 
@@ -180,13 +187,13 @@ public class PurchaseServiceImpl {
 		        List<PurchaseDetailResponseDto> detailResponseDtos = purchase.getPurchaseDetails().stream()
 		        		.map(detail -> new PurchaseDetailResponseDto(
 		        			    detail.getPurchaseDetailId(),
-		        			    detail.getBook().getBookId(),
-		        			    bookRepository.findById(detail.getBook().getBookId())
+		        			    detail.getBook_idF().getBookId(),
+		        			    bookRepository.findById(detail.getBook_idF().getBookId())
 		        			        .map(Book::getBookName)
 		        			        .orElse("Book name not available"),
-		        			    detail.getQty(),
-		        			    (int) detail.getRate(), // Assuming detail.getRate() returns a double, cast it to int if it's supposed to be an int
-		        			    (int) detail.getAmount() // Assuming detail.getAmount() returns a double, cast it to int if it's supposed to be an int
+		        			    detail.getBook_qty(),
+		        			    (int) detail.getBook_rate(), // Assuming detail.getRate() returns a double, cast it to int if it's supposed to be an int
+		        			    (int) detail.getBook_amount() // Assuming detail.getAmount() returns a double, cast it to int if it's supposed to be an int
 		        			))
 		        			.collect(Collectors.toList());
 
@@ -202,8 +209,8 @@ public class PurchaseServiceImpl {
 		            purchase.getGstPercent(),
 		            purchase.getGstAmount(),
 		            purchase.getGrandTotal(),
-		            purchase.getLedger().getLedgerName(),
-		            purchase.getLedger().getLedgerID(),
+		            purchase.getLedgerIDF().getLedgerName(),
+		            purchase.getLedgerIDF().getLedgerID(),
 		            detailResponseDtos
 		        );
 		    }).collect(Collectors.toList());
@@ -213,7 +220,7 @@ public class PurchaseServiceImpl {
 
 
 	 @Transactional
-	 public PurchaseResponseDto updatePurchase(Long purchaseId, PurchaseRequestDto requestDto) {
+	 public PurchaseResponseDto updatePurchase(int purchaseId, PurchaseRequestDto requestDto) {
 	     Purchase purchase = purchaseRepository.findById(purchaseId)
 	             .orElseThrow(() -> new RuntimeException("Purchase not found with id: " + purchaseId));
 
@@ -224,13 +231,13 @@ public class PurchaseServiceImpl {
 
 	     for (PurchaseDetailDto detailDto : requestDto.getPurchaseDetails()) {
 	         PurchaseDetail newDetail = new PurchaseDetail();
-	         newDetail.setPurchase(purchase);
+	         newDetail.setPurchaseIdF(purchase);
 	         Book book = bookRepository.findById(detailDto.getBookId())
 	                                   .orElseThrow(() -> new RuntimeException("Book not found with id: " + detailDto.getBookId()));
 	         newDetail.setBook(book);
-	         newDetail.setQty(detailDto.getQty());
-	         newDetail.setRate(detailDto.getRate());
-	         newDetail.setAmount(detailDto.getAmount());
+	         newDetail.setBook_qty(detailDto.getQty());
+	         newDetail.setBook_rate(detailDto.getRate());
+	         newDetail.setBook_amount(detailDto.getAmount());
 	         newDetail.setSrno(1); 
 
 	         newDetails.add(newDetail);
@@ -265,7 +272,7 @@ public class PurchaseServiceImpl {
 	 }
 	 
 	 
-	public ApiResponseDTO<Object> deletePurchase(Long purchaseId) {
+	public ApiResponseDTO<Object> deletePurchase(int purchaseId) {
 	    Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
 	    if (optionalPurchase.isPresent()) {
 	        Purchase purchase = optionalPurchase.get();

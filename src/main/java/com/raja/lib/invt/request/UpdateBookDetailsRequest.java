@@ -7,17 +7,13 @@ import lombok.Setter;
 @Setter
 public class UpdateBookDetailsRequest {
     private String isbn;
-    private String language;
     private String classificationNumber;
     private String itemNumber;
-    private String author;
     private String editor;
     private String title;
     private String secondTitle;
     private String seriesTitle;
     private int edition;
-    private String placeOfPublication;
-    private String nameOfPublisher;
     private int publicationYear;
     private int numberOfPages;
     private String subjectHeading;
@@ -32,6 +28,11 @@ public class UpdateBookDetailsRequest {
     private String copyNo;
     private String accessionNo;
     private String typeofbook;
+    private String bookIssue;
+    private String bookWorkingStart;
+    private String bookLostScrap;
+
+
 
    
 }

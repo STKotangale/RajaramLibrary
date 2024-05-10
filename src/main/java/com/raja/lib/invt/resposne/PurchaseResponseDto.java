@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PurchaseResponseDto {
-	private Long purchaseId;
+	private int purchaseId;
 	private String invoiceNo;
 	private String message;
 	private int statusCode;

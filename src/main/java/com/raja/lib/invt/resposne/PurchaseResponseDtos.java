@@ -14,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PurchaseResponseDtos {
-    private Long purchaseId;
+    private int purchaseId;
     private String invoiceNo;
     private String invoiceDate;
     private int billTotal;

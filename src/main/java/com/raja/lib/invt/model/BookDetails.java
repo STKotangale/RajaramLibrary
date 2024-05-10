@@ -1,6 +1,9 @@
 package com.raja.lib.invt.model;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
+
+import java.io.Serializable;
+
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -14,18 +17,21 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.ToString;
 
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
+@ToString
 @AllArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Table(name = "invt_book_details")
-public class BookDetails {
+@NoArgsConstructor
+@Component
+@Data
+@Entity
+@Table(name="invt_book_details")
+public class BookDetails implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="bookDetailId")
@@ -110,12 +116,14 @@ public class BookDetails {
     private int purchaseCopyNo;
     
     
-//    private int rate;
-//    private double price;
-//    private String language;
-//    private String author;
-//    private String placeOfPublication;
-//    private String nameOfPublisher;
+    @Column(name="bookIssue")
+    private String bookIssue;
+    
+    @Column(name="bookWorkingStart")
+    private String bookWorkingStart;
+    
+    @Column(name="bookLostScrap")
+    private String bookLostScrap;
 
     
     

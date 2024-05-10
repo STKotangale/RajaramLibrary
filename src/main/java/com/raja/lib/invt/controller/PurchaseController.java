@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.objects.BookDetail;
-import com.raja.lib.invt.objects.BookName;
-import com.raja.lib.invt.objects.BookRate;
 import com.raja.lib.invt.request.PurchaseRequestDto;
 import com.raja.lib.invt.request.UpdateBookDetailsRequest;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
@@ -46,7 +44,7 @@ public class PurchaseController {
 	}
 
 	@GetMapping("/{purchaseId}")
-	public ResponseEntity<PurchaseResponseDtos> getPurchaseById(@PathVariable Long purchaseId) {
+	public ResponseEntity<PurchaseResponseDtos> getPurchaseById(@PathVariable int purchaseId) {
 		try {
 			PurchaseResponseDtos purchaseResponse = purchaseService.getPurchaseById(purchaseId);
 			return ResponseEntity.ok(purchaseResponse); // Return 200 OK with the PurchaseResponseDtos object
@@ -62,14 +60,14 @@ public class PurchaseController {
 	}
 
 	@PutMapping("/{purchaseId}")
-	public ResponseEntity<PurchaseResponseDto> updatePurchase(@PathVariable Long purchaseId,
+	public ResponseEntity<PurchaseResponseDto> updatePurchase(@PathVariable int purchaseId,
 			@RequestBody PurchaseRequestDto requestDto) {
 		PurchaseResponseDto responseDto = purchaseService.updatePurchase(purchaseId, requestDto);
 		return ResponseEntity.ok(responseDto);
 	}
 
 	@DeleteMapping("/{purchaseId}")
-	public ResponseEntity<ApiResponseDTO<Object>> deletePurchase(@PathVariable Long purchaseId) {
+	public ResponseEntity<ApiResponseDTO<Object>> deletePurchase(@PathVariable int purchaseId) {
 		ApiResponseDTO<Object> response = purchaseService.deletePurchase(purchaseId);
 		return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
 	}
