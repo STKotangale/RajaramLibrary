@@ -218,11 +218,21 @@ public class PurchaseServiceImpl {
 
 
 
-
 	 @Transactional
 	 public PurchaseResponseDto updatePurchase(int purchaseId, PurchaseRequestDto requestDto) {
 	     Purchase purchase = purchaseRepository.findById(purchaseId)
 	             .orElseThrow(() -> new RuntimeException("Purchase not found with id: " + purchaseId));
+
+	     // Update purchase attributes
+	     purchase.setInvoiceNo(requestDto.getInvoiceNo());
+	     purchase.setInvoiceDate(requestDto.getInvoiceDate());
+	     purchase.setBillTotal(requestDto.getBillTotal());
+	     purchase.setDiscountPercent(requestDto.getDiscountPercent());
+	     purchase.setDiscountAmount(requestDto.getDiscountAmount());
+	     purchase.setTotalAfterDiscount(requestDto.getTotalAfterDiscount());
+	     purchase.setGstPercent(requestDto.getGstPercent());
+	     purchase.setGstAmount(requestDto.getGstAmount());
+	     purchase.setGrandTotal(requestDto.getGrandTotal());
 
 	     List<PurchaseDetail> newDetails = new ArrayList<>();
 	     List<BookDetails> newBookDetailsList = new ArrayList<>();
@@ -238,28 +248,30 @@ public class PurchaseServiceImpl {
 	         newDetail.setBook_qty(detailDto.getQty());
 	         newDetail.setBook_rate(detailDto.getRate());
 	         newDetail.setBook_amount(detailDto.getAmount());
-	         newDetail.setSrno(1); 
+	         newDetail.setSrno(nextSrno++); 
 
 	         newDetails.add(newDetail);
 
 	         for (int i = 0; i < detailDto.getQty(); i++) {
 	             BookDetails bookDetail = new BookDetails();
 	             bookDetail.setPurchaseDetail(newDetail);
-//	             bookDetail.setRate(detailDto.getRate());
 	             bookDetail.setPurchaseCopyNo(i + 1);
 	             bookDetail.setBookIdF(book);
 	             newBookDetailsList.add(bookDetail);
 	         }
 	     }
 
+	     // Clear existing purchase details and associated book details
 	     purchase.getPurchaseDetails().clear();
-//	     purchaseDetailRepository.deleteByPurchase(purchase);
+	     purchaseDetailRepository.deleteByPurchase(purchase);
 
+	     // Add new purchase details and associated book details
 	     purchase.getPurchaseDetails().addAll(newDetails);
 	     purchaseDetailRepository.saveAll(newDetails);
 	     bookDetailsRepository.saveAll(newBookDetailsList);
 
-	     purchaseRepository.save(purchase);
+	     // Save updated purchase
+	     purchase = purchaseRepository.save(purchase);
 
 	     PurchaseResponseDto responseDto = new PurchaseResponseDto();
 	     responseDto.setPurchaseId(purchase.getPurchaseId());
@@ -270,8 +282,8 @@ public class PurchaseServiceImpl {
 
 	     return responseDto;
 	 }
-	 
-	 
+
+		 
 	public ApiResponseDTO<Object> deletePurchase(int purchaseId) {
 	    Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
 	    if (optionalPurchase.isPresent()) {
