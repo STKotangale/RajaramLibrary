@@ -37,7 +37,7 @@ public class BookDetailsController {
     
     
     @PostMapping("/update/book-details/{id}")
-    public Map<String, Object> updateBookDetails(@PathVariable Long id, @RequestBody UpdateBookDetailsRequest request) {
+    public Map<String, Object> updateBookDetails(@PathVariable int id, @RequestBody UpdateBookDetailsRequest request) {
         Map<String, Object> response = new HashMap<>();
         try {
             String result = bookDetailsService.updateBookDetails(id, request);

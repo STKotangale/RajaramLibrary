@@ -14,7 +14,7 @@ import com.raja.lib.invt.objects.BookDetail;
 import jakarta.transaction.Transactional;
 
 @Repository
-public interface BookDetailsRepository extends JpaRepository<BookDetails, Long> {
+public interface BookDetailsRepository extends JpaRepository<BookDetails, Integer> {
 
 	@Query(value = "SELECT \r\n"
 			+ "    ibd.bookDetailId,\r\n"

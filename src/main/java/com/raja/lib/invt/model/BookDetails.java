@@ -31,7 +31,7 @@ public class BookDetails implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="bookDetailId")
-    private Long bookDetailId;
+    private int bookDetailId;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stockDetailIdF")

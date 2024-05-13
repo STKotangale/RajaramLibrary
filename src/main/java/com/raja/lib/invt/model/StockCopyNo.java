@@ -29,15 +29,15 @@ public class StockCopyNo implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "stockCopyId")
-    private Long id;
+    private int stockCopyId ;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stockDetailIdF", nullable = false)
-    private StockDetail stockDetail;
+    private StockDetail stockDetailIdF;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bookDetailIdF", nullable = false)
-    private BookDetails bookDetails;
+    private BookDetails bookDetailIdF;
 
     @Column(name = "stock_type", columnDefinition = "VARCHAR(255) DEFAULT 'Default'")
     private String stockType;

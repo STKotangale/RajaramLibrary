@@ -26,7 +26,7 @@ public class BookDetailsService {
         return bookDetailsRepository.findBooksByNullIsbn();
     }
 
-    public String updateBookDetails(Long id, UpdateBookDetailsRequest request) {
+    public String updateBookDetails(int id, UpdateBookDetailsRequest request) {
         try {
             // Fetch existing BookDetails
             BookDetails existingBookDetails = bookDetailsRepository.findById(id)
@@ -63,8 +63,8 @@ public class BookDetailsService {
 
             // Create and populate StockCopyNo object
             StockCopyNo stockCopyNo = new StockCopyNo();
-            stockCopyNo.setStockDetail(existingBookDetails.getStockDetailIdF());
-            stockCopyNo.setBookDetails(existingBookDetails);
+            stockCopyNo.setStockDetailIdF(existingBookDetails.getStockDetailIdF());
+            stockCopyNo.setBookDetailIdF(existingBookDetails);
             stockCopyNo.setStockType("A1");
             stockCopyNoRepository.save(stockCopyNo);
 
