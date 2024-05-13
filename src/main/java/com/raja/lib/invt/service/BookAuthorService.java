@@ -6,6 +6,9 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,7 @@ import com.raja.lib.invt.resposne.ApiResponseDTO;
 import jakarta.transaction.Transactional;
 
 @Service
+@EnableCaching
 public class BookAuthorService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BookAuthorService.class);
@@ -24,6 +28,7 @@ public class BookAuthorService {
     @Autowired
     private BookAuthorRepository bookAuthorRepository;
 
+    @CacheEvict(value = "authers", allEntries = true) 
     public ApiResponseDTO<List<BookAuthor>> getAllBookAuthors() {
         LOGGER.info("Fetching all book authors");
         List<BookAuthor> bookAuthors = bookAuthorRepository.findAll();
@@ -31,6 +36,7 @@ public class BookAuthorService {
         return new ApiResponseDTO<>(true, "All book authors retrieved successfully.", bookAuthors, 200);
     }
 
+    @Cacheable(value = "autherById", key = "#autherId")
     public ApiResponseDTO<BookAuthor> getBookAuthorById(int authorId) {
         LOGGER.info("Fetching book author with id {}", authorId);
         Optional<BookAuthor> optionalBookAuthor = bookAuthorRepository.findById(authorId);
