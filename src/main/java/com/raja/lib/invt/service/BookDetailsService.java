@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import com.raja.lib.invt.model.BookDetails;
+import com.raja.lib.invt.model.StockCopyNo;
 import com.raja.lib.invt.objects.BookDetail;
 import com.raja.lib.invt.repository.BookDetailsRepository;
+import com.raja.lib.invt.repository.StockCopyNoRepository;
 import com.raja.lib.invt.request.UpdateBookDetailsRequest;
 
 @Service
@@ -15,19 +17,20 @@ public class BookDetailsService {
     @Autowired
     private BookDetailsRepository bookDetailsRepository;
 
+    @Autowired
+    private StockCopyNoRepository stockCopyNoRepository;
+
     public List<BookDetail> findBooksByNullIsbn() {
         return bookDetailsRepository.findBooksByNullIsbn();
     }
 
     public String updateBookDetails(Long id, UpdateBookDetailsRequest request) {
         try {
+            // Fetch existing BookDetails
             BookDetails existingBookDetails = bookDetailsRepository.findById(id)
                     .orElseThrow(() -> new Exception("Book details not found with id: " + id));
 
-            if (request.getIsbn() == null || request.getIsbn().trim().isEmpty()) {
-                return "ISBN is compulsory.";
-            }
-
+            // Update BookDetails fields
             existingBookDetails.setIsbn(request.getIsbn());
             existingBookDetails.setClassificationNumber(request.getClassificationNumber());
             existingBookDetails.setItemNumber(request.getItemNumber());
@@ -55,6 +58,13 @@ public class BookDetailsService {
             existingBookDetails.setTypeofbook(request.getTypeofbook());
 
             BookDetails updatedBookDetails = bookDetailsRepository.save(existingBookDetails);
+
+            // Create and populate StockCopyNo object
+            StockCopyNo stockCopyNo = new StockCopyNo();
+            stockCopyNo.setStockDetailIdF(existingBookDetails.getStockDetailIdF().getStockIdF());
+            stockCopyNo.setBookDetailIdF(existingBookDetails.getStockDetailIdF().getBook_idF());
+            stockCopyNo.setStock_type("A1");
+            stockCopyNoRepository.save(stockCopyNo);
 
             return "Book details updated successfully.";
 

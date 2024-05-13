@@ -2,7 +2,7 @@ spring:
   application:
     name: RajaLib
   datasource:
-    url: jdbc:mysql://localhost:3306/rajalib1?serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/rajaram2?serverTimezone=UTC
     username: root
     password: root
     driver-class: com.mysql.cj.jdbc.Driver

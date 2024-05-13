@@ -39,9 +39,9 @@ public class Stock  implements Serializable {
 	@Column(name="stock_id")
 	private int stockId;
 
-	@Column(name="stock_type")
-	private String stock_type;
-	
+	@Column(name = "stock_type", columnDefinition = "VARCHAR(255) DEFAULT 'A1'")
+	private String stock_type = "A1";
+
 	@Column(name="invoiceNo")
 	private String invoiceNo;
 	

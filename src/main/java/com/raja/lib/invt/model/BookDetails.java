@@ -2,11 +2,7 @@ package com.raja.lib.invt.model;
 
 
 import java.io.Serializable;
-
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -38,8 +34,8 @@ public class BookDetails implements Serializable{
     private Long bookDetailId;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "purchaseDetailIdF")
-    private PurchaseDetail purchaseDetail;
+    @JoinColumn(name = "stockDetailIdF")
+    private StockDetail stockDetailIdF;
     
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bookIdF") 

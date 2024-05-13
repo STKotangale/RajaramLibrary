@@ -12,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.raja.lib.acc.model.Ledger;
 import com.raja.lib.acc.repository.LedgerRepository;
 import com.raja.lib.invt.model.Book;
+import com.raja.lib.invt.model.BookDetails;
 import com.raja.lib.invt.model.Stock;
 import com.raja.lib.invt.model.StockDetail;
+import com.raja.lib.invt.repository.BookDetailsRepository;
 import com.raja.lib.invt.repository.BookRepository;
 import com.raja.lib.invt.repository.StockDetailRepository;
 import com.raja.lib.invt.repository.StockRepository;
@@ -34,51 +36,82 @@ public class StockService {
     private final StockDetailRepository stockDetailRepository;
     private final LedgerRepository ledgerRepository;
     private final BookRepository bookRepository;
+	private final BookDetailsRepository bookDetailsRepository;
 
-    @Transactional
-    public ApiResponseDTO<Stock> createStock(StockRequestDTO stockRequestDTO) throws NotFoundException {
-        Ledger ledger = ledgerRepository.findById(stockRequestDTO.getLedgerIDF())
-                .orElseThrow(() -> new NotFoundException());
 
-        Stock stock = new Stock();
-        stock.setStock_type(stockRequestDTO.getStockType());
-        stock.setInvoiceNo(stockRequestDTO.getInvoiceNo());
-        stock.setInvoiceDate(stockRequestDTO.getInvoiceDate());
-        stock.setBillTotal(stockRequestDTO.getBillTotal());
-        stock.setDiscountPercent(stockRequestDTO.getDiscountPercent());
-        stock.setDiscountAmount(stockRequestDTO.getDiscountAmount());
-        stock.setTotalAfterDiscount(stockRequestDTO.getTotalAfterDiscount());
-        stock.setGstPercent(stockRequestDTO.getGstPercent());
-        stock.setGstAmount(stockRequestDTO.getGstAmount());
-        stock.setGrandTotal(stockRequestDTO.getGrandTotal());
-        stock.setLedgerIDF(ledger);
+	@Transactional
+	public ApiResponseDTO<Stock> createStock(StockRequestDTO stockRequestDTO) throws NotFoundException {
+	    Ledger ledger = ledgerRepository.findById(stockRequestDTO.getLedgerIDF())
+	            .orElseThrow(() -> new NotFoundException());
 
-        Integer maxSrno = stockDetailRepository.findMaxSrno();
-        int nextSrno = (maxSrno == null ? 0 : maxSrno) + 1;
+	    Stock stock = new Stock();
+	    stock.setStock_type("A1");
+	    stock.setInvoiceNo(stockRequestDTO.getInvoiceNo());
+	    stock.setInvoiceDate(stockRequestDTO.getInvoiceDate());
+	    stock.setBillTotal(stockRequestDTO.getBillTotal());
+	    stock.setDiscountPercent(stockRequestDTO.getDiscountPercent());
+	    stock.setDiscountAmount(stockRequestDTO.getDiscountAmount());
+	    stock.setTotalAfterDiscount(stockRequestDTO.getTotalAfterDiscount());
+	    stock.setGstPercent(stockRequestDTO.getGstPercent());
+	    stock.setGstAmount(stockRequestDTO.getGstAmount());
+	    stock.setGrandTotal(stockRequestDTO.getGrandTotal());
+	    stock.setLedgerIDF(ledger);
 
-        List<StockDetail> stockDetails = new ArrayList<>();
+	    Integer maxSrno = stockDetailRepository.findMaxSrno();
+	    int nextSrno = (maxSrno == null ? 0 : maxSrno) + 1;
 
-        for (StockDetailRequestDTO detailDTO : stockRequestDTO.getStockDetails()) {
-            Book book = bookRepository.findById(detailDTO.getBookIdF())
-                    .orElseThrow(() -> new NotFoundException());
+	    List<StockDetail> stockDetails = new ArrayList<>();
+	    List<BookDetails> bookDetailsList = new ArrayList<>();
 
-            StockDetail stockDetail = new StockDetail();
-            stockDetail.setStockIdF(stock);
-            stockDetail.setSrno(nextSrno++);
-            stockDetail.setBook_qty(detailDTO.getBookQty());
-            stockDetail.setBook_rate(detailDTO.getBookRate());
-            stockDetail.setStock_type(detailDTO.getStockType());
-            stockDetail.setBook_amount(detailDTO.getBookAmount());
-            stockDetail.setBook_idF(book);
-            stockDetails.add(stockDetail);
-        }
+	    for (StockDetailRequestDTO detailDTO : stockRequestDTO.getStockDetails()) {
+	        Book book = bookRepository.findById(detailDTO.getBookIdF())
+	                .orElseThrow(() -> new NotFoundException());
 
-        stock.setStockDetails(stockDetails);
+	        StockDetail stockDetail = new StockDetail();
+	        stockDetail.setStockIdF(stock);
+	        stockDetail.setSrno(nextSrno++);
+	        stockDetail.setBook_qty(detailDTO.getBookQty());
+	        stockDetail.setBook_rate(detailDTO.getBookRate());
+	        stockDetail.setStock_type("A1");
+	        stockDetail.setBook_amount(detailDTO.getBookAmount());
+	        stockDetail.setBook_idF(book);
+	        stockDetails.add(stockDetail);
 
-        Stock savedStock = stockRepository.save(stock);
-        return new ApiResponseDTO<>(true, "Stock created successfully", savedStock, HttpStatus.CREATED.value());
-    }
-    
+	        // Generate BookDetails for each StockDetail
+	        List<BookDetails> generatedBookDetails = generateBookDetails(stockDetail, detailDTO.getBookQty());
+	        bookDetailsList.addAll(generatedBookDetails);
+	    }
+
+	    stock.setStockDetails(stockDetails);
+
+	    Stock savedStock = stockRepository.save(stock);
+	    // Save BookDetails after saving Stock
+	    bookDetailsRepository.saveAll(bookDetailsList);
+
+	    return new ApiResponseDTO<>(true, "Stock created successfully", savedStock, HttpStatus.CREATED.value());
+	}
+
+	private List<BookDetails> generateBookDetails(StockDetail stockDetail, int quantity) {
+	    List<BookDetails> bookDetailsList = new ArrayList<>();
+	    int purchaseCopyNo = 1;
+
+	    for (int i = 0; i < quantity; i++) {
+	        BookDetails bookDetails = new BookDetails();
+	        bookDetails.setStockDetailIdF(stockDetail);
+	        bookDetails.setBookIdF(stockDetail.getBook_idF());
+	        // Set other book details as per your requirement
+	        bookDetails.setPurchaseCopyNo(purchaseCopyNo);
+
+	        bookDetailsList.add(bookDetails);
+
+	        purchaseCopyNo++;
+	    }
+	    return bookDetailsList;
+	}
+
+
+	
+	
     @Transactional(readOnly = true)
     public ApiResponseDTO<StockResponseDTO> getStockById(int stockId) {
         Stock stock = stockRepository.findById(stockId)
@@ -143,11 +176,9 @@ public class StockService {
     
     @Transactional
     public ApiResponseDTO<StockResponseDTO> updateStock(int stockId, StockRequestDTO stockRequestDTO) throws NotFoundException {
-        Stock stock = stockRepository.findById(stockId)
-                .orElseThrow(() -> new NotFoundException());
-        
-        // Update stock attributes
-        stock.setStock_type(stockRequestDTO.getStockType());
+        Stock stock = stockRepository.findById(stockId).orElseThrow(() -> new NotFoundException());
+
+        stock.setStock_type("A1");
         stock.setInvoiceNo(stockRequestDTO.getInvoiceNo());
         stock.setInvoiceDate(stockRequestDTO.getInvoiceDate());
         stock.setBillTotal(stockRequestDTO.getBillTotal());
@@ -157,73 +188,65 @@ public class StockService {
         stock.setGstPercent(stockRequestDTO.getGstPercent());
         stock.setGstAmount(stockRequestDTO.getGstAmount());
         stock.setGrandTotal(stockRequestDTO.getGrandTotal());
-        // Update Ledger
         Ledger ledger = ledgerRepository.findById(stockRequestDTO.getLedgerIDF())
                 .orElseThrow(() -> new NotFoundException());
         stock.setLedgerIDF(ledger);
-        
+
         List<StockDetailRequestDTO> updatedStockDetailDTOs = stockRequestDTO.getStockDetails();
         List<StockDetail> stockDetails = stock.getStockDetails();
+        Integer maxSrno = stockDetailRepository.findMaxSrno();
+        int nextSrno = (maxSrno == null ? 0 : maxSrno) + 1;
 
-        // Iterate over the updated stock details
         for (StockDetailRequestDTO updatedDetailDTO : updatedStockDetailDTOs) {
-            // Find the corresponding stock detail in the existing list by comparing attributes
             Optional<StockDetail> existingStockDetailOptional = stockDetails.stream()
-                    .filter(detail -> detailMatchesRequest(detail, updatedDetailDTO))
-                    .findFirst();
+                    .filter(detail -> detailMatchesRequest(detail, updatedDetailDTO)).findFirst();
 
             if (existingStockDetailOptional.isPresent()) {
                 StockDetail existingStockDetail = existingStockDetailOptional.get();
-                // Update existing stock detail attributes
                 existingStockDetail.setBook_qty(updatedDetailDTO.getBookQty());
                 existingStockDetail.setBook_rate(updatedDetailDTO.getBookRate());
-                existingStockDetail.setStock_type(updatedDetailDTO.getStockType());
+                existingStockDetail.setStock_type("A1");
                 existingStockDetail.setBook_amount(updatedDetailDTO.getBookAmount());
 
-                // Update associated Book if needed
                 if (existingStockDetail.getBook_idF().getBookId() != updatedDetailDTO.getBookIdF()) {
                     Book updatedBook = bookRepository.findById(updatedDetailDTO.getBookIdF())
                             .orElseThrow(() -> new NotFoundException());
                     existingStockDetail.setBook_idF(updatedBook);
                 }
             } else {
-                // If the stock detail does not exist, it's a new one, so we add it
                 StockDetail newStockDetail = new StockDetail();
                 newStockDetail.setStockIdF(stock);
+                newStockDetail.setSrno(nextSrno++);
                 newStockDetail.setBook_qty(updatedDetailDTO.getBookQty());
                 newStockDetail.setBook_rate(updatedDetailDTO.getBookRate());
-                newStockDetail.setStock_type(updatedDetailDTO.getStockType());
+                newStockDetail.setStock_type("A1");
                 newStockDetail.setBook_amount(updatedDetailDTO.getBookAmount());
 
-                // Set associated Book
                 Book associatedBook = bookRepository.findById(updatedDetailDTO.getBookIdF())
                         .orElseThrow(() -> new NotFoundException());
                 newStockDetail.setBook_idF(associatedBook);
 
-                // Add the new stock detail to the list of stock details
                 stock.getStockDetails().add(newStockDetail);
             }
         }
 
-        // Remove any existing stock details not present in the updated details
-        stockDetails.removeIf(detail -> !updatedStockDetailDTOs.stream()
-                .anyMatch(dto -> detailMatchesRequest(detail, dto)));
+        stockDetails.removeIf(
+                detail -> !updatedStockDetailDTOs.stream().anyMatch(dto -> detailMatchesRequest(detail, dto)));
 
-        // Save the updated stock
         Stock savedStock = stockRepository.save(stock);
         StockResponseDTO updatedStockResponseDTO = mapToStockResponseDTO(savedStock);
 
-        return new ApiResponseDTO<>(true, "Stock details updated successfully", updatedStockResponseDTO, HttpStatus.OK.value());
+        return new ApiResponseDTO<>(true, "Stock details updated successfully", updatedStockResponseDTO,
+                HttpStatus.OK.value());
     }
 
-    private boolean detailMatchesRequest(StockDetail detail, StockDetailRequestDTO requestDTO) {
-        return detail.getBook_idF().getBookId() == requestDTO.getBookIdF()
-                && detail.getBook_qty() == requestDTO.getBookQty()
-                && detail.getBook_rate() == requestDTO.getBookRate()
-                && detail.getStock_type().equals(requestDTO.getStockType())
-                && detail.getBook_amount() == requestDTO.getBookAmount();
-    }
-    
+
+	private boolean detailMatchesRequest(StockDetail detail, StockDetailRequestDTO requestDTO) {
+		return detail.getBook_idF().getBookId() == requestDTO.getBookIdF()
+				&& detail.getBook_qty() == requestDTO.getBookQty() && detail.getBook_rate() == requestDTO.getBookRate()
+				&& detail.getStock_type().equals(requestDTO.getStockType())
+				&& detail.getBook_amount() == requestDTO.getBookAmount();
+	}
     
     
     

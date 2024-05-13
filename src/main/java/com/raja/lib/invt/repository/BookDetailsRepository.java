@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.raja.lib.invt.model.BookDetails;
-import com.raja.lib.invt.model.PurchaseDetail;
 import com.raja.lib.invt.objects.BookDetail;
 
 import jakarta.transaction.Transactional;
@@ -33,8 +32,8 @@ public interface BookDetailsRepository extends JpaRepository<BookDetails, Long> 
 			+ "", nativeQuery = true)
 	List<BookDetail> findBooksByNullIsbn();
 
-	@Transactional
-    @Modifying
-    @Query("DELETE FROM BookDetails bd WHERE bd.purchaseDetail = :purchaseDetail")
-    void deleteByPurchaseDetail(@Param("purchaseDetail") PurchaseDetail purchaseDetail);
+//	@Transactional
+//    @Modifying
+//    @Query("DELETE FROM BookDetails bd WHERE bd.purchaseDetail = :purchaseDetail")
+//    void deleteByPurchaseDetail(@Param("purchaseDetail") PurchaseDetail purchaseDetail);
 }
