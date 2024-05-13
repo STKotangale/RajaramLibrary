@@ -3,6 +3,8 @@ import java.io.Serializable;
 
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,6 +23,7 @@ import lombok.ToString;
 @Data
 @Entity
 @Table(name = "acc_ledger")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Ledger implements Serializable{
 	
 	private static final long serialVersionUID = 1L;

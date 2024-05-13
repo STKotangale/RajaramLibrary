@@ -1,0 +1,60 @@
+package com.raja.lib.invt.model;
+
+import java.io.Serializable;
+import org.springframework.stereotype.Component;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@Component
+@Data
+@Entity
+@Table(name = "invt_stockdetail")
+public class StockDetail implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "stockDetailId")
+	private int stockDetailId;
+
+	@ManyToOne
+    @JoinColumn(name = "stock_idF", nullable = false)
+    private Stock stockIdF;
+
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "srno")
+	private int srno;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "book_idF", nullable = false)
+	private Book book_idF;
+	
+	@Column(name = "book_qty")
+	private int book_qty;
+
+	@Column(name = "book_rate")
+	private int book_rate;
+
+	@Column(name = "book_amount")
+	private int book_amount;
+
+	@Column(name = "stock_type")
+	private String stock_type;
+
+}
