@@ -1,9 +1,11 @@
 package com.raja.lib.invt.service;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+
 import com.raja.lib.invt.model.BookDetails;
 import com.raja.lib.invt.model.StockCopyNo;
 import com.raja.lib.invt.objects.BookDetail;
@@ -61,9 +63,9 @@ public class BookDetailsService {
 
             // Create and populate StockCopyNo object
             StockCopyNo stockCopyNo = new StockCopyNo();
-            stockCopyNo.setStockDetailIdF(existingBookDetails.getStockDetailIdF().getStockIdF());
-            stockCopyNo.setBookDetailIdF(existingBookDetails.getStockDetailIdF().getBook_idF());
-            stockCopyNo.setStock_type("A1");
+            stockCopyNo.setStockDetail(existingBookDetails.getStockDetailIdF());
+            stockCopyNo.setBookDetails(existingBookDetails);
+            stockCopyNo.setStockType("A1");
             stockCopyNoRepository.save(stockCopyNo);
 
             return "Book details updated successfully.";
@@ -75,3 +77,4 @@ public class BookDetailsService {
         }
     }
 }
+
