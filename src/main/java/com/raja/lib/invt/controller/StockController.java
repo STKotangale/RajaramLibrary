@@ -65,11 +65,6 @@ public class StockController {
         }
     }
     
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO<StockResponseDTO>> updateStock(@PathVariable int id, @RequestBody StockRequestDTO stockRequestDTO) throws NotFoundException {
-        ApiResponseDTO<StockResponseDTO> response = stockService.updateStock(id, stockRequestDTO);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
-    }
-
+   
 }
 

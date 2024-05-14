@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
+import org.springframework.cache.annotation.Cacheable;
 import com.raja.lib.invt.model.BookDetails;
 import com.raja.lib.invt.model.StockCopyNo;
 import com.raja.lib.invt.objects.BookDetail;

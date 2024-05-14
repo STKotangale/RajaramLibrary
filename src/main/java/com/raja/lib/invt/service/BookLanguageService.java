@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +23,10 @@ public class BookLanguageService {
     @Autowired
     private BookLanguageRepository bookLanguageRepository;
 
+    @Caching(evict = {
+        @CacheEvict(value = "bookLanguages", allEntries = true),
+        @CacheEvict(value = "bookLanguageById", key = "#result.data.bookLangId")
+    })
     public ApiResponseDTO<BookLanguage> createBookLanguage(BookLanguageRequest request) {
         try {
             BookLanguage bookLanguage = new BookLanguage();
@@ -31,11 +39,13 @@ public class BookLanguageService {
         }
     }
 
+    @Cacheable(value = "bookLanguages")
     public ApiResponseDTO<List<BookLanguage>> getAllBookLanguages() {
         List<BookLanguage> bookLanguages = bookLanguageRepository.findAll();
         return new ApiResponseDTO<>(true, "List of book languages", bookLanguages, HttpStatus.OK.value());
     }
 
+    @Cacheable(value = "bookLanguageById", key = "#id")
     public ApiResponseDTO<BookLanguage> getBookLanguageById(int id) {
         Optional<BookLanguage> optionalBookLanguage = bookLanguageRepository.findById(id);
         if (optionalBookLanguage.isPresent()) {
@@ -45,24 +55,28 @@ public class BookLanguageService {
         }
     }
 
+    @Caching(put = {
+        @CachePut(value = "bookLanguageById", key = "#id")
+    }, evict = {
+        @CacheEvict(value = "bookLanguages", allEntries = true)
+    })
     public ApiResponseDTO<BookLanguage> updateBookLanguage(int id, BookLanguageRequest request) {
-        try {
-            Optional<BookLanguage> optionalBookLanguage = bookLanguageRepository.findById(id);
-            if (optionalBookLanguage.isPresent()) {
-                BookLanguage existingBookLanguage = optionalBookLanguage.get();
-                existingBookLanguage.setBookLangName(request.getBookLangName());
-                existingBookLanguage.setIsBlock(request.getIsBlock());
-                BookLanguage updatedBookLanguage = bookLanguageRepository.save(existingBookLanguage);
-                return new ApiResponseDTO<>(true, "Book language updated successfully", updatedBookLanguage, HttpStatus.OK.value());
-            } else {
-                return new ApiResponseDTO<>(false, "Book language not found", null, HttpStatus.NOT_FOUND.value());
-            }
-        } catch (DataIntegrityViolationException e) {
-            return new ApiResponseDTO<>(false, "Failed to update book language. Language name already exists.", null, HttpStatus.BAD_REQUEST.value());
+        Optional<BookLanguage> optionalBookLanguage = bookLanguageRepository.findById(id);
+        if (optionalBookLanguage.isPresent()) {
+            BookLanguage existingBookLanguage = optionalBookLanguage.get();
+            existingBookLanguage.setBookLangName(request.getBookLangName());
+            existingBookLanguage.setIsBlock(request.getIsBlock());
+            BookLanguage updatedBookLanguage = bookLanguageRepository.save(existingBookLanguage);
+            return new ApiResponseDTO<>(true, "Book language updated successfully", updatedBookLanguage, HttpStatus.OK.value());
+        } else {
+            return new ApiResponseDTO<>(false, "Book language not found", null, HttpStatus.NOT_FOUND.value());
         }
     }
 
-
+    @Caching(evict = {
+        @CacheEvict(value = "bookLanguages", allEntries = true),
+        @CacheEvict(value = "bookLanguageById", key = "#id")
+    })
     public ApiResponseDTO<Void> deleteBookLanguage(int id) {
         Optional<BookLanguage> optionalBookLanguage = bookLanguageRepository.findById(id);
         if (optionalBookLanguage.isPresent()) {

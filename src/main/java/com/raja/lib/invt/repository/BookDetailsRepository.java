@@ -16,20 +16,10 @@ import jakarta.transaction.Transactional;
 @Repository
 public interface BookDetailsRepository extends JpaRepository<BookDetails, Integer> {
 
-	@Query(value = "SELECT \r\n"
-			+ "    ibd.bookDetailId,\r\n"
-			+ "    ibd.purchaseCopyNo,\r\n"
-			+ "    ib.bookName,\r\n"
-			+ "    ipd.book_rate \r\n"
-			+ "FROM \r\n"
-			+ "    invt_book_details ibd\r\n"
-			+ "JOIN \r\n"
-			+ "    invt_book ib ON ib.bookId = ibd.bookIdF\r\n"
-			+ "LEFT JOIN \r\n"
-			+ "    invt_purchase_detail ipd ON ipd.purchaseDetailId = ibd.purchaseDetailIdF \r\n"
-			+ "WHERE \r\n"
-			+ "    ibd.isbn IS NULL;\r\n"
-			+ "", nativeQuery = true)
+	@Query(value ="select ibd.bookDetailId , ibd.purchaseCopyNo , ib.bookName , is2.book_rate   from invt_book_details ibd left join\r\n"
+			+ "invt_book ib on ib.bookId = ibd.bookIdF left join \r\n"
+			+ "invt_stockdetail is2  on is2.stockDetailId = ibd.stockDetailIdF \r\n"
+			+ "where ibd.isbn IS null; ", nativeQuery = true)
 	List<BookDetail> findBooksByNullIsbn();
 
 //	@Transactional

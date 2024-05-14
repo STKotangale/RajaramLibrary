@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -39,7 +43,10 @@ public class BookService {
     @Autowired
     private BookLanguageRepository bookLanguageRepository;
 
-    
+    @Caching(evict = {
+        @CacheEvict(value = "books", allEntries = true),
+        @CacheEvict(value = "bookById", key = "#result.data.bookId")
+    })
     public ApiResponseDTO<Book> createBook(BookRequest request) {
         try {
             Optional<BookAuthor> optionalAuthor = authorRepository.findById(request.getAuthorId());
@@ -54,12 +61,12 @@ public class BookService {
                 BookLanguage bookLanguage = optionalBookLanguage.get();
 
                 Book book = new Book();
-                book.setBookName(request.getBookName()); // Set the book name
-                book.setIsBlock(request.getIsBlock()); // Set the isBlock status
-                book.setAuthorIdF(author); // Set the author
-                book.setPublicationIdF(publication); // Set the publication
-                book.setBookTypeIdF(bookType); // Set the book type
-                book.setBookLangIdF(bookLanguage); // S
+                book.setBookName(request.getBookName()); 
+                book.setIsBlock(request.getIsBlock()); 
+                book.setAuthorIdF(author);
+                book.setPublicationIdF(publication); 
+                book.setBookTypeIdF(bookType); 
+                book.setBookLangIdF(bookLanguage); 
 
                 Book savedBook = bookRepository.save(book);
                 return new ApiResponseDTO<>(true, "Book created successfully", savedBook, HttpStatus.CREATED.value());
@@ -67,24 +74,19 @@ public class BookService {
                 return new ApiResponseDTO<>(false, "Author, Publication, Book Type, or Book Language not found", null, HttpStatus.NOT_FOUND.value());
             }
         } catch (DataIntegrityViolationException e) {
-            // If the book name already exists, return a response indicating the conflict
             return new ApiResponseDTO<>(false, "Book name already exists", null, HttpStatus.CONFLICT.value());
         } catch (Exception e) {
-            // Handle other unexpected exceptions
             return new ApiResponseDTO<>(false, "An error occurred while creating the book", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
 
-
-
-    
+    @Cacheable(value = "books", unless = "#result == null || #result.data == null || #result.data.isEmpty()")
     public ApiResponseDTO<List<Book>> getAllBooks() {
         List<Book> books = bookRepository.findAll();
         return new ApiResponseDTO<>(true, "List of books", books, HttpStatus.OK.value());
     }
 
-    
-
+    @Cacheable(value = "bookById", key = "#id", unless = "#result == null || #result.data == null")
     public ApiResponseDTO<Book> getBookById(int id) {
         Optional<Book> optionalBook = bookRepository.findById(id);
         if (optionalBook.isPresent()) {
@@ -94,8 +96,11 @@ public class BookService {
         }
     }
 
-    
-
+    @Caching(put = {
+        @CachePut(value = "bookById", key = "#id")
+    }, evict = {
+        @CacheEvict(value = "books", allEntries = true)
+    })
     public ApiResponseDTO<Book> updateBook(int id, BookRequest request) {
         Optional<Book> optionalBook = bookRepository.findById(id);
         if (optionalBook.isPresent()) {
@@ -124,8 +129,10 @@ public class BookService {
         }
     }
 
-
-    
+    @Caching(evict = {
+        @CacheEvict(value = "books", allEntries = true),
+        @CacheEvict(value = "bookById", key = "#id")
+    })
     public ApiResponseDTO<Void> deleteBook(int id) {
         Optional<Book> optionalBook = bookRepository.findById(id);
         if (optionalBook.isPresent()) {
