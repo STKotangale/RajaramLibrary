@@ -15,9 +15,7 @@ import com.raja.lib.acc.repository.LedgerRepository;
 import com.raja.lib.acc.request.LedgerRequestDTO;
 import com.raja.lib.acc.response.ApiResponseDTO;
 
-
 @Service
-
 public class LedgerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LedgerService.class);
@@ -34,7 +32,7 @@ public class LedgerService {
         LOGGER.debug("Ledger created with id {}", savedLedger.getLedgerID());
         return new ApiResponseDTO<>(true, "Ledger created successfully", savedLedger, 201);
     }
-    
+
     @Cacheable(value = "Ledgers", key = "#ledgerId")
     public ApiResponseDTO<Ledger> getLedgerById(int ledgerId) {
         LOGGER.info("Fetching ledger with id {}", ledgerId);
@@ -57,6 +55,7 @@ public class LedgerService {
         return new ApiResponseDTO<>(true, "All ledgers retrieved successfully", ledgers, 200);
     }
 
+    @CacheEvict(value = "Ledgers", key = "#ledgerId")
     public ApiResponseDTO<Ledger> updateLedger(int ledgerId, LedgerRequestDTO request) {
         LOGGER.info("Updating ledger with id {}", ledgerId);
         Optional<Ledger> optionalLedger = ledgerRepository.findById(ledgerId);
@@ -73,6 +72,7 @@ public class LedgerService {
         }
     }
 
+    @CacheEvict(value = "Ledgers", key = "#ledgerId")
     public ApiResponseDTO<Void> deleteLedger(int ledgerId) {
         LOGGER.info("Deleting ledger with id {}", ledgerId);
         if (ledgerRepository.existsById(ledgerId)) {
@@ -89,5 +89,4 @@ public class LedgerService {
             return new ApiResponseDTO<>(false, "Ledger not found with id: " + ledgerId, null, 404);
         }
     }
-
 }
