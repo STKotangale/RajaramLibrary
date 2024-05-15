@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.raja.lib.acc.model.Ledger;
+import com.raja.lib.auth.model.GeneralMember;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -75,5 +76,12 @@ public class Stock  implements Serializable {
 	
 	@OneToMany(mappedBy = "stockIdF", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StockDetail> stockDetails;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "memberIdF") 
+	private GeneralMember generalMember;
+	
+	
+	
 	
 }

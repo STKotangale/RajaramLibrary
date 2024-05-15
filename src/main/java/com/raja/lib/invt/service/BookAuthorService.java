@@ -6,9 +6,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.redis.core.RedisTemplate;
+
+//import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.raja.lib.invt.model.BookAuthor;
@@ -26,10 +25,10 @@ public class BookAuthorService {
     @Autowired
     private BookAuthorRepository bookAuthorRepository;
 
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
+//    @Resource
+//    private RedisTemplate<String, Object> redisTemplate;
 
-    @Cacheable(value = "allBookAuthors")
+//    @Cacheable(value = "allBookAuthors")
     public ApiResponseDTO<List<BookAuthor>> getAllBookAuthors() {
         LOGGER.info("Fetching all book authors");
         List<BookAuthor> bookAuthors = bookAuthorRepository.findAll();
@@ -37,7 +36,7 @@ public class BookAuthorService {
         return new ApiResponseDTO<>(true, "All book authors retrieved successfully.", bookAuthors, 200);
     }
 
-    @Cacheable(value = "authorById", key = "#authorId")
+//    @Cacheable(value = "authorById", key = "#authorId")
     public ApiResponseDTO<BookAuthor> getBookAuthorById(int authorId) {
         LOGGER.info("Fetching book author with id {}", authorId);
         Optional<BookAuthor> optionalBookAuthor = bookAuthorRepository.findById(authorId);
@@ -50,7 +49,7 @@ public class BookAuthorService {
         }
     }
 
-    @CacheEvict(value = {"allBookAuthors", "authorById"}, allEntries = true)
+//    @CacheEvict(value = {"allBookAuthors", "authorById"}, allEntries = true)
     public ApiResponseDTO<BookAuthor> createBookAuthor(BookAuthorRequestDTO requestDTO) {
         LOGGER.info("Creating book author");
         BookAuthor bookAuthor = new BookAuthor();
@@ -65,7 +64,7 @@ public class BookAuthorService {
         return new ApiResponseDTO<>(true, "Book author created successfully.", savedBookAuthor, 201);
     }
 
-    @CacheEvict(value = {"allBookAuthors", "authorById"}, allEntries = true)
+//    @CacheEvict(value = {"allBookAuthors", "authorById"}, allEntries = true)
     public ApiResponseDTO<BookAuthor> updateBookAuthor(int authorId, BookAuthorRequestDTO requestDTO) {
         LOGGER.info("Updating book author with id {}", authorId);
         Optional<BookAuthor> optionalBookAuthor = bookAuthorRepository.findById(authorId);
@@ -88,7 +87,7 @@ public class BookAuthorService {
         }
     }
 
-    @CacheEvict(value = {"allBookAuthors", "authorById"}, allEntries = true)
+//    @CacheEvict(value = {"allBookAuthors", "authorById"}, allEntries = true)
     public ApiResponseDTO<Void> deleteBookAuthor(int authorId) {
         LOGGER.info("Deleting book author with id {}", authorId);
         if (bookAuthorRepository.existsById(authorId)) {

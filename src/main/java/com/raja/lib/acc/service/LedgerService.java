@@ -33,7 +33,7 @@ public class LedgerService {
         return new ApiResponseDTO<>(true, "Ledger created successfully", savedLedger, 201);
     }
 
-    @Cacheable(value = "Ledgers", key = "#ledgerId")
+//    @Cacheable(value = "Ledgers", key = "#ledgerId")
     public ApiResponseDTO<Ledger> getLedgerById(int ledgerId) {
         LOGGER.info("Fetching ledger with id {}", ledgerId);
         Optional<Ledger> optionalLedger = ledgerRepository.findById(ledgerId);
@@ -47,7 +47,7 @@ public class LedgerService {
         }
     }
 
-    @CacheEvict(value = "allLedger", allEntries = true)
+//    @CacheEvict(value = "allLedger", allEntries = true)
     public ApiResponseDTO<List<Ledger>> getAllLedgers() {
         LOGGER.info("Fetching all ledgers");
         List<Ledger> ledgers = ledgerRepository.findAll();
@@ -55,7 +55,7 @@ public class LedgerService {
         return new ApiResponseDTO<>(true, "All ledgers retrieved successfully", ledgers, 200);
     }
 
-    @CacheEvict(value = "Ledgers", key = "#ledgerId")
+//    @CacheEvict(value = "Ledgers", key = "#ledgerId")
     public ApiResponseDTO<Ledger> updateLedger(int ledgerId, LedgerRequestDTO request) {
         LOGGER.info("Updating ledger with id {}", ledgerId);
         Optional<Ledger> optionalLedger = ledgerRepository.findById(ledgerId);
@@ -72,7 +72,7 @@ public class LedgerService {
         }
     }
 
-    @CacheEvict(value = "Ledgers", key = "#ledgerId")
+//    @CacheEvict(value = "Ledgers", key = "#ledgerId")
     public ApiResponseDTO<Void> deleteLedger(int ledgerId) {
         LOGGER.info("Deleting ledger with id {}", ledgerId);
         if (ledgerRepository.existsById(ledgerId)) {

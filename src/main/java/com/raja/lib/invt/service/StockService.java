@@ -42,10 +42,10 @@ public class StockService {
 	private final LedgerRepository ledgerRepository;
 	private final BookRepository bookRepository;
 	private final BookDetailsRepository bookDetailsRepository;
-
-	@Transactional
-	@Caching(evict = { @CacheEvict(value = "stocks", allEntries = true),
-			@CacheEvict(value = "stockById", key = "#result.data.stockId") })
+//
+//	@Transactional
+//	@Caching(evict = { @CacheEvict(value = "stocks", allEntries = true),
+//			@CacheEvict(value = "stockById", key = "#result.data.stockId") })
 	public ApiResponseDTO<Stock> createStock(StockRequestDTO stockRequestDTO) throws NotFoundException {
 		Ledger ledger = ledgerRepository.findById(stockRequestDTO.getLedgerIDF())
 				.orElseThrow(() -> new NotFoundException());
@@ -111,8 +111,8 @@ public class StockService {
 		return bookDetailsList;
 	}
 
-	@Transactional(readOnly = true)
-	@Cacheable(value = "stockById", key = "#stockId", unless = "#result == null || #result.data == null")
+//	@Transactional(readOnly = true)
+//	@Cacheable(value = "stockById", key = "#stockId", unless = "#result == null || #result.data == null")
 	public ApiResponseDTO<StockResponseDTO> getStockById(int stockId) {
 		Stock stock = stockRepository.findById(stockId)
 				.orElseThrow(() -> new RuntimeException("Stock not found with id: " + stockId));
@@ -122,8 +122,8 @@ public class StockService {
 		return new ApiResponseDTO<>(true, "Stock found", stockResponseDTO, HttpStatus.OK.value());
 	}
 
-	@Transactional(readOnly = true)
-	@Cacheable(value = "stocks", unless = "#result == null || #result.data == null || #result.data.isEmpty()")
+//	@Transactional(readOnly = true)
+//	@Cacheable(value = "stocks", unless = "#result == null || #result.data == null || #result.data.isEmpty()")
 	public ApiResponseDTO<List<StockResponseDTO>> getAllStocks() {
 		List<Stock> stocks = stockRepository.findAll();
 
@@ -136,9 +136,9 @@ public class StockService {
 		return new ApiResponseDTO<>(true, "All stocks found", stockResponseDTOs, HttpStatus.OK.value());
 	}
 
-	@Transactional
-	@Caching(evict = { @CacheEvict(value = "stocks", allEntries = true),
-			@CacheEvict(value = "stockById", key = "#id") })
+//	@Transactional
+//	@Caching(evict = { @CacheEvict(value = "stocks", allEntries = true),
+//			@CacheEvict(value = "stockById", key = "#id") })
 	public ApiResponseDTO<Void> deleteStockById(int id) throws NotFoundException {
 		Stock stock = stockRepository.findById(id).orElseThrow(() -> new NotFoundException());
 
@@ -171,8 +171,32 @@ public class StockService {
 
 		return stockResponseDTO;
 	}
+//
+//	@Transactional
+//	@Caching(evict = { @CacheEvict(value = "stocks", allEntries = true),
+//	        @CacheEvict(value = "stockById", key = "#result.data.stockId") })
+	public ApiResponseDTO<Stock> bookIssue(StockRequestDTO stockRequestDTO) throws NotFoundException {
+	    Stock stock = new Stock();
+	    stock.setStock_type("A2"); 
+	    stock.setInvoiceNo(stockRequestDTO.getInvoiceNo());
+	    stock.setInvoiceDate(stockRequestDTO.getInvoiceDate());
 
-	
+	    Stock savedStock = stockRepository.save(stock);
+
+	    List<StockDetail> stockDetails = new ArrayList<>();
+	    for (StockDetailRequestDTO detailDTO : stockRequestDTO.getStockDetails()) {
+	        StockDetail stockDetail = new StockDetail();
+	        stockDetail.setStockIdF(savedStock); 
+	        Book book = bookRepository.findById(detailDTO.getBookIdF())
+	                .orElseThrow(() -> new NotFoundException());
+	        stockDetail.setBook_idF(book); 
+	        stockDetails.add(stockDetail);
+	    }
+	    stockDetailRepository.saveAll(stockDetails);
+
+	    return new ApiResponseDTO<>(true, "Book issued successfully", savedStock, HttpStatus.CREATED.value());
+	}
+
 
 	
 

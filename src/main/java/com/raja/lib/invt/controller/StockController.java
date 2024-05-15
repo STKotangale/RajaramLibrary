@@ -65,6 +65,18 @@ public class StockController {
         }
     }
     
+    @PostMapping("/book-issue")
+    public ResponseEntity<ApiResponseDTO<?>> bookIssue(@RequestBody StockRequestDTO stockRequestDTO) {
+        try {
+            ApiResponseDTO<?> response = stockService.bookIssue(stockRequestDTO);
+            return ResponseEntity.status(response.getStatusCode()).body(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
+        }
+    }
+    
+    
    
 }
 

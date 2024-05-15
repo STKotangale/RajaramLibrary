@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,7 +26,7 @@ public class BookPublicationService {
     @Autowired
     private BookPublicationRepository bookPublicationRepository;
 
-    @Cacheable(value = "publications")
+//    @Cacheable(value = "publications")
     public ApiResponseDTO<List<BookPublication>> getAllBookPublications() {
         LOGGER.info("Fetching all book publications");
         List<BookPublication> bookPublications = bookPublicationRepository.findAll();
@@ -33,7 +34,7 @@ public class BookPublicationService {
         return new ApiResponseDTO<>(true, "All book publications retrieved successfully.", bookPublications, 200);
     }
 
-    @Cacheable(value = "publicationById", key = "#publicationId")
+//    @Cacheable(value = "publicationById", key = "#publicationId")
     public ApiResponseDTO<BookPublication> getBookPublicationById(Integer publicationId) {
         LOGGER.info("Fetching book publication with id {}", publicationId);
         Optional<BookPublication> optionalBookPublication = bookPublicationRepository.findById(publicationId);
@@ -46,10 +47,10 @@ public class BookPublicationService {
         }
     }
 
-    @Caching(evict = {
-        @CacheEvict(value = "publicationById", key = "#result.data.publicationId"),
-        @CacheEvict(value = "publications", allEntries = true)
-    })
+//    @Caching(evict = {
+//        @CacheEvict(value = "publicationById", key = "#result.data.publicationId"),
+//        @CacheEvict(value = "publications", allEntries = true)
+//    })
     public ApiResponseDTO<BookPublication> createBookPublication(BookPublicationRequestDTO requestDTO) {
         LOGGER.info("Creating book publication");
 
@@ -71,10 +72,10 @@ public class BookPublicationService {
         }
     }
 
-    @Caching(evict = {
-        @CacheEvict(value = "publicationById", key = "#publicationId"),
-        @CacheEvict(value = "publications", allEntries = true)
-    })
+//    @Caching(evict = {
+//        @CacheEvict(value = "publicationById", key = "#publicationId"),
+//        @CacheEvict(value = "publications", allEntries = true)
+//    })
     public ApiResponseDTO<BookPublication> updateBookPublication(int publicationId, BookPublicationRequestDTO requestDTO) {
         LOGGER.info("Updating book publication with id {}", publicationId);
         Optional<BookPublication> optionalBookPublication = bookPublicationRepository.findById(publicationId);
@@ -103,10 +104,10 @@ public class BookPublicationService {
         }
     }
 
-    @Caching(evict = {
-        @CacheEvict(value = "publicationById", key = "#publicationId"),
-        @CacheEvict(value = "publications", allEntries = true)
-    })
+//    @Caching(evict = {
+//        @CacheEvict(value = "publicationById", key = "#publicationId"),
+//        @CacheEvict(value = "publications", allEntries = true)
+//    })
     public ApiResponseDTO<Void> deleteBookPublication(int publicationId) {
         LOGGER.info("Deleting book publication with id {}", publicationId);
         if (bookPublicationRepository.existsById(publicationId)) {

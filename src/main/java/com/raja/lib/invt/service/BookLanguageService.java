@@ -23,10 +23,10 @@ public class BookLanguageService {
     @Autowired
     private BookLanguageRepository bookLanguageRepository;
 
-    @Caching(evict = {
-        @CacheEvict(value = "bookLanguages", allEntries = true),
-        @CacheEvict(value = "bookLanguageById", key = "#result.data.bookLangId")
-    })
+//    @Caching(evict = {
+//        @CacheEvict(value = "bookLanguages", allEntries = true),
+//        @CacheEvict(value = "bookLanguageById", key = "#result.data.bookLangId")
+//    })
     public ApiResponseDTO<BookLanguage> createBookLanguage(BookLanguageRequest request) {
         try {
             BookLanguage bookLanguage = new BookLanguage();
@@ -39,13 +39,13 @@ public class BookLanguageService {
         }
     }
 
-    @Cacheable(value = "bookLanguages")
+//    @Cacheable(value = "bookLanguages")
     public ApiResponseDTO<List<BookLanguage>> getAllBookLanguages() {
         List<BookLanguage> bookLanguages = bookLanguageRepository.findAll();
         return new ApiResponseDTO<>(true, "List of book languages", bookLanguages, HttpStatus.OK.value());
     }
 
-    @Cacheable(value = "bookLanguageById", key = "#id")
+//    @Cacheable(value = "bookLanguageById", key = "#id")
     public ApiResponseDTO<BookLanguage> getBookLanguageById(int id) {
         Optional<BookLanguage> optionalBookLanguage = bookLanguageRepository.findById(id);
         if (optionalBookLanguage.isPresent()) {
@@ -55,11 +55,11 @@ public class BookLanguageService {
         }
     }
 
-    @Caching(put = {
-        @CachePut(value = "bookLanguageById", key = "#id")
-    }, evict = {
-        @CacheEvict(value = "bookLanguages", allEntries = true)
-    })
+//    @Caching(put = {
+//        @CachePut(value = "bookLanguageById", key = "#id")
+//    }, evict = {
+//        @CacheEvict(value = "bookLanguages", allEntries = true)
+//    })
     public ApiResponseDTO<BookLanguage> updateBookLanguage(int id, BookLanguageRequest request) {
         Optional<BookLanguage> optionalBookLanguage = bookLanguageRepository.findById(id);
         if (optionalBookLanguage.isPresent()) {
@@ -73,10 +73,10 @@ public class BookLanguageService {
         }
     }
 
-    @Caching(evict = {
-        @CacheEvict(value = "bookLanguages", allEntries = true),
-        @CacheEvict(value = "bookLanguageById", key = "#id")
-    })
+//    @Caching(evict = {
+//        @CacheEvict(value = "bookLanguages", allEntries = true),
+//        @CacheEvict(value = "bookLanguageById", key = "#id")
+//    })
     public ApiResponseDTO<Void> deleteBookLanguage(int id) {
         Optional<BookLanguage> optionalBookLanguage = bookLanguageRepository.findById(id);
         if (optionalBookLanguage.isPresent()) {

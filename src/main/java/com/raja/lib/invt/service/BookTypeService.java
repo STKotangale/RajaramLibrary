@@ -23,10 +23,10 @@ public class BookTypeService {
     @Autowired
     private BookTypeRepository bookTypeRepository;
 
-    @Caching(evict = {
-        @CacheEvict(value = "bookTypes", allEntries = true),
-        @CacheEvict(value = "bookTypeById", key = "#result.data.bookTypeId")
-    })
+//    @Caching(evict = {
+//        @CacheEvict(value = "bookTypes", allEntries = true),
+//        @CacheEvict(value = "bookTypeById", key = "#result.data.bookTypeId")
+//    })
     public ApiResponseDTO<BookType> createBookType(BookTypeRequest request) {
         try {
             BookType bookType = new BookType();
@@ -39,13 +39,13 @@ public class BookTypeService {
         }
     }
 
-    @Cacheable(value = "bookTypes", unless = "#result == null || #result.data == null || #result.data.isEmpty()")
+//    @Cacheable(value = "bookTypes", unless = "#result == null || #result.data == null || #result.data.isEmpty()")
     public ApiResponseDTO<List<BookType>> getAllBookTypes() {
         List<BookType> bookTypes = bookTypeRepository.findAll();
         return new ApiResponseDTO<>(true, "List of book types", bookTypes, HttpStatus.OK.value());
     }
 
-    @Cacheable(value = "bookTypeById", key = "#id", unless = "#result == null || #result.data == null")
+//    @Cacheable(value = "bookTypeById", key = "#id", unless = "#result == null || #result.data == null")
     public ApiResponseDTO<BookType> getBookTypeById(int id) {
         Optional<BookType> optionalBookType = bookTypeRepository.findById(id);
         if (optionalBookType.isPresent()) {
@@ -55,11 +55,11 @@ public class BookTypeService {
         }
     }
 
-    @Caching(put = {
-        @CachePut(value = "bookTypeById", key = "#id")
-    }, evict = {
-        @CacheEvict(value = "bookTypes", allEntries = true)
-    })
+//    @Caching(put = {
+//        @CachePut(value = "bookTypeById", key = "#id")
+//    }, evict = {
+//        @CacheEvict(value = "bookTypes", allEntries = true)
+//    })
     public ApiResponseDTO<BookType> updateBookType(int id, BookTypeRequest request) {
         Optional<BookType> optionalBookType = bookTypeRepository.findById(id);
         if (optionalBookType.isPresent()) {
@@ -73,10 +73,10 @@ public class BookTypeService {
         }
     }
 
-    @Caching(evict = {
-        @CacheEvict(value = "bookTypes", allEntries = true),
-        @CacheEvict(value = "bookTypeById", key = "#id")
-    })
+//    @Caching(evict = {
+//        @CacheEvict(value = "bookTypes", allEntries = true),
+//        @CacheEvict(value = "bookTypeById", key = "#id")
+//    })
     public ApiResponseDTO<Void> deleteBookType(int id) {
         Optional<BookType> optionalBookType = bookTypeRepository.findById(id);
         if (optionalBookType.isPresent()) {

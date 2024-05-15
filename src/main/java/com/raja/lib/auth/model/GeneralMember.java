@@ -66,4 +66,6 @@ public class GeneralMember implements Serializable {
 
 	@Column(name = "isBlock", columnDefinition = "char(1) default 'N'")
 	private char isBlock;
+	
+	
 }
