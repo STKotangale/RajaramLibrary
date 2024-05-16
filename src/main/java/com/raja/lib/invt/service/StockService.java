@@ -2,7 +2,6 @@ package com.raja.lib.invt.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
@@ -10,12 +9,12 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
+
 import com.raja.lib.acc.model.Ledger;
 import com.raja.lib.acc.repository.LedgerRepository;
+import com.raja.lib.auth.model.GeneralMember;
+import com.raja.lib.auth.objects.GenralMember;
+import com.raja.lib.auth.repository.GeneralMemberRepository;
 import com.raja.lib.invt.model.Book;
 import com.raja.lib.invt.model.BookDetails;
 import com.raja.lib.invt.model.Stock;
@@ -42,6 +41,7 @@ public class StockService {
 	private final LedgerRepository ledgerRepository;
 	private final BookRepository bookRepository;
 	private final BookDetailsRepository bookDetailsRepository;
+	private final GeneralMemberRepository generalMemberRepository;
 //
 //	@Transactional
 //	@Caching(evict = { @CacheEvict(value = "stocks", allEntries = true),
@@ -171,18 +171,19 @@ public class StockService {
 
 		return stockResponseDTO;
 	}
-//
-//	@Transactional
-//	@Caching(evict = { @CacheEvict(value = "stocks", allEntries = true),
-//	        @CacheEvict(value = "stockById", key = "#result.data.stockId") })
+
+
 	public ApiResponseDTO<Stock> bookIssue(StockRequestDTO stockRequestDTO) throws NotFoundException {
 	    Stock stock = new Stock();
 	    stock.setStock_type("A2"); 
 	    stock.setInvoiceNo(stockRequestDTO.getInvoiceNo());
 	    stock.setInvoiceDate(stockRequestDTO.getInvoiceDate());
 
-	    Stock savedStock = stockRepository.save(stock);
+	    GeneralMember generalMember = generalMemberRepository.findById(stockRequestDTO.getGeneralMemberId())
+	            .orElseThrow(() -> new NotFoundException());
 
+	    stock.setGeneralMember(generalMember);
+	    Stock savedStock = stockRepository.save(stock);
 	    List<StockDetail> stockDetails = new ArrayList<>();
 	    for (StockDetailRequestDTO detailDTO : stockRequestDTO.getStockDetails()) {
 	        StockDetail stockDetail = new StockDetail();
@@ -193,9 +194,11 @@ public class StockService {
 	        stockDetails.add(stockDetail);
 	    }
 	    stockDetailRepository.saveAll(stockDetails);
-
 	    return new ApiResponseDTO<>(true, "Book issued successfully", savedStock, HttpStatus.CREATED.value());
 	}
+
+
+
 
 
 	
