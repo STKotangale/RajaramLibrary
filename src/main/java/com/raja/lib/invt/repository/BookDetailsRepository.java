@@ -16,14 +16,15 @@ import jakarta.transaction.Transactional;
 @Repository
 public interface BookDetailsRepository extends JpaRepository<BookDetails, Integer> {
 
-	@Query(value ="select ibd.bookDetailId , ibd.purchaseCopyNo , ib.bookName , is2.book_rate   from invt_book_details ibd left join\r\n"
+	@Query(value = "select ibd.bookDetailId , ibd.purchaseCopyNo , ib.bookName , is2.book_rate   from invt_book_details ibd left join\r\n"
 			+ "invt_book ib on ib.bookId = ibd.bookIdF left join \r\n"
 			+ "invt_stockdetail is2  on is2.stockDetailId = ibd.stockDetailIdF \r\n"
 			+ "where ibd.isbn IS null; ", nativeQuery = true)
 	List<BookDetail> findBooksByNullIsbn();
 
-//	@Transactional
-//    @Modifying
-//    @Query("DELETE FROM BookDetails bd WHERE bd.purchaseDetail = :purchaseDetail")
-//    void deleteByPurchaseDetail(@Param("purchaseDetail") PurchaseDetail purchaseDetail);
+	@Query(value = "select ibd.bookDetailId, ibd.purchaseCopyNo, ib.bookName, is2.book_rate from invt_book_details ibd left join "
+			+ "invt_book ib on ib.bookId = ibd.bookIdF left join "
+			+ "invt_stockdetail is2 on is2.stockDetailId = ibd.stockDetailIdF", nativeQuery = true)
+	List<BookDetail> findBooksDetail();
+
 }

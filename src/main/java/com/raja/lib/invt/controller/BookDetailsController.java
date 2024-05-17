@@ -34,6 +34,11 @@ public class BookDetailsController {
     	return bookDetailsService.findBooksByNullIsbn();
     }
     
+    @GetMapping("all")
+    List<BookDetail> findBookDetails()
+    {
+    	return bookDetailsService.findBooksDetails();
+    }
     
     
     @PostMapping("/update/book-details/{id}")

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.model.Stock;
+import com.raja.lib.invt.request.BookIssueRequestDto;
 import com.raja.lib.invt.request.StockRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.resposne.StockResponseDTO;
@@ -66,16 +67,6 @@ public class StockController {
         }
     }
     
-    @PostMapping("/book-issue")
-    public ResponseEntity<ApiResponseDTO<?>> bookIssue(@RequestBody StockRequestDTO stockRequestDTO) {
-        try {
-            ApiResponseDTO<?> response = stockService.bookIssue(stockRequestDTO);
-            return ResponseEntity.status(response.getStatusCode()).body(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
-        }
-    }
     
     
    

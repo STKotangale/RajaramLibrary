@@ -26,13 +26,14 @@ public class BookDetailsService {
         return bookDetailsRepository.findBooksByNullIsbn();
     }
 
+    public List<BookDetail> findBooksDetails() {
+        return bookDetailsRepository.findBooksDetail();
+    }
+
     public String updateBookDetails(int id, UpdateBookDetailsRequest request) {
         try {
-            // Fetch existing BookDetails
             BookDetails existingBookDetails = bookDetailsRepository.findById(id)
                     .orElseThrow(() -> new Exception("Book details not found with id: " + id));
-
-            // Update BookDetails fields
             existingBookDetails.setIsbn(request.getIsbn());
             existingBookDetails.setClassificationNumber(request.getClassificationNumber());
             existingBookDetails.setItemNumber(request.getItemNumber());
@@ -58,10 +59,7 @@ public class BookDetailsService {
             existingBookDetails.setBookWorkingStart(request.getBookWorkingStart());
             existingBookDetails.setBookLostScrap(request.getBookLostScrap());
             existingBookDetails.setTypeofbook(request.getTypeofbook());
-
             BookDetails updatedBookDetails = bookDetailsRepository.save(existingBookDetails);
-
-            // Create and populate StockCopyNo object
             StockCopyNo stockCopyNo = new StockCopyNo();
             stockCopyNo.setStockDetailIdF(existingBookDetails.getStockDetailIdF());
             stockCopyNo.setBookDetailIdF(existingBookDetails);

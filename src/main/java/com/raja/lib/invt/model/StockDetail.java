@@ -61,7 +61,7 @@ public class StockDetail implements Serializable {
 	@Column(name = "book_amount")
 	private int book_amount;
 
-	@Column(name = "stock_type", columnDefinition = "VARCHAR(255) DEFAULT 'A1'")
+	@Column(name = "stock_type")
 	private String stock_type = "A1";
 
 
