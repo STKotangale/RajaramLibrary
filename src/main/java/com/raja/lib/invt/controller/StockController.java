@@ -3,7 +3,6 @@ package com.raja.lib.invt.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.raja.lib.invt.model.Stock;
-import com.raja.lib.invt.request.BookIssueRequestDto;
 import com.raja.lib.invt.request.StockRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.resposne.StockResponseDTO;
@@ -32,11 +29,11 @@ public class StockController {
     private StockService stockService;
 
     @PostMapping("")
-    public ResponseEntity<ApiResponseDTO<Stock>> createStock(@RequestBody StockRequestDTO stockRequestDTO) {
+    public ResponseEntity<ApiResponseDTO<Void>> createStock(@RequestBody StockRequestDTO stockRequestDTO) {
         try {
-            ApiResponseDTO<Stock> response = stockService.createStock(stockRequestDTO);
-            return ResponseEntity.ok(response);
-        } catch (ChangeSetPersister.NotFoundException e) {
+            ApiResponseDTO<Void> response = stockService.createStock(stockRequestDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.NOT_FOUND.value()));
         } catch (Exception e) {
