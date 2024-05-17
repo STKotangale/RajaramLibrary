@@ -20,9 +20,9 @@ import com.raja.lib.invt.request.BookAuthorRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.service.BookAuthorService;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/book-authors")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class BookAuthorController {
 
     @Autowired

@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.objects.BookDetail;
 import com.raja.lib.invt.request.UpdateBookDetailsRequest;
+import com.raja.lib.invt.resposne.BookDetailResponse;
 import com.raja.lib.invt.service.BookDetailsService;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/bookdetails")
-
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class BookDetailsController {
 
 	@Autowired
@@ -34,10 +34,9 @@ public class BookDetailsController {
     	return bookDetailsService.findBooksByNullIsbn();
     }
     
-    @GetMapping("all")
-    List<BookDetail> findBookDetails()
-    {
-    	return bookDetailsService.findBooksDetails();
+    @GetMapping("/copyno")
+    public List<BookDetailResponse> getBookDetails() {
+        return bookDetailsService.getBookDetails();
     }
     
     

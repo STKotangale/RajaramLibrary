@@ -1,17 +1,22 @@
 package com.raja.lib.invt.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.cache.annotation.Cacheable;
+
 import com.raja.lib.invt.model.BookDetails;
 import com.raja.lib.invt.model.StockCopyNo;
 import com.raja.lib.invt.objects.BookDetail;
+import com.raja.lib.invt.objects.BookDetailNameCopyNO;
 import com.raja.lib.invt.repository.BookDetailsRepository;
 import com.raja.lib.invt.repository.StockCopyNoRepository;
 import com.raja.lib.invt.request.UpdateBookDetailsRequest;
+import com.raja.lib.invt.resposne.BookDetailResponse;
 
 @Service
 public class BookDetailsService {
@@ -26,10 +31,24 @@ public class BookDetailsService {
         return bookDetailsRepository.findBooksByNullIsbn();
     }
 
-    public List<BookDetail> findBooksDetails() {
-        return bookDetailsRepository.findBooksDetail();
-    }
+    public List<BookDetailResponse> getBookDetails() {
+        List<BookDetailNameCopyNO> bookDetails = bookDetailsRepository.findBooksDetail();
+        List<BookDetailResponse> responseList = new ArrayList<>();
 
+        for (BookDetailNameCopyNO bookDetail : bookDetails) {
+            BookDetailResponse response = new BookDetailResponse();
+            response.setBookName(bookDetail.getBookName());
+            response.setPurchaseCopyNos(Stream.of(bookDetail.getPurchaseCopyNos().split(","))
+                                              .map(Integer::parseInt)
+                                              .collect(Collectors.toList()));
+            responseList.add(response);
+        }
+
+        return responseList;
+    }
+    
+    
+    
     public String updateBookDetails(int id, UpdateBookDetailsRequest request) {
         try {
             BookDetails existingBookDetails = bookDetailsRepository.findById(id)
