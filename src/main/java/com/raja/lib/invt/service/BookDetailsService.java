@@ -37,10 +37,20 @@ public class BookDetailsService {
 
         for (BookDetailNameCopyNO bookDetail : bookDetails) {
             BookDetailResponse response = new BookDetailResponse();
+            response.setBookId(bookDetail.getBookId());
             response.setBookName(bookDetail.getBookName());
-            response.setPurchaseCopyNos(Stream.of(bookDetail.getPurchaseCopyNos().split(","))
-                                              .map(Integer::parseInt)
-                                              .collect(Collectors.toList()));
+
+            List<BookDetailResponse.CopyDetail> copyDetails = Stream.of(bookDetail.getPurchaseCopyNos().split(","))
+                    .map(copyNo -> {
+                        String[] parts = copyNo.split(":");
+                        return new BookDetailResponse.CopyDetail(
+                                Integer.parseInt(parts[0]),
+                                Integer.parseInt(parts[1])
+                        );
+                    })
+                    .collect(Collectors.toList());
+
+            response.setCopyDetails(copyDetails);
             responseList.add(response);
         }
 

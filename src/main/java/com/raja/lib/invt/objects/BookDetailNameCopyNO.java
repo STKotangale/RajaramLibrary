@@ -1,7 +1,7 @@
 package com.raja.lib.invt.objects;
 
 public interface BookDetailNameCopyNO {
-
-	String getBookName();
+    Integer getBookId();
+    String getBookName();
     String getPurchaseCopyNos();
 }

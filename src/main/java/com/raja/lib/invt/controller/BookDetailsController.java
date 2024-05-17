@@ -38,7 +38,7 @@ public class BookDetailsController {
     public List<BookDetailResponse> getBookDetails() {
         return bookDetailsService.getBookDetails();
     }
-    
+
     
     @PostMapping("/update/book-details/{id}")
     public Map<String, Object> updateBookDetails(@PathVariable int id, @RequestBody UpdateBookDetailsRequest request) {
