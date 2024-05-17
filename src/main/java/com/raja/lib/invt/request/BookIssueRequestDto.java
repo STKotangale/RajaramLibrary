@@ -7,6 +7,6 @@ public class BookIssueRequestDto {
     private String invoiceNo;
     private String invoiceDate;
     private int generalMemberId;
-    private int bookIdF;
-    private int bookdetail;
+    private int bookId;
+    private int bookdetailId;
 }

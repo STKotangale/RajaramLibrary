@@ -190,7 +190,7 @@ public class StockService {
 	    
 	    StockDetail stockDetail = new StockDetail();
 	    stockDetail.setStockIdF(savedStock);
-	    Book book = bookRepository.findById(bookIssueRequestDto.getBookIdF())
+	    Book book = bookRepository.findById(bookIssueRequestDto.getBookId())
 	            .orElseThrow(() -> new NotFoundException());
 	    stockDetail.setBook_idF(book); 
 	    stockDetail.setStock_type("A2");
@@ -199,7 +199,7 @@ public class StockService {
 	    StockCopyNo stockCopyNo = new StockCopyNo();
 	    stockCopyNo.setStockType("A2");
 	    stockCopyNo.setStockDetailIdF(stockDetail); 
-	    BookDetails bookDetails = bookDetailsRepository.findById(bookIssueRequestDto.getBookdetail())
+	    BookDetails bookDetails = bookDetailsRepository.findById(bookIssueRequestDto.getBookdetailId())
 	            .orElseThrow(() -> new NotFoundException());
 	    stockCopyNo.setBookDetailIdF(bookDetails);
 
