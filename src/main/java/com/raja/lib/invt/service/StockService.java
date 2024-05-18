@@ -2,7 +2,6 @@ package com.raja.lib.invt.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -48,51 +47,51 @@ public class StockService {
 	private final StockCopyNoRepository stockCopyNoRepository;
 
 	public ApiResponseDTO<Void> createStock(StockRequestDTO stockRequestDTO) throws NotFoundException {
-	    Ledger ledger = ledgerRepository.findById(stockRequestDTO.getLedgerIDF())
-	            .orElseThrow(() -> new NotFoundException());
+		Ledger ledger = ledgerRepository.findById(stockRequestDTO.getLedgerIDF())
+				.orElseThrow(() -> new NotFoundException());
 
-	    Stock stock = new Stock();
-	    stock.setStock_type("A1");
-	    stock.setInvoiceNo(stockRequestDTO.getInvoiceNo());
-	    stock.setInvoiceDate(stockRequestDTO.getInvoiceDate());
-	    stock.setBillTotal(stockRequestDTO.getBillTotal());
-	    stock.setDiscountPercent(stockRequestDTO.getDiscountPercent());
-	    stock.setDiscountAmount(stockRequestDTO.getDiscountAmount());
-	    stock.setTotalAfterDiscount(stockRequestDTO.getTotalAfterDiscount());
-	    stock.setGstPercent(stockRequestDTO.getGstPercent());
-	    stock.setGstAmount(stockRequestDTO.getGstAmount());
-	    stock.setGrandTotal(stockRequestDTO.getGrandTotal());
-	    stock.setLedgerIDF(ledger);
+		Stock stock = new Stock();
+		stock.setStock_type("A1");
+		stock.setInvoiceNo(stockRequestDTO.getInvoiceNo());
+		stock.setInvoiceDate(stockRequestDTO.getInvoiceDate());
+		stock.setBillTotal(stockRequestDTO.getBillTotal());
+		stock.setDiscountPercent(stockRequestDTO.getDiscountPercent());
+		stock.setDiscountAmount(stockRequestDTO.getDiscountAmount());
+		stock.setTotalAfterDiscount(stockRequestDTO.getTotalAfterDiscount());
+		stock.setGstPercent(stockRequestDTO.getGstPercent());
+		stock.setGstAmount(stockRequestDTO.getGstAmount());
+		stock.setGrandTotal(stockRequestDTO.getGrandTotal());
+		stock.setLedgerIDF(ledger);
 
-	    Integer maxSrno = stockDetailRepository.findMaxSrno();
-	    int nextSrno = (maxSrno == null ? 0 : maxSrno) + 1;
+		Integer maxSrno = stockDetailRepository.findMaxSrno();
+		int nextSrno = (maxSrno == null ? 0 : maxSrno) + 1;
 
-	    List<StockDetail> stockDetails = new ArrayList<>();
-	    List<BookDetails> bookDetailsList = new ArrayList<>();
+		List<StockDetail> stockDetails = new ArrayList<>();
+		List<BookDetails> bookDetailsList = new ArrayList<>();
 
-	    for (StockDetailRequestDTO detailDTO : stockRequestDTO.getStockDetails()) {
-	        Book book = bookRepository.findById(detailDTO.getBookIdF()).orElseThrow(() -> new NotFoundException());
+		for (StockDetailRequestDTO detailDTO : stockRequestDTO.getStockDetails()) {
+			Book book = bookRepository.findById(detailDTO.getBookIdF()).orElseThrow(() -> new NotFoundException());
 
-	        StockDetail stockDetail = new StockDetail();
-	        stockDetail.setStockIdF(stock);
-	        stockDetail.setSrno(nextSrno++);
-	        stockDetail.setBook_qty(detailDTO.getBookQty());
-	        stockDetail.setBook_rate(detailDTO.getBookRate());
-	        stockDetail.setStock_type("A1");
-	        stockDetail.setBook_amount(detailDTO.getBookAmount());
-	        stockDetail.setBook_idF(book);
-	        stockDetails.add(stockDetail);
+			StockDetail stockDetail = new StockDetail();
+			stockDetail.setStockIdF(stock);
+			stockDetail.setSrno(nextSrno++);
+			stockDetail.setBook_qty(detailDTO.getBookQty());
+			stockDetail.setBook_rate(detailDTO.getBookRate());
+			stockDetail.setStock_type("A1");
+			stockDetail.setBook_amount(detailDTO.getBookAmount());
+			stockDetail.setBook_idF(book);
+			stockDetails.add(stockDetail);
 
-	        List<BookDetails> generatedBookDetails = generateBookDetails(stockDetail, detailDTO.getBookQty());
-	        bookDetailsList.addAll(generatedBookDetails);
-	    }
+			List<BookDetails> generatedBookDetails = generateBookDetails(stockDetail, detailDTO.getBookQty());
+			bookDetailsList.addAll(generatedBookDetails);
+		}
 
-	    stock.setStockDetails(stockDetails);
+		stock.setStockDetails(stockDetails);
 
-	    Stock savedStock = stockRepository.save(stock);
-	    bookDetailsRepository.saveAll(bookDetailsList);
+		Stock savedStock = stockRepository.save(stock);
+		bookDetailsRepository.saveAll(bookDetailsList);
 
-	    return new ApiResponseDTO<>(true, "Stock created successfully", null, HttpStatus.CREATED.value());
+		return new ApiResponseDTO<>(true, "Stock created successfully", null, HttpStatus.CREATED.value());
 	}
 
 	private List<BookDetails> generateBookDetails(StockDetail stockDetail, int quantity) {
@@ -112,7 +111,6 @@ public class StockService {
 		return bookDetailsList;
 	}
 
-
 	public ApiResponseDTO<StockResponseDTO> getStockById(int stockId) {
 		Stock stock = stockRepository.findById(stockId)
 				.orElseThrow(() -> new RuntimeException("Stock not found with id: " + stockId));
@@ -121,7 +119,6 @@ public class StockService {
 
 		return new ApiResponseDTO<>(true, "Stock found", stockResponseDTO, HttpStatus.OK.value());
 	}
-
 
 	public ApiResponseDTO<List<StockResponseDTO>> getAllStocks() {
 		List<Stock> stocks = stockRepository.findAll();
@@ -168,34 +165,27 @@ public class StockService {
 		return stockResponseDTO;
 	}
 
-
-
-
-
-
 	@Transactional
 	public Stock getissueById(int stockId) throws NotFoundException {
-	    return stockRepository.findById(stockId)
-	            .orElseThrow(() -> new NotFoundException());
+		return stockRepository.findById(stockId).orElseThrow(() -> new NotFoundException());
 	}
 
 	@Transactional
 	public List<Stock> getAllIsuee() {
-	    return stockRepository.findAll();
+		return stockRepository.findAll();
 	}
 
 	@Transactional
 	public ApiResponseDTO<Stock> updateStock(int stockId, Stock updatedStock) throws NotFoundException {
-	    Stock existingStock = stockRepository.findById(stockId)
-	            .orElseThrow(() -> new NotFoundException());
+		Stock existingStock = stockRepository.findById(stockId).orElseThrow(() -> new NotFoundException());
 
-	    existingStock.setStock_type(updatedStock.getStock_type());
-	    existingStock.setInvoiceNo(updatedStock.getInvoiceNo());
-	    existingStock.setInvoiceDate(updatedStock.getInvoiceDate());
+		existingStock.setStock_type(updatedStock.getStock_type());
+		existingStock.setInvoiceNo(updatedStock.getInvoiceNo());
+		existingStock.setInvoiceDate(updatedStock.getInvoiceDate());
 
-	    Stock savedStock = stockRepository.save(existingStock);
+		Stock savedStock = stockRepository.save(existingStock);
 
-	    return new ApiResponseDTO<>(true, "Stock updated successfully", savedStock, HttpStatus.OK.value());
+		return new ApiResponseDTO<>(true, "Stock updated successfully", savedStock, HttpStatus.OK.value());
 	}
 
 	private StockDetailResponseDTO mapToStockDetailResponseDTO(StockDetail stockDetail) {
@@ -218,13 +208,12 @@ public class StockService {
 		return bookResponseDTO;
 	}
 
-	
 //	-------------------------------------------- Book Issue Methods-----------------------------------------------
-	
+
 	@Transactional
 	public ApiResponseDTO<Stock> bookIssue(BookIssueRequestDto bookIssueRequestDto) throws NotFoundException {
 	    Stock stock = new Stock();
-	    stock.setStock_type("A2"); 
+	    stock.setStock_type("A2");
 	    stock.setInvoiceNo(bookIssueRequestDto.getInvoiceNo());
 	    stock.setInvoiceDate(bookIssueRequestDto.getInvoiceDate());
 
@@ -233,47 +222,90 @@ public class StockService {
 
 	    stock.setGeneralMember(generalMember);
 	    Stock savedStock = stockRepository.save(stock);
-	    
+
 	    for (BookDetailDto bookDetailDto : bookIssueRequestDto.getBookDetails()) {
 	        StockDetail stockDetail = new StockDetail();
 	        stockDetail.setStockIdF(savedStock);
-	        
-	        Book book = bookRepository.findById(bookDetailDto.getBookId())
-	                .orElseThrow(() -> new NotFoundException());
-	        stockDetail.setBook_idF(book); 
+
+	        Book book = bookRepository.findById(bookDetailDto.getBookId()).orElseThrow(() -> new NotFoundException());
+	        stockDetail.setBook_idF(book);
 	        stockDetail.setStock_type("A2");
-	        stockDetailRepository.save(stockDetail);
 	        
+	        stockDetailRepository.save(stockDetail);
+
 	        StockCopyNo stockCopyNo = new StockCopyNo();
 	        stockCopyNo.setStockType("A2");
-	        stockCopyNo.setStockDetailIdF(stockDetail); 
+	        stockCopyNo.setStockDetailIdF(stockDetail);
+
+	        BookDetails bookDetails = bookDetailsRepository.findById(bookDetailDto.getBookdetailId())
+	                .orElseThrow(() -> new NotFoundException());
+	        bookDetails.setBookIssue("N");
+	        bookDetailsRepository.save(bookDetails);
+	        
+	        stockCopyNo.setBookDetailIdF(bookDetails);
+	        stockCopyNoRepository.save(stockCopyNo);
+	    }
+
+	    return new ApiResponseDTO<>(true, "Book issued successfully", savedStock, HttpStatus.CREATED.value());
+	}
+
+
+
+	public String getStockDetailsAsJson() {
+		List<String> jsonResults = stockRepository.getStockDetailsAsJson();
+		StringBuilder jsonResponse = new StringBuilder("[");
+		for (String jsonResult : jsonResults) {
+			jsonResponse.append(jsonResult).append(",");
+		}
+		if (jsonResponse.length() > 1) {
+			jsonResponse.deleteCharAt(jsonResponse.length() - 1); // Remove trailing comma
+		}
+		jsonResponse.append("]");
+		return jsonResponse.toString();
+	}
+
+	
+	@Transactional
+	public ApiResponseDTO<Stock> updateBookIssue(int stockId, BookIssueRequestDto bookIssueRequestDto) throws NotFoundException {
+	    Stock stockToUpdate = stockRepository.findById(stockId).orElseThrow(() -> new NotFoundException());
+	    stockToUpdate.setInvoiceNo(bookIssueRequestDto.getInvoiceNo());
+	    stockToUpdate.setInvoiceDate(bookIssueRequestDto.getInvoiceDate());
+	    GeneralMember generalMember = generalMemberRepository.findById(bookIssueRequestDto.getGeneralMemberId())
+	            .orElseThrow(() -> new NotFoundException());
+	    stockToUpdate.setGeneralMember(generalMember);
+	    List<StockDetail> existingStockDetails = stockToUpdate.getStockDetails();
+	    List<BookDetailDto> newBookDetails = bookIssueRequestDto.getBookDetails();
+	    for (int i = 0; i < newBookDetails.size(); i++) {
+	        BookDetailDto bookDetailDto = newBookDetails.get(i);
+	        StockDetail stockDetail;
+	        if (i < existingStockDetails.size()) {
+	            stockDetail = existingStockDetails.get(i);
+	        } else {
+	            stockDetail = new StockDetail();
+	            stockDetail.setStockIdF(stockToUpdate);
+	            existingStockDetails.add(stockDetail);
+	        }
+	        Book book = bookRepository.findById(bookDetailDto.getBookId()).orElseThrow(() -> new NotFoundException());
+	        stockDetail.setBook_idF(book);
+	        stockDetail.setStock_type("A2");
+	        stockDetailRepository.save(stockDetail);
+
+	        StockCopyNo stockCopyNo = new StockCopyNo();
+	        stockCopyNo.setStockType("A2");
+	        stockCopyNo.setStockDetailIdF(stockDetail);
+
 	        BookDetails bookDetails = bookDetailsRepository.findById(bookDetailDto.getBookdetailId())
 	                .orElseThrow(() -> new NotFoundException());
 	        stockCopyNo.setBookDetailIdF(bookDetails);
 	        stockCopyNoRepository.save(stockCopyNo);
 	    }
-	    
-	    return new ApiResponseDTO<>(true, "Book issued successfully", savedStock, HttpStatus.CREATED.value());
+	    for (int i = newBookDetails.size(); i < existingStockDetails.size(); i++) {
+	        StockDetail stockDetailToRemove = existingStockDetails.get(i);
+	        stockDetailRepository.delete(stockDetailToRemove);
+	    }
+	    Stock updatedStock = stockRepository.save(stockToUpdate);
+	    return new ApiResponseDTO<>(true, "Book issue details updated successfully", updatedStock, HttpStatus.OK.value());
 	}
-	
-	
-	public String getStockDetailsAsJson() {
-        List<String> jsonResults = stockRepository.getStockDetailsAsJson();
-        StringBuilder jsonResponse = new StringBuilder("[");
-        for (String jsonResult : jsonResults) {
-            jsonResponse.append(jsonResult).append(",");
-        }
-        if (jsonResponse.length() > 1) {
-            jsonResponse.deleteCharAt(jsonResponse.length() - 1); // Remove trailing comma
-        }
-        jsonResponse.append("]");
-        return jsonResponse.toString();
-    }
-	
-	
-	
-	
-
 
 
 }
