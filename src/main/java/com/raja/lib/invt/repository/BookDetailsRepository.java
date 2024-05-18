@@ -22,8 +22,9 @@ public interface BookDetailsRepository extends JpaRepository<BookDetails, Intege
 
 	
 
-	@Query(value = "SELECT ib.bookId, ib.bookName, GROUP_CONCAT(CONCAT(ibd.bookDetailId, ':', ibd.purchaseCopyNo) ORDER BY ibd.purchaseCopyNo ASC) AS purchaseCopyNos FROM invt_book_details ibd JOIN invt_book ib ON ibd.bookIdF = ib.bookId GROUP BY ib.bookId, ib.bookName", nativeQuery = true)
+	@Query(value = "SELECT ib.bookId, ib.bookName, GROUP_CONCAT(CONCAT(ibd.bookDetailId, ':', ibd.purchaseCopyNo) ORDER BY ibd.purchaseCopyNo ASC) AS purchaseCopyNos FROM invt_book_details ibd JOIN invt_book ib ON ibd.bookIdF = ib.bookId WHERE ibd.isbn IS NOT NULL AND ibd.bookIssue = 'Y' AND ibd.bookWorkingStart = 'Y' AND ibd.bookLostScrap = 'N' AND ibd.copyNo IS NOT NULL GROUP BY ib.bookId, ib.bookName", nativeQuery = true)
 	List<BookDetailNameCopyNO> findBooksDetail();
+
 
 
 }

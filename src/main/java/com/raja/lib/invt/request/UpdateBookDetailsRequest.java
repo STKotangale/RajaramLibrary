@@ -28,11 +28,4 @@ public class UpdateBookDetailsRequest {
     private String copyNo;
     private String accessionNo;
     private String typeofbook;
-    private String bookIssue;
-    private String bookWorkingStart;
-    private String bookLostScrap;
-
-
-
-   
 }

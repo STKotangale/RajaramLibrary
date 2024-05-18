@@ -84,10 +84,10 @@ public class BookDetailsService {
             existingBookDetails.setFullCallNumber(request.getFullCallNumber());
             existingBookDetails.setCopyNo(request.getCopyNo());
             existingBookDetails.setAccessionNo(request.getAccessionNo());
-            existingBookDetails.setBookIssue(request.getBookIssue());
-            existingBookDetails.setBookWorkingStart(request.getBookWorkingStart());
-            existingBookDetails.setBookLostScrap(request.getBookLostScrap());
             existingBookDetails.setTypeofbook(request.getTypeofbook());
+            existingBookDetails.setBookIssue("Y");
+            existingBookDetails.setBookWorkingStart("Y");
+            existingBookDetails.setBookLostScrap("N");
             BookDetails updatedBookDetails = bookDetailsRepository.save(existingBookDetails);
             StockCopyNo stockCopyNo = new StockCopyNo();
             stockCopyNo.setStockDetailIdF(existingBookDetails.getStockDetailIdF());

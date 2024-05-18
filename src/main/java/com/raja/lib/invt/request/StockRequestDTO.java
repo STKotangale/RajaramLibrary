@@ -18,6 +18,6 @@ public class StockRequestDTO {
     private double gstAmount;
     private double grandTotal;
     private int ledgerIDF;
-    private int generalMemberId; // New field to store General Member ID
+    private int generalMemberId; 
     private List<StockDetailRequestDTO> stockDetails;
 }
