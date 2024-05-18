@@ -5,6 +5,7 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.raja.lib.invt.model.Stock;
 import com.raja.lib.invt.request.BookIssueRequestDto;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
@@ -59,4 +61,14 @@ public class IssueController {
 		return stockService.getStockDetailsAsJson();
 	}
 
+	@DeleteMapping("/{stockId}")
+    public ResponseEntity<ApiResponseDTO<Void>> deleteBookIssue(@PathVariable int stockId) {
+        try {
+        	stockService.deleteBookIssue(stockId);
+            return ResponseEntity.ok(new ApiResponseDTO<>(true, "Book issue deleted successfully", null, HttpStatus.OK.value()));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+	 
 }
