@@ -1,5 +1,7 @@
 package com.raja.lib.invt.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.model.Stock;
+import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.request.BookIssueRequestDto;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.service.StockService;
@@ -71,4 +74,11 @@ public class IssueController {
         }
     }
 	 
-}
+	
+	@GetMapping("/detail/{username}")
+	public List<GetIssueDetilsByUser> getStockDetailsByUsername(@PathVariable String username) {
+	    return stockService.getStockDetailsByUsername(username);
+	}
+
+	}
+

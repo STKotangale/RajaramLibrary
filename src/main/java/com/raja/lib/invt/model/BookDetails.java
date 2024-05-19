@@ -118,8 +118,14 @@ public class BookDetails implements Serializable{
     @Column(name="bookWorkingStart")
     private String bookWorkingStart;
     
-    @Column(name="bookLostScrap")
-    private String bookLostScrap;
+    @Column(name="bookLost")
+    private String bookLost;
+    
+    @Column(name="book_return")
+    private String book_return;
+    
+    @Column(name="bookScrap")
+    private String bookScrap;
 
     
     

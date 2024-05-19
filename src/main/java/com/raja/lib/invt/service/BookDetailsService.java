@@ -87,7 +87,8 @@ public class BookDetailsService {
             existingBookDetails.setTypeofbook(request.getTypeofbook());
             existingBookDetails.setBookIssue("Y");
             existingBookDetails.setBookWorkingStart("Y");
-            existingBookDetails.setBookLostScrap("N");
+            existingBookDetails.setBookLost("N");
+            existingBookDetails.setBookScrap("N");
             BookDetails updatedBookDetails = bookDetailsRepository.save(existingBookDetails);
             StockCopyNo stockCopyNo = new StockCopyNo();
             stockCopyNo.setStockDetailIdF(existingBookDetails.getStockDetailIdF());

@@ -22,8 +22,21 @@ public interface BookDetailsRepository extends JpaRepository<BookDetails, Intege
 
 	
 
-	@Query(value = "SELECT ib.bookId, ib.bookName, GROUP_CONCAT(CONCAT(ibd.bookDetailId, ':', ibd.purchaseCopyNo) ORDER BY ibd.purchaseCopyNo ASC) AS purchaseCopyNos FROM invt_book_details ibd JOIN invt_book ib ON ibd.bookIdF = ib.bookId WHERE ibd.isbn IS NOT NULL AND ibd.bookIssue = 'Y' AND ibd.bookWorkingStart = 'Y' AND ibd.bookLostScrap = 'N' AND ibd.copyNo IS NOT NULL GROUP BY ib.bookId, ib.bookName", nativeQuery = true)
+	@Query(value = "SELECT ib.bookId, \r\n"
+			+ "       ib.bookName, \r\n"
+			+ "       GROUP_CONCAT(CONCAT(ibd.bookDetailId, ':', ibd.purchaseCopyNo) ORDER BY ibd.purchaseCopyNo ASC) AS purchaseCopyNos \r\n"
+			+ "FROM invt_book_details ibd \r\n"
+			+ "JOIN invt_book ib ON ibd.bookIdF = ib.bookId \r\n"
+			+ "WHERE ibd.isbn IS NOT NULL \r\n"
+			+ "  AND ibd.bookIssue = 'Y' \r\n"
+			+ "  AND ibd.bookWorkingStart = 'Y' \r\n"
+			+ "  AND ibd.bookLost  = 'N'\r\n"
+			+ "And ibd.bookScrap ='N'\r\n"
+			+ "  AND ibd.copyNo IS NOT NULL \r\n"
+			+ "GROUP BY ib.bookId, ib.bookName;\r\n"
+			+ "", nativeQuery = true)
 	List<BookDetailNameCopyNO> findBooksDetail();
+
 
 
 

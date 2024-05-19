@@ -16,6 +16,7 @@ import com.raja.lib.invt.model.BookDetails;
 import com.raja.lib.invt.model.Stock;
 import com.raja.lib.invt.model.StockCopyNo;
 import com.raja.lib.invt.model.StockDetail;
+import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.repository.BookDetailsRepository;
 import com.raja.lib.invt.repository.BookRepository;
 import com.raja.lib.invt.repository.StockCopyNoRepository;
@@ -26,7 +27,6 @@ import com.raja.lib.invt.request.BookIssueRequestDto;
 import com.raja.lib.invt.request.StockDetailRequestDTO;
 import com.raja.lib.invt.request.StockRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
-import com.raja.lib.invt.resposne.BookIssueResponseDto;
 import com.raja.lib.invt.resposne.BookResponseDTO;
 import com.raja.lib.invt.resposne.StockDetailResponseDTO;
 import com.raja.lib.invt.resposne.StockResponseDTO;
@@ -46,6 +46,7 @@ public class StockService {
 	private final GeneralMemberRepository generalMemberRepository;
 	private final StockCopyNoRepository stockCopyNoRepository;
 
+	@Transactional
 	public ApiResponseDTO<Void> createStock(StockRequestDTO stockRequestDTO) throws NotFoundException {
 		Ledger ledger = ledgerRepository.findById(stockRequestDTO.getLedgerIDF())
 				.orElseThrow(() -> new NotFoundException());
@@ -250,7 +251,7 @@ public class StockService {
 			jsonResponse.append(jsonResult).append(",");
 		}
 		if (jsonResponse.length() > 1) {
-			jsonResponse.deleteCharAt(jsonResponse.length() - 1); // Remove trailing comma
+			jsonResponse.deleteCharAt(jsonResponse.length() - 1); 
 		}
 		jsonResponse.append("]");
 		return jsonResponse.toString();
@@ -303,6 +304,11 @@ public class StockService {
 	}
 
 
+//	------------------------------------------------------- Issue Return --------------------------------------------
+	
+	public List<GetIssueDetilsByUser> getStockDetailsByUsername(String username) {
+        return stockRepository.findStockDetailsByUsername(username);
+    }
 
 
 }
