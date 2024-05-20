@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.raja.lib.invt.model.Stock;
 import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.request.BookIssueRequestDto;
+import com.raja.lib.invt.request.BookIssueReturnRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.service.StockService;
 
@@ -74,11 +75,21 @@ public class IssueController {
         }
     }
 	 
+//    ------------------------------------------------- Issue Return---------------------------------------------------
 	
 	@GetMapping("/detail/{username}")
 	public List<GetIssueDetilsByUser> getStockDetailsByUsername(@PathVariable String username) {
 	    return stockService.getStockDetailsByUsername(username);
 	}
+	
+	@PostMapping("return/create")
+    public ApiResponseDTO<Void> createIssueReturn(@RequestBody BookIssueReturnRequestDTO bookIssueReturnRequestDTO) {
+        try {
+            return stockService.createIssueReturn(bookIssueReturnRequestDTO);
+        } catch (NotFoundException e) {
+            return new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.NOT_FOUND.value());
+        }
+    }
 
 	}
 

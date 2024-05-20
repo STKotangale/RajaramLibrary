@@ -24,6 +24,7 @@ import com.raja.lib.invt.repository.StockDetailRepository;
 import com.raja.lib.invt.repository.StockRepository;
 import com.raja.lib.invt.request.BookDetailDto;
 import com.raja.lib.invt.request.BookIssueRequestDto;
+import com.raja.lib.invt.request.BookIssueReturnRequestDTO;
 import com.raja.lib.invt.request.StockDetailRequestDTO;
 import com.raja.lib.invt.request.StockRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
@@ -213,36 +214,34 @@ public class StockService {
 
 	@Transactional
 	public ApiResponseDTO<Stock> bookIssue(BookIssueRequestDto bookIssueRequestDto) throws NotFoundException {
-	    Stock stock = new Stock();
-	    stock.setStock_type("A2");
-	    stock.setInvoiceNo(bookIssueRequestDto.getInvoiceNo());
-	    stock.setInvoiceDate(bookIssueRequestDto.getInvoiceDate());
-	    GeneralMember generalMember = generalMemberRepository.findById(bookIssueRequestDto.getGeneralMemberId())
-	            .orElseThrow(() -> new NotFoundException());
-	    stock.setGeneralMember(generalMember);
-	    Stock savedStock = stockRepository.save(stock);
-	    for (BookDetailDto bookDetailDto : bookIssueRequestDto.getBookDetails()) {
-	        StockDetail stockDetail = new StockDetail();
-	        stockDetail.setStockIdF(savedStock);
-	        Book book = bookRepository.findById(bookDetailDto.getBookId()).orElseThrow(() -> new NotFoundException());
-	        stockDetail.setBook_idF(book);
-	        stockDetail.setStock_type("A2");
-	        stockDetailRepository.save(stockDetail);
-	        StockCopyNo stockCopyNo = new StockCopyNo();
-	        stockCopyNo.setStockType("A2");
-	        stockCopyNo.setStockDetailIdF(stockDetail);
-	        BookDetails bookDetails = bookDetailsRepository.findById(bookDetailDto.getBookdetailId())
-	                .orElseThrow(() -> new NotFoundException());
-	        bookDetails.setBookIssue("N"); 
-	        stockCopyNo.setBookDetailIdF(bookDetails);
-	       
-	        bookDetailsRepository.save(bookDetails); 
-	        stockCopyNoRepository.save(stockCopyNo);
-	    }
-	    return new ApiResponseDTO<>(true, "Book issued successfully", savedStock, HttpStatus.CREATED.value());
+		Stock stock = new Stock();
+		stock.setStock_type("A2");
+		stock.setInvoiceNo(bookIssueRequestDto.getInvoiceNo());
+		stock.setInvoiceDate(bookIssueRequestDto.getInvoiceDate());
+		GeneralMember generalMember = generalMemberRepository.findById(bookIssueRequestDto.getGeneralMemberId())
+				.orElseThrow(() -> new NotFoundException());
+		stock.setGeneralMember(generalMember);
+		Stock savedStock = stockRepository.save(stock);
+		for (BookDetailDto bookDetailDto : bookIssueRequestDto.getBookDetails()) {
+			StockDetail stockDetail = new StockDetail();
+			stockDetail.setStockIdF(savedStock);
+			Book book = bookRepository.findById(bookDetailDto.getBookId()).orElseThrow(() -> new NotFoundException());
+			stockDetail.setBook_idF(book);
+			stockDetail.setStock_type("A2");
+			stockDetailRepository.save(stockDetail);
+			StockCopyNo stockCopyNo = new StockCopyNo();
+			stockCopyNo.setStockType("A2");
+			stockCopyNo.setStockDetailIdF(stockDetail);
+			BookDetails bookDetails = bookDetailsRepository.findById(bookDetailDto.getBookdetailId())
+					.orElseThrow(() -> new NotFoundException());
+			bookDetails.setBookIssue("N");
+			stockCopyNo.setBookDetailIdF(bookDetails);
+
+			bookDetailsRepository.save(bookDetails);
+			stockCopyNoRepository.save(stockCopyNo);
+		}
+		return new ApiResponseDTO<>(true, "Book issued successfully", savedStock, HttpStatus.CREATED.value());
 	}
-
-
 
 	public String getStockDetailsAsJson() {
 		List<String> jsonResults = stockRepository.getStockDetailsAsJson();
@@ -251,64 +250,96 @@ public class StockService {
 			jsonResponse.append(jsonResult).append(",");
 		}
 		if (jsonResponse.length() > 1) {
-			jsonResponse.deleteCharAt(jsonResponse.length() - 1); 
+			jsonResponse.deleteCharAt(jsonResponse.length() - 1);
 		}
 		jsonResponse.append("]");
 		return jsonResponse.toString();
 	}
 
-	
 	@Transactional
-	public ApiResponseDTO<Stock> updateBookIssue(int stockId, BookIssueRequestDto bookIssueRequestDto) throws NotFoundException {
-	    Stock stockToUpdate = stockRepository.findById(stockId).orElseThrow(() -> new NotFoundException());
-	    stockToUpdate.setInvoiceNo(bookIssueRequestDto.getInvoiceNo());
-	    stockToUpdate.setInvoiceDate(bookIssueRequestDto.getInvoiceDate());
+	public ApiResponseDTO<Stock> updateBookIssue(int stockId, BookIssueRequestDto bookIssueRequestDto)
+			throws NotFoundException {
+		Stock stockToUpdate = stockRepository.findById(stockId).orElseThrow(() -> new NotFoundException());
+		stockToUpdate.setInvoiceNo(bookIssueRequestDto.getInvoiceNo());
+		stockToUpdate.setInvoiceDate(bookIssueRequestDto.getInvoiceDate());
 
-	    GeneralMember generalMember = generalMemberRepository.findById(bookIssueRequestDto.getGeneralMemberId())
-	            .orElseThrow(() -> new NotFoundException());
-	    stockToUpdate.setGeneralMember(generalMember);
+		GeneralMember generalMember = generalMemberRepository.findById(bookIssueRequestDto.getGeneralMemberId())
+				.orElseThrow(() -> new NotFoundException());
+		stockToUpdate.setGeneralMember(generalMember);
 
-	    List<StockDetail> existingStockDetails = stockToUpdate.getStockDetails();
-	    List<BookDetailDto> newBookDetails = bookIssueRequestDto.getBookDetails();
+		List<StockDetail> existingStockDetails = stockToUpdate.getStockDetails();
+		List<BookDetailDto> newBookDetails = bookIssueRequestDto.getBookDetails();
 
-	    for (int i = 0; i < existingStockDetails.size(); i++) {
-	        StockDetail stockDetail = existingStockDetails.get(i);
-	        if (i < newBookDetails.size()) {
-	            BookDetailDto bookDetailDto = newBookDetails.get(i);
-	            Book book = bookRepository.findById(bookDetailDto.getBookId()).orElseThrow(() -> new NotFoundException());
-	            stockDetail.setBook_idF(book);
-	            stockDetailRepository.save(stockDetail);
-	        }
-	    }
-	    Stock updatedStock = stockRepository.save(stockToUpdate);
+		for (int i = 0; i < existingStockDetails.size(); i++) {
+			StockDetail stockDetail = existingStockDetails.get(i);
+			if (i < newBookDetails.size()) {
+				BookDetailDto bookDetailDto = newBookDetails.get(i);
+				Book book = bookRepository.findById(bookDetailDto.getBookId())
+						.orElseThrow(() -> new NotFoundException());
+				stockDetail.setBook_idF(book);
+				stockDetailRepository.save(stockDetail);
+			}
+		}
+		Stock updatedStock = stockRepository.save(stockToUpdate);
 
-	    return new ApiResponseDTO<>(true, "Book issue details updated successfully", updatedStock, HttpStatus.OK.value());
+		return new ApiResponseDTO<>(true, "Book issue details updated successfully", updatedStock,
+				HttpStatus.OK.value());
 	}
-	
-	
+
 	@Transactional
 	public ApiResponseDTO<Void> deleteBookIssue(int stockId) throws NotFoundException {
-	    Stock stockToDelete = stockRepository.findById(stockId).orElseThrow(() -> new NotFoundException());
+		Stock stockToDelete = stockRepository.findById(stockId).orElseThrow(() -> new NotFoundException());
 
-	    List<StockDetail> stockDetails = stockToDelete.getStockDetails();
-	    for (StockDetail stockDetail : stockDetails) {
-	        List<StockCopyNo> stockCopyNos = stockDetail.getStockCopyNos();
-	        stockCopyNoRepository.deleteAll(stockCopyNos);
-	    }
+		List<StockDetail> stockDetails = stockToDelete.getStockDetails();
+		for (StockDetail stockDetail : stockDetails) {
+			List<StockCopyNo> stockCopyNos = stockDetail.getStockCopyNos();
+			stockCopyNoRepository.deleteAll(stockCopyNos);
+		}
 
-	    stockDetailRepository.deleteAll(stockDetails);
+		stockDetailRepository.deleteAll(stockDetails);
 
-	    stockRepository.delete(stockToDelete);
+		stockRepository.delete(stockToDelete);
 
-	    return new ApiResponseDTO<>(true, "Book issue deleted successfully", null, HttpStatus.OK.value());
+		return new ApiResponseDTO<>(true, "Book issue deleted successfully", null, HttpStatus.OK.value());
 	}
 
-
 //	------------------------------------------------------- Issue Return --------------------------------------------
-	
-	public List<GetIssueDetilsByUser> getStockDetailsByUsername(String username) {
-        return stockRepository.findStockDetailsByUsername(username);
-    }
 
+	public List<GetIssueDetilsByUser> getStockDetailsByUsername(String username) {
+		return stockRepository.findStockDetailsByUsername(username);
+	}
+
+	@Transactional
+	public ApiResponseDTO<Void> createIssueReturn(BookIssueReturnRequestDTO bookIssueReturnRequestDTO) throws NotFoundException {
+	    Stock stock = new Stock();
+	    stock.setStock_type("A3");
+	    stock.setInvoiceNo(bookIssueReturnRequestDTO.getIssueNo());
+	    stock.setInvoiceDate(bookIssueReturnRequestDTO.getIssueReturnDate());
+
+	    GeneralMember generalMember = generalMemberRepository.findById(bookIssueReturnRequestDTO.getMemberId())
+	            .orElseThrow(() -> new NotFoundException());
+	    stock.setGeneralMember(generalMember);
+	    Stock savedStock = stockRepository.save(stock);
+
+	    StockDetail stockDetail = new StockDetail();
+	    stockDetail.setStockIdF(savedStock);
+	    stockDetail.setStock_type("A3");
+	    stockDetailRepository.save(stockDetail);
+
+	    StockCopyNo stockCopyNo = new StockCopyNo();
+	    stockCopyNo.setStockDetailIdF(stockDetail);
+	    stockCopyNo.setStockType("A3");
+	    
+	    BookDetails bookDetails = bookDetailsRepository.findById(bookIssueReturnRequestDTO.getBookDetailId())
+	            .orElseThrow(() -> new NotFoundException());
+	    stockCopyNo.setBookDetailIdF(bookDetails);
+	    bookDetails.setBookIssue("Y");
+	    bookDetails.setBook_return("Y");
+
+	    bookDetailsRepository.save(bookDetails);
+
+	    stockCopyNoRepository.save(stockCopyNo);
+	    return new ApiResponseDTO<>(true, "Issue return created successfully", null, HttpStatus.CREATED.value());
+	}
 
 }
