@@ -1,10 +1,14 @@
 package com.raja.lib.invt.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
 import com.raja.lib.acc.model.Ledger;
 import com.raja.lib.acc.repository.LedgerRepository;
 import com.raja.lib.auth.model.GeneralMember;
@@ -28,6 +32,8 @@ import com.raja.lib.invt.request.StockDetailRequestDTO;
 import com.raja.lib.invt.request.StockRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.resposne.BookResponseDTO;
+import com.raja.lib.invt.resposne.StockDTO;
+import com.raja.lib.invt.resposne.StockDetailDTO;
 import com.raja.lib.invt.resposne.StockDetailResponseDTO;
 import com.raja.lib.invt.resposne.StockResponseDTO;
 
@@ -350,6 +356,51 @@ public class StockService {
 
 	public List<GetIssueDetilsByUser> findAllIssueReturn() {
         return stockRepository.findAllIssueReturn();
+    }
+	
+	
+//	------------------------------------------ Purchase Return ---------------------------------------------
+	
+	public List<StockDTO> getStockDetailsByLedgerName(String ledgerName) {
+        List<Object[]> results = stockRepository.findStockDetailsByLedgerName(ledgerName);
+        Map<Long, StockDTO> stockMap = new HashMap<>();
+
+        for (Object[] result : results) {
+            Long stockId = ((Number) result[0]).longValue();
+            Long ledgerIDF = ((Number) result[1]).longValue();
+            String invoiceNo = (String) result[2];
+            String invoiceDate = result[3].toString();
+            Long stockDetailId = ((Number) result[4]).longValue();
+            Long bookIdF = ((Number) result[5]).longValue();
+            Double bookRate = ((Number) result[6]).doubleValue();
+            Double bookAmount = ((Number) result[7]).doubleValue();
+            Long bookId = ((Number) result[8]).longValue();
+            String bookName = (String) result[9];
+            Integer purchaseCopyNo = ((Number) result[10]).intValue();
+
+            StockDetailDTO detailDTO = new StockDetailDTO();
+            detailDTO.setStockDetailId(stockDetailId);
+            detailDTO.setBookIdF(bookIdF);
+            detailDTO.setBookRate(bookRate);
+            detailDTO.setBookAmount(bookAmount);
+            detailDTO.setBookId(bookId);
+            detailDTO.setBookName(bookName);
+            detailDTO.setPurchaseCopyNo(purchaseCopyNo);
+
+            if (!stockMap.containsKey(stockId)) {
+                StockDTO stockDTO = new StockDTO();
+                stockDTO.setStockId(stockId);
+                stockDTO.setLedgerIDF(ledgerIDF);
+                stockDTO.setInvoiceNo(invoiceNo);
+                stockDTO.setInvoiceDate(invoiceDate);
+                stockDTO.setDetails(new ArrayList<>());
+                stockMap.put(stockId, stockDTO);
+            }
+
+            stockMap.get(stockId).getDetails().add(detailDTO);
+        }
+
+        return new ArrayList<>(stockMap.values());
     }
 	
 	

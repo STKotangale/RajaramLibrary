@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.raja.lib.invt.model.Stock;
 import com.raja.lib.invt.objects.GetIssueDetilsByUser;
+import com.raja.lib.invt.resposne.CreateStockResponse;
 
 @Repository
 public interface StockRepository extends JpaRepository<Stock, Integer> {
@@ -49,5 +51,19 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "    auth_users au ON au.memberIdF = agm.memberId \r\n" + "WHERE \r\n" + "    is2.stock_type = 'A3'\r\n"
 			+ "    AND is3.stock_type = 'A3'\r\n" + "    AND iscn.stock_type = 'A3';\r\n" + "", nativeQuery = true)
 	List<GetIssueDetilsByUser> findAllIssueReturn();
+
+	@Query(value = "SELECT is2.stock_id AS stockId, is2.ledgerIDF AS ledgerId, is2.invoiceNo, is2.invoiceDate, JSON_OBJECTAGG(is3.stockDetailId, JSON_OBJECT('bookId', is3.book_idF, 'bookRate', is3.book_rate, 'bookAmount', is3.book_amount)) AS details FROM invt_stock is2 JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id WHERE is2.ledgerIDF IS NOT NULL GROUP BY is2.stock_id, is2.ledgerIDF, is2.invoiceNo, is2.invoiceDate", nativeQuery = true)
+	List<CreateStockResponse> getStockDetails();
+
+	@Query(value = "SELECT is2.stock_id, is2.ledgerIDF, is2.invoiceNo, is2.invoiceDate, "
+			+ "is3.stockDetailId, is3.book_idF, is3.book_rate, is3.book_amount, "
+			+ "ib.bookId, ib.bookName, ibd.purchaseCopyNo " + "FROM invt_stock AS is2 "
+			+ "JOIN invt_stockdetail AS is3 ON is3.stock_idF = is2.stock_id "
+			+ "JOIN acc_ledger AS al ON al.ledgerID = is2.ledgerIDF "
+			+ "JOIN invt_book AS ib ON ib.bookId = is3.book_idF "
+			+ "JOIN invt_stock_copy_no AS iscn ON iscn.stockDetailIdF = is3.stockDetailId "
+			+ "JOIN invt_book_details AS ibd ON ibd.bookDetailId = iscn.bookDetailIdF "
+			+ "WHERE al.ledgerName = :ledgerName", nativeQuery = true)
+	List<Object[]> findStockDetailsByLedgerName(@Param("ledgerName") String ledgerName);
 
 }
