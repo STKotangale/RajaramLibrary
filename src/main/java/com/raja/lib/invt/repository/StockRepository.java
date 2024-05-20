@@ -25,8 +25,9 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 	List<String> getStockDetailsAsJson();
 
 	@Query(value = "SELECT is2.stock_id, " + "is2.memberIdF, " + "is2.invoiceNo, " + "is2.invoiceDate, "
-			+ "is3.stockDetailId, " + "is3.book_idF as bookId, " + "ib.bookName, " + "iscn.stockCopyId, " + "au.username, "
-			+ "ibd.* " + "FROM invt_stock is2 " + "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
+			+ "is3.stockDetailId, " + "is3.book_idF as bookId, " + "ib.bookName, " + "iscn.stockCopyId, "
+			+ "au.username, " + "ibd.* " + "FROM invt_stock is2 "
+			+ "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
 			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF "
 			+ "JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId "
 			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF "
@@ -36,16 +37,17 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "AND iscn.stock_type = 'A2'", nativeQuery = true)
 	List<GetIssueDetilsByUser> findStockDetailsByUsername(String username);
 
-	@Query(value = "SELECT \r\n" + "    is2.stock_id, \r\n" + "    is2.invoiceNo, \r\n" + "    is2.invoiceDate, \r\n"
-			+ "    is3.stockDetailId, \r\n" + "    is3.book_idF, \r\n" + "    ib.bookName, \r\n"
-			+ "    iscn.stockCopyId, \r\n" + "    au.username, \r\n" + "    ibd.* \r\n" + "FROM \r\n"
-			+ "    invt_stock is2 \r\n" + "JOIN \r\n" + "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id \r\n"
-			+ "JOIN \r\n" + "    invt_book ib ON ib.bookId = is3.book_idF \r\n" + "JOIN \r\n"
+	@Query(value = "SELECT \r\n" + "    is2.stock_id, \r\n" + "    is2.invoiceNo, \r\n" + "    is2.memberIdF ,\r\n"
+			+ "    is2.invoiceDate, \r\n" + "    is3.stockDetailId, \r\n" + "    is3.book_idF as bookId, \r\n"
+			+ "    ib.bookName, \r\n" + "    iscn.stockCopyId, \r\n" + "    au.username, \r\n" + "    ibd.* \r\n"
+			+ "FROM \r\n" + "    invt_stock is2 \r\n" + "JOIN \r\n"
+			+ "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id \r\n" + "JOIN \r\n"
+			+ "    invt_book ib ON ib.bookId = is3.book_idF \r\n" + "JOIN\r\n"
 			+ "    invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId \r\n" + "JOIN \r\n"
 			+ "    invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF \r\n" + "JOIN \r\n"
 			+ "    auth_general_members agm ON agm.memberId = is2.memberIdF \r\n" + "JOIN \r\n"
 			+ "    auth_users au ON au.memberIdF = agm.memberId \r\n" + "WHERE \r\n" + "    is2.stock_type = 'A3'\r\n"
-			+ "    AND is3.stock_type = 'A3'\r\n" + "    AND iscn.stock_type = 'A3';", nativeQuery = true)
+			+ "    AND is3.stock_type = 'A3'\r\n" + "    AND iscn.stock_type = 'A3';\r\n" + "", nativeQuery = true)
 	List<GetIssueDetilsByUser> findAllIssueReturn();
 
 }
