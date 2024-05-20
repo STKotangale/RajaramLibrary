@@ -90,6 +90,10 @@ public class IssueController {
             return new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.NOT_FOUND.value());
         }
     }
-
-	}
-
+	
+	@GetMapping("/issueReturns")
+    public List<GetIssueDetilsByUser> getAllIssueReturns() {
+        return stockService.findAllIssueReturn();
+    }
+	
+}
