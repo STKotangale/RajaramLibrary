@@ -10,7 +10,7 @@ public interface GetIssueDetilsByUser {
     String getusername();
     int getbookDetailId();
     int getStockDetailIdF();
-    int getbookIdF();
+    int getbookId();
     String getisbn();
     String getclassificationNumber();
     String getitemNumber();
@@ -39,4 +39,5 @@ public interface GetIssueDetilsByUser {
     String getbookLost();
     String getbook_return();
     String getbookScrap();
+    int getmemberIdF();
 }

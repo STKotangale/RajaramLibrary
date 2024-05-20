@@ -24,14 +24,14 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "is2.stock_id, is2.invoiceNo, is2.memberIdF, au.username, is2.invoiceDate", nativeQuery = true)
 	List<String> getStockDetailsAsJson();
 
-	@Query(value = "SELECT " + "is2.stock_id, " + "is2.invoiceNo, " + "is2.invoiceDate, " + "is3.stockDetailId, "
-			+ "is3.book_idF, " + "ib.bookName, " + "iscn.stockCopyId, " + "au.username, " + "ibd.* " + "FROM "
-			+ "invt_stock is2 " + "JOIN " + "invt_stockdetail is3 ON is3.stock_idF = is2.stock_id " + "JOIN "
-			+ "invt_book ib ON ib.bookId = is3.book_idF " + "JOIN "
-			+ "invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId " + "JOIN "
-			+ "invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF " + "JOIN "
-			+ "auth_general_members agm ON agm.memberId = is2.memberIdF " + "JOIN "
-			+ "auth_users au ON au.memberIdF = agm.memberId " + "WHERE " + "au.username = ?1 "
+	@Query(value = "SELECT is2.stock_id, " + "is2.memberIdF, " + "is2.invoiceNo, " + "is2.invoiceDate, "
+			+ "is3.stockDetailId, " + "is3.book_idF as bookId, " + "ib.bookName, " + "iscn.stockCopyId, " + "au.username, "
+			+ "ibd.* " + "FROM invt_stock is2 " + "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
+			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF "
+			+ "JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId "
+			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF "
+			+ "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF "
+			+ "JOIN auth_users au ON au.memberIdF = agm.memberId " + "WHERE au.username = :username "
 			+ "AND is2.stock_type = 'A2' " + "AND is3.stock_type = 'A2' "
 			+ "AND iscn.stock_type = 'A2'", nativeQuery = true)
 	List<GetIssueDetilsByUser> findStockDetailsByUsername(String username);
