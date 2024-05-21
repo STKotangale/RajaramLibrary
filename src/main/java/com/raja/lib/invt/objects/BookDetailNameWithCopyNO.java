@@ -5,4 +5,5 @@ public interface BookDetailNameWithCopyNO {
 	String getBookName();
 	Integer getPurchaseCopyNo();
 	Integer getBookDetailId();
+	
 }

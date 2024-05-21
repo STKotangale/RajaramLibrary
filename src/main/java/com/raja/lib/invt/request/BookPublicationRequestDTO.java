@@ -1,4 +1,4 @@
-package com.raja.lib.invt.repository;
+package com.raja.lib.invt.request;
 import lombok.Data;
 
 @Data

@@ -116,6 +116,7 @@ public class BookDetailsService {
             Map<String, Object> bookMap = new HashMap<>();
             bookMap.put("bookRate", detail.getBookRate());
             bookMap.put("purchaseCopyNo", detail.getPurchaseCopyNo());
+            bookMap.put("bookDetailId", detail.getBookDetailId()); // Include bookDetailId
             return bookMap;
         }).collect(Collectors.toList());
 
@@ -125,5 +126,6 @@ public class BookDetailsService {
 
         return result;
     }
+
 }
 

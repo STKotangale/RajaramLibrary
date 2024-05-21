@@ -29,12 +29,9 @@ public interface BookDetailsRepository extends JpaRepository<BookDetails, Intege
 			+ "  AND ibd.copyNo IS NOT NULL \r\n" + "GROUP BY ib.bookId, ib.bookName;\r\n" + "", nativeQuery = true)
 	List<BookDetailNameCopyNO> findBooksDetail();
 
-	@Query(value = "SELECT sdet.book_rate AS bookRate, bk.bookName AS bookName, bdet.purchaseCopyNo AS purchaseCopyNo " +
-            "FROM invt_book_details bdet " +
-            "JOIN invt_stockdetail sdet ON bdet.stockDetailIdF = sdet.stockDetailId " +
-            "JOIN invt_book bk ON bk.bookId = bdet.bookIdF " +
-            "WHERE bk.bookName = :bookName", 
-    nativeQuery = true)
-List<BookDetailNameWithCopyNO> findBookDetailsByBookName(@Param("bookName") String bookName);
+	@Query(value = "SELECT sdet.book_rate AS bookRate, bk.bookName AS bookName, bdet.purchaseCopyNo AS purchaseCopyNo, bdet.bookDetailId AS bookDetailId "
+			+ "FROM invt_book_details bdet " + "JOIN invt_stockdetail sdet ON bdet.stockDetailIdF = sdet.stockDetailId "
+			+ "JOIN invt_book bk ON bk.bookId = bdet.bookIdF " + "WHERE bk.bookName = :bookName", nativeQuery = true)
+	List<BookDetailNameWithCopyNO> findBookDetailsByBookName(@Param("bookName") String bookName);
 
 }

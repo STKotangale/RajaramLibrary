@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.raja.lib.invt.model.BookPublication;
 import com.raja.lib.invt.repository.BookPublicationRepository;
-import com.raja.lib.invt.repository.BookPublicationRequestDTO;
+import com.raja.lib.invt.request.BookPublicationRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 
 @Service

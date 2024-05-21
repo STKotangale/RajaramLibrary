@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.model.BookPublication;
-import com.raja.lib.invt.repository.BookPublicationRequestDTO;
+import com.raja.lib.invt.request.BookPublicationRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.service.BookPublicationService;
 
