@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.raja.lib.invt.model.BookDetails;
 import com.raja.lib.invt.objects.BookDetail;
 import com.raja.lib.invt.objects.BookDetailNameCopyNO;
-
+import com.raja.lib.invt.objects.BookDetailNameWithCopyNO;
 
 @Repository
 public interface BookDetailsRepository extends JpaRepository<BookDetails, Integer> {
@@ -20,24 +20,19 @@ public interface BookDetailsRepository extends JpaRepository<BookDetails, Intege
 			+ "where ibd.isbn IS null; ", nativeQuery = true)
 	List<BookDetail> findBooksByNullIsbn();
 
-	
-
-	@Query(value = "SELECT ib.bookId, \r\n"
-			+ "       ib.bookName, \r\n"
+	@Query(value = "SELECT ib.bookId, \r\n" + "       ib.bookName, \r\n"
 			+ "       GROUP_CONCAT(CONCAT(ibd.bookDetailId, ':', ibd.purchaseCopyNo) ORDER BY ibd.purchaseCopyNo ASC) AS purchaseCopyNos \r\n"
-			+ "FROM invt_book_details ibd \r\n"
-			+ "JOIN invt_book ib ON ibd.bookIdF = ib.bookId \r\n"
-			+ "WHERE ibd.isbn IS NOT NULL \r\n"
-			+ "  AND ibd.bookIssue = 'Y' \r\n"
-			+ "  AND ibd.bookWorkingStart = 'Y' \r\n"
-			+ "  AND ibd.bookLost  = 'N'\r\n"
-			+ "And ibd.bookScrap ='N'\r\n"
-			+ "  AND ibd.copyNo IS NOT NULL \r\n"
-			+ "GROUP BY ib.bookId, ib.bookName;\r\n"
-			+ "", nativeQuery = true)
+			+ "FROM invt_book_details ibd \r\n" + "JOIN invt_book ib ON ibd.bookIdF = ib.bookId \r\n"
+			+ "WHERE ibd.isbn IS NOT NULL \r\n" + "  AND ibd.bookIssue = 'Y' \r\n"
+			+ "  AND ibd.bookWorkingStart = 'Y' \r\n" + "  AND ibd.bookLost  = 'N'\r\n" + "And ibd.bookScrap ='N'\r\n"
+			+ "  AND ibd.copyNo IS NOT NULL \r\n" + "GROUP BY ib.bookId, ib.bookName;\r\n" + "", nativeQuery = true)
 	List<BookDetailNameCopyNO> findBooksDetail();
 
-
-
+	 @Query(value = "SELECT sdet.book_rate AS bookRate, bk.bookName AS bookName, bdet.purchaseCopyNo AS purchaseCopyNo, bdet.bookDetailId AS bookDetailId " +
+             "FROM invt_book_details bdet " +
+             "JOIN invt_stockdetail sdet ON bdet.stockDetailIdF = sdet.stockDetailId " +
+             "JOIN invt_book bk ON bk.bookId = bdet.bookIdF", 
+     nativeQuery = true)
+	List<BookDetailNameWithCopyNO> findAllBookDetails();
 
 }

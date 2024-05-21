@@ -1,6 +1,7 @@
 package com.raja.lib.invt.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.model.Stock;
@@ -22,7 +22,7 @@ import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.request.BookIssueRequestDto;
 import com.raja.lib.invt.request.BookIssueReturnRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
-import com.raja.lib.invt.resposne.StockDTO;
+import com.raja.lib.invt.service.BookDetailsService;
 import com.raja.lib.invt.service.StockService;
 
 @RestController
@@ -32,6 +32,11 @@ public class IssueController {
 
 	@Autowired
 	private StockService stockService;
+	
+	@Autowired
+	private BookDetailsService bookDetailservice;
+	
+	
 
 	@PostMapping("/book-issue")
 	public ResponseEntity<ApiResponseDTO<Stock>> bookIssue(@RequestBody BookIssueRequestDto bookIssueRequestDto) {
@@ -102,8 +107,8 @@ public class IssueController {
 //  ------------------------------------------------- Purchase Return---------------------------------------------------
 
 
-	@GetMapping("/stock-details/{ledgerName}")
-    public List<StockDTO> getStockDetails(@PathVariable String ledgerName) {
-        return stockService.getStockDetailsByLedgerName(ledgerName);
-    }
+	 @GetMapping("/purchase/detail/book-copyno")
+	    public List<Map<String, Object>> getBookDetails() {
+	        return bookDetailservice.getBookDetailsWithCopyNO();
+	    }
 }

@@ -1,7 +1,9 @@
 package com.raja.lib.invt.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,6 +15,7 @@ import com.raja.lib.invt.model.BookDetails;
 import com.raja.lib.invt.model.StockCopyNo;
 import com.raja.lib.invt.objects.BookDetail;
 import com.raja.lib.invt.objects.BookDetailNameCopyNO;
+import com.raja.lib.invt.objects.BookDetailNameWithCopyNO;
 import com.raja.lib.invt.repository.BookDetailsRepository;
 import com.raja.lib.invt.repository.StockCopyNoRepository;
 import com.raja.lib.invt.request.UpdateBookDetailsRequest;
@@ -103,6 +106,33 @@ public class BookDetailsService {
         } catch (Exception e) {
             return "An error occurred while updating book details.";
         }
+    }
+    
+    
+    public List<Map<String, Object>> getBookDetailsWithCopyNO() {
+        List<BookDetailNameWithCopyNO> bookDetails = bookDetailsRepository.findAllBookDetails();
+
+        Map<String, List<Map<String, Object>>> groupedBooks = bookDetails.stream().collect(
+            Collectors.groupingBy(
+            		BookDetailNameWithCopyNO::getBookName,
+                Collectors.mapping(detail -> {
+                    Map<String, Object> bookMap = new HashMap<>();
+                    bookMap.put("bookRate", detail.getBookRate());
+                    bookMap.put("purchaseCopyNo", detail.getPurchaseCopyNo());
+                    bookMap.put("bookDetailId", detail.getBookDetailId());
+                    return bookMap;
+                }, Collectors.toList())
+            )
+        );
+
+        List<Map<String, Object>> result = groupedBooks.entrySet().stream().map(entry -> {
+            Map<String, Object> bookGroup = new HashMap<>();
+            bookGroup.put("bookName", entry.getKey());
+            bookGroup.put("details", entry.getValue());
+            return bookGroup;
+        }).collect(Collectors.toList());
+
+        return result;
     }
 }
 
