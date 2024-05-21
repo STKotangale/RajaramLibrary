@@ -2,11 +2,9 @@ package com.raja.lib.invt.service;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import com.raja.lib.acc.model.Ledger;
 import com.raja.lib.acc.repository.LedgerRepository;
 import com.raja.lib.auth.model.GeneralMember;
@@ -31,6 +29,8 @@ import com.raja.lib.invt.request.StockDetailRequestDTO;
 import com.raja.lib.invt.request.StockRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.resposne.BookResponseDTO;
+import com.raja.lib.invt.resposne.PurchaseReturnBookDetailDTO;
+import com.raja.lib.invt.resposne.PurchaseReturnDTO;
 import com.raja.lib.invt.resposne.StockDetailResponseDTO;
 import com.raja.lib.invt.resposne.StockResponseDTO;
 
@@ -312,95 +312,100 @@ public class StockService {
 	}
 
 	@Transactional
-	public ApiResponseDTO<Void> createIssueReturn(BookIssueReturnRequestDTO bookIssueReturnRequestDTO) throws NotFoundException {
-	    Stock stock = new Stock();
-	    stock.setStock_type("A3");
-	    stock.setInvoiceNo(bookIssueReturnRequestDTO.getIssueNo());
-	    stock.setInvoiceDate(bookIssueReturnRequestDTO.getIssueReturnDate());
+	public ApiResponseDTO<Void> createIssueReturn(BookIssueReturnRequestDTO bookIssueReturnRequestDTO)
+			throws NotFoundException {
+		Stock stock = new Stock();
+		stock.setStock_type("A3");
+		stock.setInvoiceNo(bookIssueReturnRequestDTO.getIssueNo());
+		stock.setInvoiceDate(bookIssueReturnRequestDTO.getIssueReturnDate());
 
-	    GeneralMember generalMember = generalMemberRepository.findById(bookIssueReturnRequestDTO.getMemberId())
-	            .orElseThrow(() -> new NotFoundException());
-	    stock.setGeneralMember(generalMember);
+		GeneralMember generalMember = generalMemberRepository.findById(bookIssueReturnRequestDTO.getMemberId())
+				.orElseThrow(() -> new NotFoundException());
+		stock.setGeneralMember(generalMember);
 
-	    Stock savedStock = stockRepository.save(stock);
+		Stock savedStock = stockRepository.save(stock);
 
-	    for (BookDetailsDTO bookDetailsDTO : bookIssueReturnRequestDTO.getBookDetailsList()) {
-	        StockDetail stockDetail = new StockDetail();
-	        stockDetail.setStockIdF(savedStock);
-	        stockDetail.setStock_type("A3");
+		for (BookDetailsDTO bookDetailsDTO : bookIssueReturnRequestDTO.getBookDetailsList()) {
+			StockDetail stockDetail = new StockDetail();
+			stockDetail.setStockIdF(savedStock);
+			stockDetail.setStock_type("A3");
 
-	        Book book = bookRepository.findById(bookDetailsDTO.getBookId())
-	                .orElseThrow(() -> new NotFoundException());
-	        stockDetail.setBook_idF(book);
+			Book book = bookRepository.findById(bookDetailsDTO.getBookId()).orElseThrow(() -> new NotFoundException());
+			stockDetail.setBook_idF(book);
 
-	        stockDetailRepository.save(stockDetail);
+			stockDetailRepository.save(stockDetail);
 
-	        StockCopyNo stockCopyNo = new StockCopyNo();
-	        stockCopyNo.setStockDetailIdF(stockDetail);
-	        stockCopyNo.setStockType("A3");
+			StockCopyNo stockCopyNo = new StockCopyNo();
+			stockCopyNo.setStockDetailIdF(stockDetail);
+			stockCopyNo.setStockType("A3");
 
-	        BookDetails bookDetails = bookDetailsRepository.findById(bookDetailsDTO.getBookDetailIds())
-	                .orElseThrow(() -> new NotFoundException());
+			BookDetails bookDetails = bookDetailsRepository.findById(bookDetailsDTO.getBookDetailIds())
+					.orElseThrow(() -> new NotFoundException());
 
-	        bookDetails.setBookIssue("Y");
-	        bookDetailsRepository.save(bookDetails);
-	        stockCopyNo.setBookDetailIdF(bookDetails);
-	        stockCopyNoRepository.save(stockCopyNo);
-	    }
+			bookDetails.setBookIssue("Y");
+			bookDetailsRepository.save(bookDetails);
+			stockCopyNo.setBookDetailIdF(bookDetails);
+			stockCopyNoRepository.save(stockCopyNo);
+		}
 
-	    return new ApiResponseDTO<>(true, "Issue return created successfully", null, HttpStatus.CREATED.value());
+		return new ApiResponseDTO<>(true, "Issue return created successfully", null, HttpStatus.CREATED.value());
 	}
 
 	public List<GetIssueDetilsByUser> findAllIssueReturn() {
-        return stockRepository.findAllIssueReturn();
-    }
-	
-	
+		return stockRepository.findAllIssueReturn();
+	}
+
 //	------------------------------------------ Purchase Return ---------------------------------------------
-	
-	
+
 	@Transactional
-    public ApiResponseDTO<Void> createPurchaseReturn(PurchaseReturnRequestDTO purchaseReturnRequestDTO) throws NotFoundException {
-        Ledger ledger = ledgerRepository.findById(purchaseReturnRequestDTO.getLedgerId())
-                .orElseThrow(() -> new NotFoundException());
+	public ApiResponseDTO<Void> createPurchaseReturn(PurchaseReturnRequestDTO purchaseReturnRequestDTO)
+			throws NotFoundException {
+		Ledger ledger = ledgerRepository.findById(purchaseReturnRequestDTO.getLedgerId())
+				.orElseThrow(() -> new NotFoundException());
 
-        BookDetails bookDetails = bookDetailsRepository.findById(purchaseReturnRequestDTO.getBookdetailId())
-                .orElseThrow(() -> new NotFoundException());
+		Stock stock = new Stock();
+		stock.setStock_type("A4");
+		stock.setInvoiceNo(purchaseReturnRequestDTO.getInvoiceNO());
+		stock.setInvoiceDate(purchaseReturnRequestDTO.getInvoiceDate());
+		stock.setBillTotal(purchaseReturnRequestDTO.getBillTotal());
+		stock.setDiscountPercent(purchaseReturnRequestDTO.getDiscount());
+		stock.setDiscountAmount(purchaseReturnRequestDTO.getDiscount());
+		stock.setTotalAfterDiscount(purchaseReturnRequestDTO.getTotalAfterDiscount());
+		stock.setGrandTotal(purchaseReturnRequestDTO.getGrandTotal());
+		stock.setLedgerIDF(ledger);
 
-        StockDetail stockDetail = bookDetails.getStockDetailIdF();
-        
-        Stock stock = new Stock();
-        stock.setStock_type("A4"); 
-        stock.setInvoiceNo(purchaseReturnRequestDTO.getInvoiceNO());
-        stock.setInvoiceDate(purchaseReturnRequestDTO.getInvoiceDate());
-        stock.setBillTotal(purchaseReturnRequestDTO.getBillTotal());
-        stock.setDiscountPercent(purchaseReturnRequestDTO.getDiscount());
-        stock.setDiscountAmount(purchaseReturnRequestDTO.getDiscount());
-        stock.setTotalAfterDiscount(purchaseReturnRequestDTO.getTotalAfterDiscount());
-        stock.setGrandTotal(purchaseReturnRequestDTO.getGrandTotal());
-        stock.setLedgerIDF(ledger);
+		List<StockDetail> stockDetails = new ArrayList<>();
+		List<StockCopyNo> stockCopyNos = new ArrayList<>();
 
-        StockDetail returnStockDetail = new StockDetail();
-        returnStockDetail.setStockIdF(stock);
-        returnStockDetail.setBook_idF(stockDetail.getBook_idF());
-        returnStockDetail.setBook_qty(0);
-        returnStockDetail.setBook_rate(0); 
-        returnStockDetail.setStock_type("A4"); 
-        returnStockDetail.setBook_amount(0); 
-        bookDetails.setBook_return("Y");
+		for (PurchaseReturnBookDetailDTO bookDetailDTO : purchaseReturnRequestDTO.getBookDetails()) {
+			BookDetails bookDetails = bookDetailsRepository.findById(bookDetailDTO.getBookdetailId())
+					.orElseThrow(() -> new NotFoundException());
+			StockDetail stockDetail = bookDetails.getStockDetailIdF();
+			StockDetail returnStockDetail = new StockDetail();
+			returnStockDetail.setStockIdF(stock);
+			returnStockDetail.setBook_idF(stockDetail.getBook_idF());
+			returnStockDetail.setBook_qty(0);
+			returnStockDetail.setBook_rate(0);
+			returnStockDetail.setStock_type("A4");
+			returnStockDetail.setBook_amount(bookDetailDTO.getAmount());
+			bookDetails.setBook_return("Y");
+			stockDetails.add(returnStockDetail);
+			bookDetailsRepository.save(bookDetails);
+			StockCopyNo stockCopyNo = new StockCopyNo();
+			stockCopyNo.setStockDetailIdF(returnStockDetail);
+			stockCopyNo.setBookDetailIdF(bookDetails);
+			stockCopyNo.setStockType("A4");
+			stockCopyNos.add(stockCopyNo);
+		}
+		stock.setStockDetails(stockDetails);
+		stockRepository.save(stock);
+		stockDetailRepository.saveAll(stockDetails);
+		stockCopyNoRepository.saveAll(stockCopyNos);
+		return new ApiResponseDTO<>(true, "Purchase return created successfully", null, HttpStatus.CREATED.value());
+	}
 
-        stockRepository.save(stock);
-        stockDetailRepository.save(returnStockDetail);
-        bookDetailsRepository.save(bookDetails);
+	public List<PurchaseReturnDTO> getStockDetailsByType() {
+		return stockRepository.findStockDetailsByType();
+	}
 
-        StockCopyNo stockCopyNo = new StockCopyNo();
-        stockCopyNo.setStockDetailIdF(returnStockDetail);
-        stockCopyNo.setBookDetailIdF(bookDetails);
-        stockCopyNo.setStockType("A4");
-        stockCopyNoRepository.save(stockCopyNo);
-
-        return new ApiResponseDTO<>(true, "Purchase return created successfully", null, HttpStatus.CREATED.value());
-    }
-
-	
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.model.Stock;
@@ -23,6 +24,7 @@ import com.raja.lib.invt.request.BookIssueRequestDto;
 import com.raja.lib.invt.request.BookIssueReturnRequestDTO;
 import com.raja.lib.invt.request.PurchaseReturnRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
+import com.raja.lib.invt.resposne.PurchaseReturnDTO;
 import com.raja.lib.invt.service.BookDetailsService;
 import com.raja.lib.invt.service.StockService;
 
@@ -126,4 +128,11 @@ public class IssueController {
                     .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
         }
     }
+
+	
+	
+	 @GetMapping("/purchase-return-all")
+	    public List<PurchaseReturnDTO> getStockDetails() {
+	        return stockService.getStockDetailsByType();
+	    }
 }
