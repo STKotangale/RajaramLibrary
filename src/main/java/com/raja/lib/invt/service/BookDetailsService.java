@@ -109,28 +109,19 @@ public class BookDetailsService {
     }
     
     
-    public List<Map<String, Object>> getBookDetailsWithCopyNO() {
-        List<BookDetailNameWithCopyNO> bookDetails = bookDetailsRepository.findAllBookDetails();
+    public Map<String, Object> getBookDetailsByBookName(String bookName) {
+        List<BookDetailNameWithCopyNO> bookDetails = bookDetailsRepository.findBookDetailsByBookName(bookName);
 
-        Map<String, List<Map<String, Object>>> groupedBooks = bookDetails.stream().collect(
-            Collectors.groupingBy(
-            		BookDetailNameWithCopyNO::getBookName,
-                Collectors.mapping(detail -> {
-                    Map<String, Object> bookMap = new HashMap<>();
-                    bookMap.put("bookRate", detail.getBookRate());
-                    bookMap.put("purchaseCopyNo", detail.getPurchaseCopyNo());
-                    bookMap.put("bookDetailId", detail.getBookDetailId());
-                    return bookMap;
-                }, Collectors.toList())
-            )
-        );
-
-        List<Map<String, Object>> result = groupedBooks.entrySet().stream().map(entry -> {
-            Map<String, Object> bookGroup = new HashMap<>();
-            bookGroup.put("bookName", entry.getKey());
-            bookGroup.put("details", entry.getValue());
-            return bookGroup;
+        List<Map<String, Object>> details = bookDetails.stream().map(detail -> {
+            Map<String, Object> bookMap = new HashMap<>();
+            bookMap.put("bookRate", detail.getBookRate());
+            bookMap.put("purchaseCopyNo", detail.getPurchaseCopyNo());
+            return bookMap;
         }).collect(Collectors.toList());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("bookName", bookName);
+        result.put("details", details);
 
         return result;
     }

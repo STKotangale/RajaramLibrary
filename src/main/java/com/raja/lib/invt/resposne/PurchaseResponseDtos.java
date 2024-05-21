@@ -1,7 +1,5 @@
 package com.raja.lib.invt.resposne;
 
-
-import java.util.Date;
 import java.util.List;
 
 import lombok.AllArgsConstructor;

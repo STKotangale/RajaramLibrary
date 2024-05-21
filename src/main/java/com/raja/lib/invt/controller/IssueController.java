@@ -21,6 +21,7 @@ import com.raja.lib.invt.model.Stock;
 import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.request.BookIssueRequestDto;
 import com.raja.lib.invt.request.BookIssueReturnRequestDTO;
+import com.raja.lib.invt.request.PurchaseReturnRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.service.BookDetailsService;
 import com.raja.lib.invt.service.StockService;
@@ -107,8 +108,22 @@ public class IssueController {
 //  ------------------------------------------------- Purchase Return---------------------------------------------------
 
 
-	 @GetMapping("/purchase/detail/book-copyno")
-	    public List<Map<String, Object>> getBookDetails() {
-	        return bookDetailservice.getBookDetailsWithCopyNO();
-	    }
+	@GetMapping("/details/{bookName}")
+    public Map<String, Object> getBookDetails(@PathVariable String bookName) {
+        return bookDetailservice.getBookDetailsByBookName(bookName);
+    }
+	
+	@PostMapping("/purchase-return")
+    public ResponseEntity<ApiResponseDTO<Void>> createPurchaseReturn(@RequestBody PurchaseReturnRequestDTO purchaseReturnRequestDTO) {
+        try {
+            ApiResponseDTO<Void> response = stockService.createPurchaseReturn(purchaseReturnRequestDTO);
+            return ResponseEntity.status(response.getStatusCode()).body(response);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.NOT_FOUND.value()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
+        }
+    }
 }
