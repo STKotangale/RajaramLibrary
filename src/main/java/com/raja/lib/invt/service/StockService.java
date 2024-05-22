@@ -473,8 +473,7 @@ public class StockService {
 //	------------------------------------------ Book scrap --------------------------------------------
 
 	@Transactional
-	public ApiResponseDTO<Void> createBookScrap(BookLostRequestDTO bookLostRequestDTO)
-	        throws NotFoundException {
+	public ApiResponseDTO<Void> createBookScrap(BookLostRequestDTO bookLostRequestDTO) throws NotFoundException {
 	    Ledger ledger = ledgerRepository.findById(bookLostRequestDTO.getLedgerId())
 	            .orElseThrow(() -> new NotFoundException());
 
@@ -496,6 +495,7 @@ public class StockService {
 	        returnStockDetail.setStockIdF(stock);
 	        returnStockDetail.setBook_idF(stockDetail.getBook_idF());
 	        returnStockDetail.setStock_type("A6");
+	        returnStockDetail.setBook_rate(bookDetailDTO.getAmount());
 	        bookDetails.setBookScrap("Y");
 	        stockDetails.add(returnStockDetail);
 	        bookDetailsRepository.save(bookDetails);
@@ -509,8 +509,9 @@ public class StockService {
 	    stockRepository.save(stock);
 	    stockDetailRepository.saveAll(stockDetails);
 	    stockCopyNoRepository.saveAll(stockCopyNos);
-	    return new ApiResponseDTO<>(true, "Book scrap created successfully", null, HttpStatus.CREATED.value());
+	    return new ApiResponseDTO<>(true, "Purchase return created successfully", null, HttpStatus.CREATED.value());
 	}
+
 	
 	public List<PurchaseReturnDTO> getScarpDetials() {
 		return stockRepository.findBookScrap();
