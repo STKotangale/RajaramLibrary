@@ -135,4 +135,27 @@ public class IssueController {
 	    public List<PurchaseReturnDTO> getStockDetails() {
 	        return stockService.getStockDetailsByType();
 	    }
+	 
+	//  ------------------------------------------------- Book Lost---------------------------------------------------
+	 
+	 @PostMapping("/book-lost")
+	    public ResponseEntity<ApiResponseDTO<Void>> createBookLost(@RequestBody PurchaseReturnRequestDTO purchaseReturnRequestDTO) {
+	        try {
+	            ApiResponseDTO<Void> response = stockService.createBookLost(purchaseReturnRequestDTO);
+	            return ResponseEntity.status(response.getStatusCode()).body(response);
+	        } catch (NotFoundException e) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.NOT_FOUND.value()));
+	        } catch (Exception e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
+	        }
+	    }
+	 
+	 @GetMapping("/book-lost-all")
+	    public List<PurchaseReturnDTO> getLostDetials() {
+	        return stockService.getLostDetials();
+	    }
+
+	 
 }

@@ -407,5 +407,59 @@ public class StockService {
 	public List<PurchaseReturnDTO> getStockDetailsByType() {
 		return stockRepository.findStockDetailsByType();
 	}
+	
+	
+//	------------------------------------------ Book Scarp ---------------------------------------------
+	@Transactional
+	public ApiResponseDTO<Void> createBookLost(PurchaseReturnRequestDTO purchaseReturnRequestDTO)
+			throws NotFoundException {
+		Ledger ledger = ledgerRepository.findById(purchaseReturnRequestDTO.getLedgerId())
+				.orElseThrow(() -> new NotFoundException());
+
+		Stock stock = new Stock();
+		stock.setStock_type("A5");
+		stock.setInvoiceNo(purchaseReturnRequestDTO.getInvoiceNO());
+		stock.setInvoiceDate(purchaseReturnRequestDTO.getInvoiceDate());
+		stock.setBillTotal(purchaseReturnRequestDTO.getBillTotal());
+		stock.setDiscountPercent(purchaseReturnRequestDTO.getDiscount());
+		stock.setDiscountAmount(purchaseReturnRequestDTO.getDiscount());
+		stock.setTotalAfterDiscount(purchaseReturnRequestDTO.getTotalAfterDiscount());
+		stock.setGrandTotal(purchaseReturnRequestDTO.getGrandTotal());
+		stock.setLedgerIDF(ledger);
+
+		List<StockDetail> stockDetails = new ArrayList<>();
+		List<StockCopyNo> stockCopyNos = new ArrayList<>();
+
+		for (PurchaseReturnBookDetailDTO bookDetailDTO : purchaseReturnRequestDTO.getBookDetails()) {
+			BookDetails bookDetails = bookDetailsRepository.findById(bookDetailDTO.getBookdetailId())
+					.orElseThrow(() -> new NotFoundException());
+			StockDetail stockDetail = bookDetails.getStockDetailIdF();
+			StockDetail returnStockDetail = new StockDetail();
+			returnStockDetail.setStockIdF(stock);
+			returnStockDetail.setBook_idF(stockDetail.getBook_idF());
+			returnStockDetail.setBook_qty(0);
+			returnStockDetail.setBook_rate(0);
+			returnStockDetail.setStock_type("A5");
+			returnStockDetail.setBook_amount(bookDetailDTO.getAmount());
+			bookDetails.setBookLost("Y");
+			stockDetails.add(returnStockDetail);
+			bookDetailsRepository.save(bookDetails);
+			StockCopyNo stockCopyNo = new StockCopyNo();
+			stockCopyNo.setStockDetailIdF(returnStockDetail);
+			stockCopyNo.setBookDetailIdF(bookDetails);
+			stockCopyNo.setStockType("A5");
+			stockCopyNos.add(stockCopyNo);
+		}
+		stock.setStockDetails(stockDetails);
+		stockRepository.save(stock);
+		stockDetailRepository.saveAll(stockDetails);
+		stockCopyNoRepository.saveAll(stockCopyNos);
+		return new ApiResponseDTO<>(true, "Purchase return created successfully", null, HttpStatus.CREATED.value());
+	}
+	
+
+	public List<PurchaseReturnDTO> getLostDetials() {
+		return stockRepository.findbookLost();
+	}
 
 }
