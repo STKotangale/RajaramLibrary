@@ -13,7 +13,10 @@ public class PurchaseReturnRequestDTO {
 	private int ledgerId;
 	private int billTotal;
 	private int grandTotal;
-	private int discount;
+	private int discountPercent;
+	private int discountAmount;
+	private int gstPercent;
+	private int gstAmount;
 	private int totalAfterDiscount;
 	private List<PurchaseReturnBookDetailDTO> bookDetails;
 }

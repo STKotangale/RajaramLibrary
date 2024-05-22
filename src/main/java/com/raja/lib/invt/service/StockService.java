@@ -368,8 +368,10 @@ public class StockService {
 		stock.setInvoiceNo(purchaseReturnRequestDTO.getInvoiceNO());
 		stock.setInvoiceDate(purchaseReturnRequestDTO.getInvoiceDate());
 		stock.setBillTotal(purchaseReturnRequestDTO.getBillTotal());
-		stock.setDiscountPercent(purchaseReturnRequestDTO.getDiscount());
-		stock.setDiscountAmount(purchaseReturnRequestDTO.getDiscount());
+		stock.setDiscountPercent(purchaseReturnRequestDTO.getDiscountPercent());
+		stock.setDiscountAmount(purchaseReturnRequestDTO.getDiscountAmount());
+		stock.setGstPercent(purchaseReturnRequestDTO.getGstPercent());
+		stock.setGstAmount(purchaseReturnRequestDTO.getGstAmount());
 		stock.setTotalAfterDiscount(purchaseReturnRequestDTO.getTotalAfterDiscount());
 		stock.setGrandTotal(purchaseReturnRequestDTO.getGrandTotal());
 		stock.setLedgerIDF(ledger);
@@ -421,8 +423,10 @@ public class StockService {
 		stock.setInvoiceNo(purchaseReturnRequestDTO.getInvoiceNO());
 		stock.setInvoiceDate(purchaseReturnRequestDTO.getInvoiceDate());
 		stock.setBillTotal(purchaseReturnRequestDTO.getBillTotal());
-		stock.setDiscountPercent(purchaseReturnRequestDTO.getDiscount());
-		stock.setDiscountAmount(purchaseReturnRequestDTO.getDiscount());
+		stock.setDiscountPercent(purchaseReturnRequestDTO.getDiscountPercent());
+		stock.setDiscountAmount(purchaseReturnRequestDTO.getDiscountAmount());
+		stock.setGstPercent(purchaseReturnRequestDTO.getGstPercent());
+		stock.setGstAmount(purchaseReturnRequestDTO.getGstAmount());
 		stock.setTotalAfterDiscount(purchaseReturnRequestDTO.getTotalAfterDiscount());
 		stock.setGrandTotal(purchaseReturnRequestDTO.getGrandTotal());
 		stock.setLedgerIDF(ledger);
