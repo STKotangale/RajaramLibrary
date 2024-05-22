@@ -81,7 +81,15 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId "
 			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF " + "WHERE is2.stock_type = 'A5' "
 			+ "AND is3.stock_type = 'A5'", nativeQuery = true)
-	List<PurchaseReturnDTO> findbookLost();
+	List<PurchaseReturnDTO> findBookLost();
+	
+	@Query(value = "SELECT al.ledgerName, ibd.purchaseCopyNo, ibd.bookDetailId, is3.*, ib.bookName, is2.* "
+			+ "FROM invt_stock is2 " + "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
+			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF " + "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF "
+			+ "JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId "
+			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF " + "WHERE is2.stock_type = 'A6' "
+			+ "AND is3.stock_type = 'A6'", nativeQuery = true)
+	List<PurchaseReturnDTO> findBookScrap();
 	
 	
 	

@@ -2,9 +2,11 @@ package com.raja.lib.invt.service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
 import com.raja.lib.acc.model.Ledger;
 import com.raja.lib.acc.repository.LedgerRepository;
 import com.raja.lib.auth.model.GeneralMember;
@@ -24,6 +26,8 @@ import com.raja.lib.invt.request.BookDetailDto;
 import com.raja.lib.invt.request.BookDetailsDTO;
 import com.raja.lib.invt.request.BookIssueRequestDto;
 import com.raja.lib.invt.request.BookIssueReturnRequestDTO;
+import com.raja.lib.invt.request.BookLostBookDetailDTO;
+import com.raja.lib.invt.request.BookLostRequestDTO;
 import com.raja.lib.invt.request.PurchaseReturnRequestDTO;
 import com.raja.lib.invt.request.StockDetailRequestDTO;
 import com.raja.lib.invt.request.StockRequestDTO;
@@ -411,7 +415,7 @@ public class StockService {
 	}
 	
 	
-//	------------------------------------------ Book Scarp ---------------------------------------------
+//	------------------------------------------ Book Lost ---------------------------------------------
 	@Transactional
 	public ApiResponseDTO<Void> createBookLost(PurchaseReturnRequestDTO purchaseReturnRequestDTO)
 			throws NotFoundException {
@@ -463,7 +467,54 @@ public class StockService {
 	
 
 	public List<PurchaseReturnDTO> getLostDetials() {
-		return stockRepository.findbookLost();
+		return stockRepository.findBookLost();
 	}
 
+//	------------------------------------------ Book scrap --------------------------------------------
+
+	@Transactional
+	public ApiResponseDTO<Void> createBookScrap(BookLostRequestDTO bookLostRequestDTO)
+	        throws NotFoundException {
+	    Ledger ledger = ledgerRepository.findById(bookLostRequestDTO.getLedgerId())
+	            .orElseThrow(() -> new NotFoundException());
+
+	    Stock stock = new Stock();
+	    stock.setStock_type("A6");
+	    stock.setInvoiceNo(bookLostRequestDTO.getInvoiceNO());
+	    stock.setInvoiceDate(bookLostRequestDTO.getInvoiceDate());
+	    stock.setBillTotal(bookLostRequestDTO.getBillTotal());
+	    stock.setLedgerIDF(ledger);
+
+	    List<StockDetail> stockDetails = new ArrayList<>();
+	    List<StockCopyNo> stockCopyNos = new ArrayList<>();
+
+	    for (BookLostBookDetailDTO bookDetailDTO : bookLostRequestDTO.getBookDetails()) {
+	        BookDetails bookDetails = bookDetailsRepository.findById(bookDetailDTO.getBookdetailId())
+	                .orElseThrow(() -> new NotFoundException());
+	        StockDetail stockDetail = bookDetails.getStockDetailIdF();
+	        StockDetail returnStockDetail = new StockDetail();
+	        returnStockDetail.setStockIdF(stock);
+	        returnStockDetail.setBook_idF(stockDetail.getBook_idF());
+	        returnStockDetail.setStock_type("A6");
+	        bookDetails.setBookScrap("Y");
+	        stockDetails.add(returnStockDetail);
+	        bookDetailsRepository.save(bookDetails);
+	        StockCopyNo stockCopyNo = new StockCopyNo();
+	        stockCopyNo.setStockDetailIdF(returnStockDetail);
+	        stockCopyNo.setBookDetailIdF(bookDetails);
+	        stockCopyNo.setStockType("A6");
+	        stockCopyNos.add(stockCopyNo);
+	    }
+	    stock.setStockDetails(stockDetails);
+	    stockRepository.save(stock);
+	    stockDetailRepository.saveAll(stockDetails);
+	    stockCopyNoRepository.saveAll(stockCopyNos);
+	    return new ApiResponseDTO<>(true, "Book scrap created successfully", null, HttpStatus.CREATED.value());
+	}
+	
+	public List<PurchaseReturnDTO> getScarpDetials() {
+		return stockRepository.findBookScrap();
+	}
+
+	
 }

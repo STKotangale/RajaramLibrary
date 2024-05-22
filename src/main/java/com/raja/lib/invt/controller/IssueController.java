@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.model.Stock;
 import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.request.BookIssueRequestDto;
 import com.raja.lib.invt.request.BookIssueReturnRequestDTO;
+import com.raja.lib.invt.request.BookLostRequestDTO;
 import com.raja.lib.invt.request.PurchaseReturnRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.resposne.PurchaseReturnDTO;
@@ -155,6 +155,27 @@ public class IssueController {
 	 @GetMapping("/book-lost-all")
 	    public List<PurchaseReturnDTO> getLostDetials() {
 	        return stockService.getLostDetials();
+	    }
+
+		//  ------------------------------------------------- Book scrap---------------------------------------------------
+	 
+	 @PostMapping("/book-scrap")
+	    public ResponseEntity<ApiResponseDTO<Void>> createBookScrap(@RequestBody BookLostRequestDTO bookLostRequestDTO) {
+	        try {
+	            ApiResponseDTO<Void> response = stockService.createBookScrap(bookLostRequestDTO);
+	            return ResponseEntity.status(response.getStatusCode()).body(response);
+	        } catch (NotFoundException e) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.NOT_FOUND.value()));
+	        } catch (Exception e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
+	        }
+	    }
+	 
+	 @GetMapping("/book-scrap-all")
+	    public List<PurchaseReturnDTO> geScraptDetials() {
+	        return stockService.getScarpDetials();
 	    }
 
 	 
