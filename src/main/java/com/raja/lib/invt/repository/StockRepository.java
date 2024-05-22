@@ -67,9 +67,11 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "WHERE al.ledgerName = :ledgerName", nativeQuery = true)
 	List<Object[]> findStockDetailsByLedgerName(@Param("ledgerName") String ledgerName);
 
-	@Query(value = "select is3.*, is3.book_idF , ib.bookName , al.ledgerName \r\n" + "from invt_stock is2 join\r\n"
-			+ "invt_stockdetail is3 on is3.stock_idF = is2.stock_id join \r\n"
-			+ "invt_book ib on ib.bookId = is3.book_idF join \r\n" + "acc_ledger al on al.ledgerID = is2.ledgerIDF \r\n"
-			+ "where is2.stock_type ='A4'AND\r\n" + "is3.stock_type ='A4'", nativeQuery = true)
+	@Query(value = "SELECT al.ledgerName, ibd.purchaseCopyNo, ibd.bookDetailId, is3.*, ib.bookName, is2.* "
+			+ "FROM invt_stock is2 " + "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
+			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF " + "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF "
+			+ "JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId "
+			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF " + "WHERE is2.stock_type = 'A4' "
+			+ "AND is3.stock_type = 'A4'", nativeQuery = true)
 	List<PurchaseReturnDTO> findStockDetailsByType();
 }
