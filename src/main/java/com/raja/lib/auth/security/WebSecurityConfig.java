@@ -99,7 +99,8 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
                   .requestMatchers("/api/stock/**").permitAll()
                   .requestMatchers("/api/issue/**").permitAll()
                   .requestMatchers("/api/fees/**").permitAll()
-                  .requestMatchers("/api/excel/**").permitAll()  // Added this line
+                  .requestMatchers("/api/excel/**").permitAll()
+                  .requestMatchers("/api/config/**").permitAll() 
                   .anyRequest().authenticated()
           );
 
