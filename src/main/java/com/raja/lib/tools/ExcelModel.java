@@ -9,11 +9,11 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "aa_data_entry") 
+@Table(name = "aa_data_entry")
 @Data
 public class ExcelModel {
 
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SRNO")
     private int srNo;
@@ -56,5 +56,4 @@ public class ExcelModel {
 
     @Column(name = "KADAMBARI_NO")
     private String kadambarino;
-
 }

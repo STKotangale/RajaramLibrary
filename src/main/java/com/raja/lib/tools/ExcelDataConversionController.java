@@ -1,5 +1,11 @@
 package com.raja.lib.tools;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -15,13 +21,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/excel")
-public class ExcelDataConversionController  {
+public class ExcelDataConversionController {
 
     private static final Logger logger = LoggerFactory.getLogger(ExcelDataConversionController.class);
 
@@ -48,22 +50,23 @@ public class ExcelDataConversionController  {
         try (Workbook workbook = WorkbookFactory.create(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) { // Skip header row
+                if (row.getRowNum() == 0) {
                     continue;
                 }
                 ExcelModel entity = new ExcelModel();
-                entity.setAccessionNo(getCellValue(row, 0));
-                entity.setDateOfAccessioned(getCellValue(row, 1));
-                entity.setBooksName(getCellValue(row, 2));
-                entity.setAutherName(getCellValue(row, 3));
-                entity.setPublisheName(getCellValue(row, 4));
-                entity.setYearOfPublication(getCellValue(row, 5));
-                entity.setEdition(getCellValue(row, 6));
-                entity.setPages(getCellValue(row, 7));
-                entity.setBooksprice(getCellValue(row, 8));
-                entity.setNoOfCopies(getCellValue(row, 9));
-                entity.setLocation(getCellValue(row, 10));
-                entity.setKadambarino(getCellValue(row, 11));
+                entity.setAccessionNo(getCellValue(row, 2));
+                entity.setDateOfAccessioned(getCellValue(row, 3));
+                entity.setBooksName(getCellValue(row, 4));
+                entity.setLanguage(getCellValue(row, 5)); 
+                entity.setAutherName(getCellValue(row, 6));
+                entity.setPublisheName(getCellValue(row, 7));
+                entity.setYearOfPublication(getCellValue(row, 8));
+                entity.setEdition(getCellValue(row, 9));
+                entity.setPages(getCellValue(row, 10));
+                entity.setBooksprice(getCellValue(row, 11));
+                entity.setNoOfCopies(getCellValue(row, 12)); 
+                entity.setLocation(getCellValue(row, 13));
+                entity.setKadambarino(getCellValue(row, 14));
                 entities.add(entity);
             }
         }
@@ -78,7 +81,17 @@ public class ExcelDataConversionController  {
             case STRING:
                 return row.getCell(cellIndex).getStringCellValue();
             case NUMERIC:
-                return String.valueOf(row.getCell(cellIndex).getNumericCellValue());
+                if (DateUtil.isCellDateFormatted(row.getCell(cellIndex))) {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+                    return dateFormat.format(row.getCell(cellIndex).getDateCellValue());
+                } else {
+                    double numericValue = row.getCell(cellIndex).getNumericCellValue();
+                    if (numericValue == (int) numericValue) {
+                        return String.valueOf((int) numericValue);
+                    } else {
+                        return String.valueOf(numericValue);
+                    }
+                }
             case BOOLEAN:
                 return String.valueOf(row.getCell(cellIndex).getBooleanCellValue());
             case FORMULA:
@@ -87,4 +100,5 @@ public class ExcelDataConversionController  {
                 return null;
         }
     }
+
 }
