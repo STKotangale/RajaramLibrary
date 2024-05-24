@@ -101,7 +101,8 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
                   .requestMatchers("/api/fees/**").permitAll()
                   .requestMatchers("/api/excel/**").permitAll()
                   .requestMatchers("/api/config/**").permitAll() 
-                  .requestMatchers("/api/monthly-member-fees/**").permitAll() // Added this line
+                  .requestMatchers("/api/monthly-member-fees/**").permitAll() 
+                  .requestMatchers("/api/membership-fees/**").permitAll()
                   .anyRequest().authenticated()
           );
 
