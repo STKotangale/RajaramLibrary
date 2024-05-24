@@ -33,7 +33,7 @@ public class MemberMonthlyFeesController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MemberMonthlyFeesResponse> getFeeById(@PathVariable Long id) {
+    public ResponseEntity<MemberMonthlyFeesResponse> getFeeById(@PathVariable int id) {
         return ResponseEntity.ok(service.getFeeById(id));
     }
 
@@ -43,12 +43,12 @@ public class MemberMonthlyFeesController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MemberMonthlyFeesResponse> updateFee(@PathVariable Long id, @RequestBody MemberMonthlyFeesRequest request) {
+    public ResponseEntity<MemberMonthlyFeesResponse> updateFee(@PathVariable int id, @RequestBody MemberMonthlyFeesRequest request) {
         return ResponseEntity.ok(service.updateFee(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFee(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteFee(@PathVariable int id) {
         service.deleteFee(id);
         return ResponseEntity.noContent().build();
     }

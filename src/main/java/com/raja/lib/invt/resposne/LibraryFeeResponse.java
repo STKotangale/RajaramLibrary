@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class LibraryFeeResponse {
 
-	private Long feesId;
+	private int feesId;
 	private String feesName;
 	private int feesAmount;
 	private String isBlock;

@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class InvtConfigResponse {
-	private Long srno;
+	private int srno;
 	private Integer bookDays;
 	private Double finePerDays;
 }

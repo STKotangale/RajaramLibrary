@@ -22,7 +22,7 @@ public class LibraryFeeService {
         return repository.findAll().stream().map(this::convertToResponse).collect(Collectors.toList());
     }
 
-    public LibraryFeeResponse updateFee(Long feesId, LibraryFeeRequest request) {
+    public LibraryFeeResponse updateFee(int feesId, LibraryFeeRequest request) {
         LibraryFee fee = repository.findById(feesId).orElseThrow(() -> new ResourceNotFoundException("Fee not found"));
         fee.setFeesName(request.getFeesName());
         fee.setFeesAmount(request.getFeesAmount());

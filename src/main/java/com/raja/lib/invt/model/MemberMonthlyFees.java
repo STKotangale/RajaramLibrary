@@ -1,6 +1,7 @@
 package com.raja.lib.invt.model;
 
-import java.util.Date;
+import java.io.Serializable;
+
 import com.raja.lib.acc.model.Ledger;
 import com.raja.lib.auth.model.GeneralMember;
 import jakarta.persistence.Column;
@@ -17,51 +18,53 @@ import lombok.Data;
 @Entity
 @Table(name = "acc_member_monthly_fees")
 @Data
-public class MemberMonthlyFees {
+public class MemberMonthlyFees implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "memberMonthlyId")
-    private Long memberMonthlyId;
+	private static final long serialVersionUID = 1L;
 
-    @Column(name = "memMonInvoiceNo")
-    private String memMonInvoiceNo;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "memberMonthlyId")
+	private int memberMonthlyId;
 
-    @Column(name = "memMonInvoiceDate")
-    private String memMonInvoiceDate;
+	@Column(name = "memMonInvoiceNo")
+	private String memMonInvoiceNo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberIdF", referencedColumnName = "memberId")
-    private GeneralMember member;
+	@Column(name = "memMonInvoiceDate")
+	private String memMonInvoiceDate;
 
-    @Column(name = "feesAmount")
-    private Double feesAmount;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "memberIdF", referencedColumnName = "memberId")
+	private GeneralMember member;
 
-    @Column(name = "fromDate")
-    private String fromDate;
+	@Column(name = "feesAmount")
+	private Double feesAmount;
 
-    @Column(name = "toDate")
-    private String toDate;
+	@Column(name = "fromDate")
+	private String fromDate;
 
-    @Column(name = "totalMonths")
-    private Integer totalMonths;
+	@Column(name = "toDate")
+	private String toDate;
 
-    @Column(name = "feesType")
-    private String feesType;
+	@Column(name = "totalMonths")
+	private Integer totalMonths;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ledgerIDF", referencedColumnName = "ledgerID")
-    private Ledger ledger;
+	@Column(name = "feesType")
+	private String feesType;
 
-    @Column(name = "bankName")
-    private String bankName;
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "ledgerIDF", referencedColumnName = "ledgerID")
+//	private Ledger ledger;
 
-    @Column(name = "chequeNo")
-    private String chequeNo;
+	@Column(name = "bankName")
+	private String bankName;
 
-    @Column(name = "chequeDate")
-    private String chequeDate;
+	@Column(name = "chequeNo")
+	private String chequeNo;
 
-    @Column(name = "monthlyDescription")
-    private String monthlyDescription;
+	@Column(name = "chequeDate")
+	private String chequeDate;
+
+	@Column(name = "monthlyDescription")
+	private String monthlyDescription;
 }

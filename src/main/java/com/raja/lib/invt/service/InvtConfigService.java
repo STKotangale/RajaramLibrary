@@ -21,7 +21,7 @@ public class InvtConfigService {
 		return invtConfigRepository.findAll().stream().map(this::convertToResponse).collect(Collectors.toList());
 	}
 
-	public InvtConfigResponse updateConfig(Long srno, InvtConfigRequest request) {
+	public InvtConfigResponse updateConfig(int srno, InvtConfigRequest request) {
 		InvtConfig invtConfig = invtConfigRepository.findById(srno)
 				.orElseThrow(() -> new RuntimeException("Config not found"));
 		invtConfig.setBookDays(request.getBookDays());

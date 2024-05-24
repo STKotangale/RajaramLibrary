@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.raja.lib.invt.model.InvtConfig;
 
 @Repository
-public interface InvtConfigRepository extends JpaRepository<InvtConfig, Long> {
+public interface InvtConfigRepository extends JpaRepository<InvtConfig, Integer> {
 }

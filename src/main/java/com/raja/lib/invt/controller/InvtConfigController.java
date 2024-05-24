@@ -29,7 +29,7 @@ public class InvtConfigController {
 	}
 
 	@PutMapping("/{srno}")
-	public ResponseEntity<InvtConfigResponse> updateConfig(@PathVariable Long srno,
+	public ResponseEntity<InvtConfigResponse> updateConfig(@PathVariable int srno,
 			@RequestBody InvtConfigRequest request) {
 		return ResponseEntity.ok(invtConfigService.updateConfig(srno, request));
 	}

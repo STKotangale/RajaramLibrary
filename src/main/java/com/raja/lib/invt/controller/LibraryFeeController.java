@@ -30,7 +30,7 @@ public class LibraryFeeController {
     }
 
     @PutMapping("/{feesId}")
-    public ResponseEntity<LibraryFeeResponse> updateFee(@PathVariable Long feesId, @RequestBody LibraryFeeRequest request) {
+    public ResponseEntity<LibraryFeeResponse> updateFee(@PathVariable int feesId, @RequestBody LibraryFeeRequest request) {
         LibraryFeeResponse response = service.updateFee(feesId, request);
         return ResponseEntity.ok(response);
     }

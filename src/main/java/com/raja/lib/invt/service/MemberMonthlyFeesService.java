@@ -32,7 +32,7 @@ public class MemberMonthlyFeesService {
         return repository.findAll().stream().map(this::convertToResponse).collect(Collectors.toList());
     }
 
-    public MemberMonthlyFeesResponse getFeeById(Long id) {
+    public MemberMonthlyFeesResponse getFeeById(int id) {
         MemberMonthlyFees fee = repository.findById(id).orElseThrow(() -> new RuntimeException("Fee not found"));
         return convertToResponse(fee);
     }
@@ -43,13 +43,13 @@ public class MemberMonthlyFeesService {
         return convertToResponse(repository.save(fee));
     }
 
-    public MemberMonthlyFeesResponse updateFee(Long id, MemberMonthlyFeesRequest request) {
+    public MemberMonthlyFeesResponse updateFee(int id, MemberMonthlyFeesRequest request) {
         MemberMonthlyFees fee = repository.findById(id).orElseThrow(() -> new RuntimeException("Fee not found"));
         updateEntityWithRequest(fee, request);
         return convertToResponse(repository.save(fee));
     }
 
-    public void deleteFee(Long id) {
+    public void deleteFee(int id) {
         repository.deleteById(id);
     }
 
@@ -70,9 +70,9 @@ public class MemberMonthlyFeesService {
                 .orElseThrow(() -> new RuntimeException("Member not found"));
         fee.setMember(member);
 
-        Ledger ledger = ledgerRepository.findById(request.getLedgerIDF())
-                .orElseThrow(() -> new RuntimeException("Ledger not found"));
-        fee.setLedger(ledger);
+//        Ledger ledger = ledgerRepository.findById(request.getLedgerIDF())
+//                .orElseThrow(() -> new RuntimeException("Ledger not found"));
+//        fee.setLedger(ledger);
     }
 
     private MemberMonthlyFeesResponse convertToResponse(MemberMonthlyFees fee) {
@@ -86,7 +86,7 @@ public class MemberMonthlyFeesService {
         response.setToDate(fee.getToDate());
         response.setTotalMonths(fee.getTotalMonths());
         response.setFeesType(fee.getFeesType());
-        response.setLedgerIDF(fee.getLedger().getLedgerID());
+//        response.setLedgerIDF(fee.getLedger().getLedgerID());
         response.setBankName(fee.getBankName());
         response.setChequeNo(fee.getChequeNo());
         response.setChequeDate(fee.getChequeDate());

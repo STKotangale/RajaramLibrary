@@ -1,5 +1,7 @@
 package com.raja.lib.invt.model;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -9,15 +11,18 @@ import lombok.Data;
 @Entity
 @Table(name = "invt_config")
 @Data
-public class InvtConfig {
+public class InvtConfig implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	@Id
-	@Column(name="srno")
-	private Long srno;
-	
-	@Column(name="bookDays")
+	@Column(name = "srno")
+	private int srno;
+
+	@Column(name = "bookDays")
 	private Integer bookDays;
-	
-	@Column(name="finePerDays")
+
+	@Column(name = "finePerDays")
 	private Double finePerDays;
 
 }

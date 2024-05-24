@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class MemberMonthlyFeesResponse {
-	private Long memberMonthlyId;
+	private int memberMonthlyId;
 	private String memMonInvoiceNo;
 	private String memMonInvoiceDate;
 	private int memberIdF;
