@@ -7,4 +7,7 @@ import com.raja.lib.invt.model.InvtConfig;
 
 @Repository
 public interface InvtConfigRepository extends JpaRepository<InvtConfig, Integer> {
+	
+    InvtConfig findFirstByOrderBySrnoAsc();
+
 }

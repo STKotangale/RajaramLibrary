@@ -80,5 +80,13 @@ public class Stock implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "memberIdF")
 	private GeneralMember generalMember;
+	
+	@Column(name="fineDays")
+	private double fineDays;
 
+	@Column(name="finePerDays")
+	private double finePerDays;
+	
+	@Column(name="fineAmount")
+	private double fineAmount;
 }

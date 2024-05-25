@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.raja.lib.invt.model.Stock;
 import com.raja.lib.invt.objects.GetIssueDetilsByUser;
+import com.raja.lib.invt.objects.InvoiceDateProjection;
 import com.raja.lib.invt.resposne.CreateStockResponse;
 import com.raja.lib.invt.resposne.PurchaseReturnDTO;
 
@@ -40,12 +41,13 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "AND iscn.stock_type = 'A2'", nativeQuery = true)
 	List<GetIssueDetilsByUser> findStockDetailsByUsername(String username);
 
-	@Query(value = "SELECT \r\n" + "    is2.stock_id, \r\n" + "    is2.invoiceNo, \r\n" + "    is2.memberIdF ,\r\n"
+	@Query(value = "SELECT \r\n" + "    is2.stock_id, \r\n" + "    is2.invoiceNo, \r\n" + "    is2.fineDays,\r\n"
+			+ "    is2.finePerDays ,\r\n" + "    is2.fineAmount,\r\n" + "    is2.memberIdF,\r\n"
 			+ "    is2.invoiceDate, \r\n" + "    is3.stockDetailId, \r\n" + "    is3.book_idF as bookId, \r\n"
 			+ "    ib.bookName, \r\n" + "    iscn.stockCopyId, \r\n" + "    au.username, \r\n" + "    ibd.* \r\n"
 			+ "FROM \r\n" + "    invt_stock is2 \r\n" + "JOIN \r\n"
 			+ "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id \r\n" + "JOIN \r\n"
-			+ "    invt_book ib ON ib.bookId = is3.book_idF \r\n" + "JOIN\r\n"
+			+ "    invt_book ib ON ib.bookId = is3.book_idF \r\n" + "JOIN \r\n"
 			+ "    invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId \r\n" + "JOIN \r\n"
 			+ "    invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF \r\n" + "JOIN \r\n"
 			+ "    auth_general_members agm ON agm.memberId = is2.memberIdF \r\n" + "JOIN \r\n"
@@ -74,7 +76,7 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF " + "WHERE is2.stock_type = 'A4' "
 			+ "AND is3.stock_type = 'A4'", nativeQuery = true)
 	List<PurchaseReturnDTO> findStockDetailsByType();
-	
+
 	@Query(value = "SELECT al.ledgerName, ibd.purchaseCopyNo, ibd.bookDetailId, is3.*, ib.bookName, is2.* "
 			+ "FROM invt_stock is2 " + "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
 			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF " + "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF "
@@ -82,7 +84,7 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF " + "WHERE is2.stock_type = 'A5' "
 			+ "AND is3.stock_type = 'A5'", nativeQuery = true)
 	List<PurchaseReturnDTO> findBookLost();
-	
+
 	@Query(value = "SELECT al.ledgerName, ibd.purchaseCopyNo, ibd.bookDetailId, is3.*, ib.bookName, is2.* "
 			+ "FROM invt_stock is2 " + "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
 			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF " + "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF "
@@ -90,7 +92,11 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF " + "WHERE is2.stock_type = 'A6' "
 			+ "AND is3.stock_type = 'A6'", nativeQuery = true)
 	List<PurchaseReturnDTO> findBookScrap();
-	
-	
-	
+
+	@Query(value = "select invoiceDate  from invt_stock is2 join\r\n"
+			+ "invt_stockdetail is3 on is3.stock_idF  = is2.stock_id join \r\n"
+			+ "invt_stock_copy_no iscn on iscn.stockDetailIdF = is3.stockDetailId join \r\n"
+			+ "invt_book_details ibd on ibd.bookDetailId = iscn.bookDetailIdF \r\n"
+			+ "where ibd.bookDetailId= bookDetailId  and \r\n" + "is2.stock_type =\"A2\"", nativeQuery = true)
+	List<InvoiceDateProjection> findInvoiceDateByBookDetailId(@Param("bookDetailId") Long bookDetailId);
 }

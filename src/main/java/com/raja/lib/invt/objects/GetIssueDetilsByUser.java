@@ -40,4 +40,7 @@ public interface GetIssueDetilsByUser {
     String getbook_return();
     String getbookScrap();
     int getmemberIdF();
+    double getfineDays();
+    double getfinePerDays();
+    double getfineAmount();
 }
