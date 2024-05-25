@@ -143,4 +143,7 @@ public class GeneralMemberService {
 		member.setIsBlock(requestDTO.getIsBlock());
 		return member;
 	}
+	
+	
+	
 }

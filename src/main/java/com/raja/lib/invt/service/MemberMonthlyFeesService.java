@@ -13,6 +13,7 @@ import com.raja.lib.auth.model.GeneralMember;
 import com.raja.lib.auth.repository.GeneralMemberRepository;
 import com.raja.lib.invt.model.MemberMonthlyFees;
 import com.raja.lib.invt.repository.MemberMonthlyFeesRepository;
+import com.raja.lib.invt.repository.MembershipFeesRepository;
 import com.raja.lib.invt.request.MemberMonthlyFeesRequest;
 import com.raja.lib.invt.resposne.MemberMonthlyFeesResponse;
 
@@ -21,6 +22,10 @@ public class MemberMonthlyFeesService {
 
     @Autowired
     private MemberMonthlyFeesRepository repository;
+    
+    @Autowired
+    private MembershipFeesRepository feesrepository;
+
 
     @Autowired
     private LedgerRepository ledgerRepository;
@@ -93,4 +98,8 @@ public class MemberMonthlyFeesService {
         response.setMonthlyDescription(fee.getMonthlyDescription());
         return response;
     }
+    
+    
+    
+    
 }

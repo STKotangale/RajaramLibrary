@@ -21,6 +21,5 @@ public interface GeneralMemberRepository extends JpaRepository<GeneralMember, In
 	@Query(value = "SELECT * FROM auth_general_members agm JOIN auth_users au ON au.memberIdF = agm.memberId WHERE agm.memberId = :memberId", nativeQuery = true)
 	GenralMember getGeneralMemberById(@Param("memberId") int memberId);
 
-
 	
 }

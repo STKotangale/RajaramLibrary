@@ -66,4 +66,7 @@ public class GeneralMemberController {
         ApiResponseDTO<String> responseDTO = generalMemberService.deleteGeneralMember(id);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
+    
+  
+    
 }
