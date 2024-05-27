@@ -55,6 +55,9 @@ public class PermanentMember implements Serializable{
     @Column(name="confirmDate")
     private String confirmDate;
     
+    @Column(name="parMemEmailId")
+    private String emailId;
+    
 	@Column(name = "isBlock", columnDefinition = "char(1) default 'N'")
     private char isBlock;
 }

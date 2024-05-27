@@ -17,5 +17,6 @@ public class PermanentMemberRequestDTO {
     private long mobileNo;
     private String confirmDate;
     private char isBlock;
+    private String emailId;
 }
 

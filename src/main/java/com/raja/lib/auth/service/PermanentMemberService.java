@@ -54,19 +54,18 @@ public class PermanentMemberService {
         existingMember.setMemberOccupation(requestDTO.getMemberOccupation());
         existingMember.setMobileNo(requestDTO.getMobileNo());
         existingMember.setConfirmDate(requestDTO.getConfirmDate());
-        existingMember.setIsBlock(requestDTO.getIsBlock());
-        
+        existingMember.setIsBlock('N'); // Set default value 'N'
+        existingMember.setEmailId(requestDTO.getEmailId());
 
         return permanentMemberRepository.save(existingMember);
     }
+
     public ApiResponseDTO<String> deletePermanentMember(int id) {
         LOGGER.info("Deleting permanent member with id: {}", id);
         PermanentMember existingMember = getPermanentMemberById(id);
         permanentMemberRepository.delete(existingMember);
         return new ApiResponseDTO<>(true, "Permanent member deleted successfully", "Permanent member with ID " + id + " has been deleted", HttpStatus.OK.value());
     }
-
-
 
     private PermanentMember convertToEntity(PermanentMemberRequestDTO requestDTO) {
         PermanentMember member = new PermanentMember();
@@ -81,7 +80,8 @@ public class PermanentMemberService {
         member.setMemberOccupation(requestDTO.getMemberOccupation());
         member.setMobileNo(requestDTO.getMobileNo());
         member.setConfirmDate(requestDTO.getConfirmDate());
-        member.setIsBlock(requestDTO.getIsBlock());
+        member.setIsBlock('N'); // Set default value 'N'
+        member.setEmailId(requestDTO.getEmailId());
         return member;
     }
 }

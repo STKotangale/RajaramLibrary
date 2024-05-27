@@ -16,6 +16,7 @@ import com.raja.lib.auth.model.GeneralMember;
 import com.raja.lib.auth.model.Role;
 import com.raja.lib.auth.model.User;
 import com.raja.lib.auth.objects.GenralMember;
+import com.raja.lib.auth.objects.MemberBookInfo;
 import com.raja.lib.auth.repository.GeneralMemberRepository;
 import com.raja.lib.auth.repository.RoleRepository;
 import com.raja.lib.auth.repository.UserRepository;
@@ -99,7 +100,7 @@ public class GeneralMemberService {
 		member.setMemberOccupation(requestDTO.getMemberOccupation());
 		member.setMobileNo(requestDTO.getMobileNo());
 		member.setConfirmDate(requestDTO.getConfirmDate());
-		member.setIsBlock(requestDTO.getIsBlock());
+		member.setIsBlock('N');
 	}
 
 	private void updateUserDetails(User user, GeneralMemberRequestDTO requestDTO) {
@@ -140,10 +141,12 @@ public class GeneralMemberService {
 		member.setMemberOccupation(requestDTO.getMemberOccupation());
 		member.setMobileNo(requestDTO.getMobileNo());
 		member.setConfirmDate(requestDTO.getConfirmDate());
-		member.setIsBlock(requestDTO.getIsBlock());
+		member.setIsBlock('N');
 		return member;
 	}
-	
-	
-	
+
+	public List<MemberBookInfo> getMemberBookInfo(String username) {
+		return generalMemberRepository.findMemberBookInfoByUsername(username);
+	}
+
 }

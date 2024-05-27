@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.auth.model.GeneralMember;
 import com.raja.lib.auth.objects.GenralMember;
+import com.raja.lib.auth.objects.MemberBookInfo;
 import com.raja.lib.auth.request.GeneralMemberRequestDTO;
 import com.raja.lib.auth.service.GeneralMemberService;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
@@ -67,6 +69,9 @@ public class GeneralMemberController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
     
-  
+    @GetMapping("/memberBookInfo/{username}")
+    public List<MemberBookInfo> getMemberBookInfo(@PathVariable String username) {
+        return generalMemberService.getMemberBookInfo(username);
+    }
     
 }
