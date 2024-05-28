@@ -1,5 +1,6 @@
 package com.raja.lib.auth.controller;
 
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.auth.model.GeneralMember;
+import com.raja.lib.auth.objects.BookIssueDetails;
 import com.raja.lib.auth.objects.GenralMember;
 import com.raja.lib.auth.objects.MemberBookInfo;
+import com.raja.lib.auth.request.BookIssueDetailsRequest;
 import com.raja.lib.auth.request.GeneralMemberRequestDTO;
 import com.raja.lib.auth.service.GeneralMemberService;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
@@ -74,4 +76,10 @@ public class GeneralMemberController {
         return generalMemberService.getMemberBookInfo(username);
     }
     
+    
+    @PostMapping("/bookIssueDetails")
+    public List<BookIssueDetails> getBookIssueDetails(@RequestBody BookIssueDetailsRequest request) {
+        return generalMemberService.getBookIssueDetails(request.getUsername(), request.getStartDate(), request.getEndDate());
+    }
+
 }

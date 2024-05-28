@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.raja.lib.auth.model.GeneralMember;
 import com.raja.lib.auth.model.Role;
 import com.raja.lib.auth.model.User;
+import com.raja.lib.auth.objects.BookIssueDetails;
 import com.raja.lib.auth.objects.GenralMember;
 import com.raja.lib.auth.objects.MemberBookInfo;
 import com.raja.lib.auth.repository.GeneralMemberRepository;
@@ -147,6 +148,10 @@ public class GeneralMemberService {
 
 	public List<MemberBookInfo> getMemberBookInfo(String username) {
 		return generalMemberRepository.findMemberBookInfoByUsername(username);
+	}
+
+	public List<BookIssueDetails> getBookIssueDetails(String username, String startDate, String endDate) {
+		return generalMemberRepository.findBookIssueDetails(username, startDate, endDate);
 	}
 
 }
