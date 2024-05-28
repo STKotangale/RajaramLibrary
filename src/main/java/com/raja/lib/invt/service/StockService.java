@@ -20,6 +20,7 @@ import com.raja.lib.invt.model.InvtConfig;
 import com.raja.lib.invt.model.Stock;
 import com.raja.lib.invt.model.StockCopyNo;
 import com.raja.lib.invt.model.StockDetail;
+import com.raja.lib.invt.objects.GetAllIssueBookDetailsByUsername;
 import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.objects.InvoiceDateProjection;
 import com.raja.lib.invt.repository.BookDetailsRepository;
@@ -318,7 +319,7 @@ public class StockService {
 
 //	------------------------------------------------------- Issue Return --------------------------------------------
 
-	public List<GetIssueDetilsByUser> getStockDetailsByUsername(String username) {
+	public List<GetAllIssueBookDetailsByUsername> getStockDetailsByUsername(String username) {
 		return stockRepository.findStockDetailsByUsername(username);
 	}
 

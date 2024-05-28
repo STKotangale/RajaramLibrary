@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.raja.lib.invt.model.Stock;
+import com.raja.lib.invt.objects.GetAllIssueBookDetailsByUsername;
 import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.objects.InvoiceDateProjection;
 import com.raja.lib.invt.resposne.CreateStockResponse;
@@ -29,7 +30,7 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 	List<String> getStockDetailsAsJson();
 
 	@Query(value = "SELECT is2.stock_id, " + "is2.memberIdF, " + "is2.invoiceNo, " + "is2.invoiceDate, "
-			+ "is3.stockDetailId, " + "is3.book_idF as bookId, " + "ib.bookName, " + "iscn.stockCopyId, "
+			+ "is3.stockDetailId, " + "is3.book_idF AS bookId, " + "ib.bookName, " + "iscn.stockCopyId, "
 			+ "au.username, " + "ibd.* " + "FROM invt_stock is2 "
 			+ "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
 			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF "
@@ -39,7 +40,7 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "JOIN auth_users au ON au.memberIdF = agm.memberId " + "WHERE au.username = :username "
 			+ "AND is2.stock_type = 'A2' " + "AND is3.stock_type = 'A2' "
 			+ "AND iscn.stock_type = 'A2'", nativeQuery = true)
-	List<GetIssueDetilsByUser> findStockDetailsByUsername(String username);
+	List<GetAllIssueBookDetailsByUsername> findStockDetailsByUsername(@Param("username") String username);
 
 	@Query(value = "SELECT \r\n" + "    is2.stock_id, \r\n" + "    is2.invoiceNo, \r\n" + "    is2.fineDays,\r\n"
 			+ "    is2.finePerDays ,\r\n" + "    is2.fineAmount,\r\n" + "    is2.memberIdF,\r\n"

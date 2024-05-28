@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.model.Stock;
+import com.raja.lib.invt.objects.GetAllIssueBookDetailsByUsername;
 import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.request.BookIssueRequestDto;
 import com.raja.lib.invt.request.BookIssueReturnRequestDTO;
@@ -88,7 +89,7 @@ public class IssueController {
 //    ------------------------------------------------- Issue Return---------------------------------------------------
 	
 	@GetMapping("/detail/{username}")
-	public List<GetIssueDetilsByUser> getStockDetailsByUsername(@PathVariable String username) {
+	public List<GetAllIssueBookDetailsByUsername> getStockDetailsByUsername(@PathVariable String username) {
 	    return stockService.getStockDetailsByUsername(username);
 	}
 	
