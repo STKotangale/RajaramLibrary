@@ -1,6 +1,8 @@
 package com.raja.lib.invt.service;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,6 +32,12 @@ public class MembershipFeesService {
     
     @Autowired
     private MemberMonthlyFeesRepository memberMonthlyFeesRepository;
+    
+    @Autowired
+    private MembershipFeesRepository membershipFeesRepository;
+    
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+
 
     public List<MembershipFeesResponse> getAllFees() {
         return repository.findAll().stream().map(this::convertToResponse).collect(Collectors.toList());
@@ -101,8 +109,18 @@ public class MembershipFeesService {
         }
 
         GeneralMember member = memberOptional.get();
-        boolean monthlyFeeExists = memberMonthlyFeesRepository.existsByMemberAndDate(request.getMemberId(), request.getDate());
-        boolean membershipFeeExists = repository.existsByMemberAndDate(request.getMemberId(), request.getDate());
+
+        boolean monthlyFeeExists = false;
+        boolean membershipFeeExists = false;
+
+        try {
+            String date = DATE_FORMAT.format(DATE_FORMAT.parse(request.getDate()));
+
+            monthlyFeeExists = memberMonthlyFeesRepository.existsByMemberAndDate(request.getMemberId(), date);
+            membershipFeeExists = membershipFeesRepository.existsByMemberAndDate(request.getMemberId(), date);
+        } catch (ParseException e) {
+            return new ApiResponseDTO<>(false, "Invalid date format", null, HttpStatus.BAD_REQUEST.value());
+        }
 
         if (!monthlyFeeExists && !membershipFeeExists) {
             return new ApiResponseDTO<>(false, "Member does not have fees within the specified date range", null, HttpStatus.NOT_FOUND.value());
