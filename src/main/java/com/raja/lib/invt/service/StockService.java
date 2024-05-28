@@ -327,7 +327,7 @@ public class StockService {
 	public ApiResponseDTO<Void> createIssueReturn(BookIssueReturnRequestDTO bookIssueReturnRequestDTO)
 	        throws NotFoundException {
 
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
 	    int totalFineDays = 0;
 	    double totalFinePerDay = 0;
