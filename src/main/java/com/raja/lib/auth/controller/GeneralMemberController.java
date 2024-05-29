@@ -22,6 +22,8 @@ import com.raja.lib.auth.objects.GenralMember;
 import com.raja.lib.auth.objects.MemberBookInfo;
 import com.raja.lib.auth.request.BookIssueDetailsRequest;
 import com.raja.lib.auth.request.GeneralMemberRequestDTO;
+import com.raja.lib.auth.request.PasswordUpdateRequestDTO;
+import com.raja.lib.auth.request.UserCheckRequestDTO;
 import com.raja.lib.auth.service.GeneralMemberService;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 
@@ -71,15 +73,27 @@ public class GeneralMemberController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
     
-    @GetMapping("/memberBookInfo/{username}")
-    public List<MemberBookInfo> getMemberBookInfo(@PathVariable String username) {
-        return generalMemberService.getMemberBookInfo(username);
+    @GetMapping("/memberBookInfo/{userId}")
+    public List<MemberBookInfo> getMemberBookInfo(@PathVariable int userId) {
+        return generalMemberService.getMemberBookInfo(userId);
     }
+
     
     
     @PostMapping("/bookIssueDetails")
     public List<BookIssueDetails> getBookIssueDetails(@RequestBody BookIssueDetailsRequest request) {
-        return generalMemberService.getBookIssueDetails(request.getUsername(), request.getStartDate(), request.getEndDate());
+        return generalMemberService.getBookIssueDetails(request.getUserId(), request.getStartDate(), request.getEndDate());
     }
 
+    @PostMapping("/check-user")
+    public ResponseEntity<ApiResponseDTO<String>> checkUserDetails(@RequestBody UserCheckRequestDTO requestDTO) {
+        ApiResponseDTO<String> responseDTO = generalMemberService.checkUserDetails(requestDTO);
+        return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
+    }
+
+    @PostMapping("/update-password")
+    public ResponseEntity<ApiResponseDTO<String>> updatePassword(@RequestBody PasswordUpdateRequestDTO requestDTO) {
+        ApiResponseDTO<String> responseDTO = generalMemberService.updatePassword(requestDTO);
+        return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
+    }
 }

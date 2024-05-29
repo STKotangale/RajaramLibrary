@@ -77,6 +77,4 @@ public class User implements Serializable {
 	    this.userpassword = userpassword;
 	    this.isBlock = isBlock;
 	}
-
-
 }

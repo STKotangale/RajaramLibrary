@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class BookIssueDetailsRequest {
-	private String username;
+	private int userId;
     private String startDate;
     private String endDate;
 

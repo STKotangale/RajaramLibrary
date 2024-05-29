@@ -23,4 +23,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> getAllAdminUsers();
 
     Optional<User> findByGeneralMember_MemberId(int memberId);
+    
+    Optional<User> findByUseremail(String email);
+
 }

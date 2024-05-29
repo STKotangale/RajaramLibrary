@@ -3,6 +3,7 @@ package com.raja.lib.auth.service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -22,6 +23,8 @@ import com.raja.lib.auth.repository.GeneralMemberRepository;
 import com.raja.lib.auth.repository.RoleRepository;
 import com.raja.lib.auth.repository.UserRepository;
 import com.raja.lib.auth.request.GeneralMemberRequestDTO;
+import com.raja.lib.auth.request.PasswordUpdateRequestDTO;
+import com.raja.lib.auth.request.UserCheckRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 
 import jakarta.transaction.Transactional;
@@ -146,12 +149,44 @@ public class GeneralMemberService {
 		return member;
 	}
 
-	public List<MemberBookInfo> getMemberBookInfo(String username) {
-		return generalMemberRepository.findMemberBookInfoByUsername(username);
+	public List<MemberBookInfo> getMemberBookInfo(int userId) {
+	    return generalMemberRepository.findMemberBookInfoByUserId(userId);
 	}
 
-	public List<BookIssueDetails> getBookIssueDetails(String username, String startDate, String endDate) {
-		return generalMemberRepository.findBookIssueDetails(username, startDate, endDate);
+
+	public List<BookIssueDetails> getBookIssueDetails(int userId, String startDate, String endDate) {
+	    return generalMemberRepository.findBookIssueDetails(userId, startDate, endDate);
 	}
+	
+	public ApiResponseDTO<String> checkUserDetails(UserCheckRequestDTO requestDTO) {
+        Optional<User> userOptional = userrepository.findByUseremail(requestDTO.getEmail());
+        Optional<GeneralMember> memberOptional = generalMemberRepository.findByMobileNo(requestDTO.getMobileNo());
+
+        if (userOptional.isPresent() && memberOptional.isPresent() && userOptional.get().getGeneralMember().equals(memberOptional.get())) {
+            User user = userOptional.get();
+            return new ApiResponseDTO<>(true, "User found",""+ user.getUserId(), HttpStatus.OK.value());
+        } else {
+            return new ApiResponseDTO<>(false, "User not found", "No user found with the provided email and mobile number", HttpStatus.NOT_FOUND.value());
+        }
+    }
+	
+	
+	public ApiResponseDTO<String> updatePassword(PasswordUpdateRequestDTO requestDTO) {
+        if (!requestDTO.getPassword().equals(requestDTO.getConfirmPassword())) {
+            return new ApiResponseDTO<>(false, "Passwords do not match", null, HttpStatus.BAD_REQUEST.value());
+        }
+
+        Optional<User> userOptional = userrepository.findById(requestDTO.getUserId());
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setUserpassword(passwordEncoder.encode(requestDTO.getPassword()));
+            userrepository.save(user);
+            return new ApiResponseDTO<>(true, "Password updated successfully", null, HttpStatus.OK.value());
+        } else {
+            return new ApiResponseDTO<>(false, "User not found", null, HttpStatus.NOT_FOUND.value());
+        }
+    }
+	
+	
 
 }

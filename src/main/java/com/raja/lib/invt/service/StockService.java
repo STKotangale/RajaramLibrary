@@ -332,74 +332,75 @@ public class StockService {
 
 	@Transactional
 	public ApiResponseDTO<Void> createIssueReturn(BookIssueReturnRequestDTO bookIssueReturnRequestDTO) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-		double totalFineDays = 0;
-		double totalFinePerDay = 0;
-		double totalFineAmount = 0;
+	    double totalFineDays = 0;
+	    double totalFinePerDay = 0;
+	    double totalFineAmount = 0;
 
-		if (!bookIssueReturnRequestDTO.getBookDetailsList().isEmpty()) {
-			Long bookDetailId = (long) bookIssueReturnRequestDTO.getBookDetailsList().get(0).getBookDetailIds();
-			List<InvoiceDateProjection> invoiceDates = stockRepository.findInvoiceDateByBookDetailId(bookDetailId);
+	    if (!bookIssueReturnRequestDTO.getBookDetailsList().isEmpty()) {
+	        Long bookDetailId = (long) bookIssueReturnRequestDTO.getBookDetailsList().get(0).getBookDetailIds();
+	        List<InvoiceDateProjection> invoiceDates = stockRepository.findInvoiceDateByBookDetailId(bookDetailId);
 
-			for (InvoiceDateProjection invoiceDate : invoiceDates) {
-				LocalDate issueDate = LocalDate.parse(invoiceDate.getInvoiceDate(), formatter);
-				LocalDate invoiceDateFromRequest = LocalDate.parse(bookIssueReturnRequestDTO.getIssueReturnDate(),
-						formatter);
-				long daysBetween = ChronoUnit.DAYS.between(issueDate, invoiceDateFromRequest);
+	        for (InvoiceDateProjection invoiceDate : invoiceDates) {
+	            LocalDate issueDate = LocalDate.parse(invoiceDate.getInvoiceDate(), formatter);
+	            LocalDate invoiceDateFromRequest = LocalDate.parse(bookIssueReturnRequestDTO.getIssueReturnDate(), formatter);
+	            long daysBetween = ChronoUnit.DAYS.between(issueDate, invoiceDateFromRequest);
 
-				InvtConfig invtConfig = invtConfigRepository.findFirstByOrderBySrnoAsc();
-				int bookDays = invtConfig.getBookDays();
-				double finePerDay = invtConfig.getFinePerDays();
+	            InvtConfig invtConfig = invtConfigRepository.findFirstByOrderBySrnoAsc();
+	            int bookDays = invtConfig.getBookDays();
+	            double finePerDay = invtConfig.getFinePerDays();
 
-				if (daysBetween > bookDays) {
-					totalFineDays = (int) (daysBetween - bookDays);
-					totalFinePerDay = finePerDay;
-					totalFineAmount = totalFineDays * totalFinePerDay;
-				}
-			}
-		}
+	            if (daysBetween > bookDays) {
+	                totalFineDays = (int) (daysBetween - bookDays);
+	                totalFinePerDay = finePerDay;
+	                totalFineAmount = totalFineDays * totalFinePerDay;
+	            }
+	        }
+	    }
 
-		Stock stock = new Stock();
-		stock.setStock_type("A3");
-		stock.setInvoiceNo(bookIssueReturnRequestDTO.getIssueNo());
-		stock.setInvoiceDate(bookIssueReturnRequestDTO.getIssueReturnDate()); // Directly set the string
-		stock.setFineDays(totalFineDays);
-		stock.setFinePerDays(totalFinePerDay);
-		stock.setFineAmount(totalFineAmount);
+	    Stock stock = new Stock();
+	    stock.setStock_type("A3");
+	    stock.setInvoiceNo(bookIssueReturnRequestDTO.getIssueNo());
+	    stock.setInvoiceDate(bookIssueReturnRequestDTO.getIssueReturnDate()); // Directly set the string
+	    stock.setFineDays(totalFineDays);
+	    stock.setFinePerDays(totalFinePerDay);
+	    stock.setFineAmount(totalFineAmount);
 
-		GeneralMember generalMember = generalMemberRepository.findById(bookIssueReturnRequestDTO.getMemberId())
-				.orElseThrow(() -> new RuntimeException("General member not found"));
-		stock.setGeneralMember(generalMember);
+	    GeneralMember generalMember = generalMemberRepository.findById(bookIssueReturnRequestDTO.getMemberId())
+	            .orElseThrow(() -> new RuntimeException("General member not found"));
+	    stock.setGeneralMember(generalMember);
 
-		Stock savedStock = stockRepository.save(stock);
+	    Stock savedStock = stockRepository.save(stock);
 
-		for (BookDetailsDTO bookDetailsDTO : bookIssueReturnRequestDTO.getBookDetailsList()) {
-			StockDetail stockDetail = new StockDetail();
-			stockDetail.setStockIdF(savedStock);
-			stockDetail.setStock_type("A3");
+	    for (BookDetailsDTO bookDetailsDTO : bookIssueReturnRequestDTO.getBookDetailsList()) {
+	        StockDetail stockDetail = new StockDetail();
+	        stockDetail.setStockIdF(savedStock);
+	        stockDetail.setStock_type("A3");
 
-			Book book = bookRepository.findById(bookDetailsDTO.getBookId())
-					.orElseThrow(() -> new RuntimeException("Book not found"));
-			stockDetail.setBook_idF(book);
+	        Book book = bookRepository.findById(bookDetailsDTO.getBookId())
+	                .orElseThrow(() -> new RuntimeException("Book not found"));
+	        stockDetail.setBook_idF(book);
 
-			stockDetailRepository.save(stockDetail);
+	        stockDetailRepository.save(stockDetail);
 
-			StockCopyNo stockCopyNo = new StockCopyNo();
-			stockCopyNo.setStockDetailIdF(stockDetail);
-			stockCopyNo.setStockType("A3");
+	        StockCopyNo stockCopyNo = new StockCopyNo();
+	        stockCopyNo.setStockDetailIdF(stockDetail);
+	        stockCopyNo.setStockType("A3");
 
-			BookDetails bookDetails = bookDetailsRepository.findById(bookDetailsDTO.getBookDetailIds())
-					.orElseThrow(() -> new RuntimeException("Book details not found"));
+	        BookDetails bookDetails = bookDetailsRepository.findById(bookDetailsDTO.getBookDetailIds())
+	                .orElseThrow(() -> new RuntimeException("Book details not found"));
 
-			bookDetails.setBookIssue("Y");
-			bookDetailsRepository.save(bookDetails);
-			stockCopyNo.setBookDetailIdF(bookDetails);
-			stockCopyNoRepository.save(stockCopyNo);
-		}
+	        bookDetails.setBookIssue("Y");
+	        bookDetailsRepository.save(bookDetails);
+	        stockCopyNo.setBookDetailIdF(bookDetails);
+	        stockCopyNoRepository.save(stockCopyNo);
+	    }
 
-		return new ApiResponseDTO<>(true, "Issue return created successfully", null, HttpStatus.OK.value());
+	    return new ApiResponseDTO<>(true, "Issue return created successfully", null, HttpStatus.OK.value());
 	}
+
+
 
 	public List<GetIssueDetilsByUser> findAllIssueReturn() {
 		return stockRepository.findAllIssueReturn();

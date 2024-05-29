@@ -5,7 +5,8 @@ public interface BookIssueDetails {
     String getBookName();
     Integer getPurchaseCopyNo();
     String getIssueDate();
+    String getReturnDate();
     String getConfirmReturnDate();
     Double getMaxFineAmount();
-    String getReturnDate();
+    
 }

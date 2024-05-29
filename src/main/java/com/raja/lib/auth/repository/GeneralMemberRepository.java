@@ -1,6 +1,7 @@
 package com.raja.lib.auth.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.raja.lib.auth.model.GeneralMember;
+import com.raja.lib.auth.model.User;
 import com.raja.lib.auth.objects.BookIssueDetails;
 import com.raja.lib.auth.objects.GenralMember;
 import com.raja.lib.auth.objects.MemberBookInfo;
@@ -31,10 +33,10 @@ public interface GeneralMemberRepository extends JpaRepository<GeneralMember, In
 			+ "JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId "
 			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF "
 			+ "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF "
-			+ "JOIN auth_users au ON au.memberIdF = agm.memberId " + "WHERE au.username = :username "
+			+ "JOIN auth_users au ON au.memberIdF = agm.memberId " + "WHERE au.userId = :userId "
 			+ "GROUP BY agm.memberId, ib.bookName, ibd.purchaseCopyNo "
 			+ "HAVING MAX(CASE WHEN is2.stock_type = 'A3' THEN is2.invoiceDate END) IS NULL", nativeQuery = true)
-	List<MemberBookInfo> findMemberBookInfoByUsername(@Param("username") String username);
+	List<MemberBookInfo> findMemberBookInfoByUserId(@Param("userId") int userId);
 
 	@Query(value = "SELECT " + "agm.memberId AS memberId, " + "ib.bookName AS bookName, "
 			+ "ibd.purchaseCopyNo AS purchaseCopyNo, "
@@ -48,9 +50,13 @@ public interface GeneralMemberRepository extends JpaRepository<GeneralMember, In
 			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF "
 			+ "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF "
 			+ "JOIN auth_users au ON au.memberIdF = agm.memberId " + "CROSS JOIN invt_config ic "
-			+ "WHERE au.username = :username "
+			+ "WHERE au.userId = :userId "
 			+ "AND STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y') BETWEEN STR_TO_DATE(:startDate, '%d-%m-%Y') AND STR_TO_DATE(:endDate, '%d-%m-%Y') "
 			+ "GROUP BY agm.memberId, ib.bookName, ibd.purchaseCopyNo", nativeQuery = true)
-	List<BookIssueDetails> findBookIssueDetails(@Param("username") String username,
-			@Param("startDate") String startDate, @Param("endDate") String endDate);
+	List<BookIssueDetails> findBookIssueDetails(@Param("userId") int userId, @Param("startDate") String startDate,
+			@Param("endDate") String endDate);
+	
+    Optional<GeneralMember> findByMobileNo(long mobileNo);
+
+
 }
