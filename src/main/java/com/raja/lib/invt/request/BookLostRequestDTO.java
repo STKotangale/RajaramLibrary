@@ -10,7 +10,7 @@ public class BookLostRequestDTO {
 	private String invoiceNO;
 	private String invoiceDate;
 	private int ledgerId;
-	private int billTotal;
+	private double billTotal;
 
 	private List<BookLostBookDetailDTO> bookDetails;
 

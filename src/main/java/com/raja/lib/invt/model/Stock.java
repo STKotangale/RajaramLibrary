@@ -50,25 +50,25 @@ public class Stock implements Serializable {
 	private String invoiceDate;
 
 	@Column(name = "billTotal")
-	private double billTotal;
+	private Double billTotal;
 
 	@Column(name = "discountPercent")
-	private double discountPercent;
+	private Double discountPercent;
 
 	@Column(name = "discountAmount")
-	private double discountAmount;
+	private Double discountAmount;
 
 	@Column(name = "totalAfterDiscount")
-	private double totalAfterDiscount;
+	private Double totalAfterDiscount;
 
 	@Column(name = "gstPercent")
-	private double gstPercent;
+	private Double gstPercent;
 
 	@Column(name = "gstAmount")
-	private double gstAmount;
+	private Double gstAmount;
 
 	@Column(name = "grandTotal")
-	private double grandTotal;
+	private Double grandTotal;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ledgerIDF", nullable = false)
@@ -81,12 +81,12 @@ public class Stock implements Serializable {
 	@JoinColumn(name = "memberIdF")
 	private GeneralMember generalMember;
 	
-	@Column(name="fineDays")
-	private double fineDays;
+	@Column(name = "fineDays")
+	private Double fineDays;
 
-	@Column(name="finePerDays")
-	private double finePerDays;
+	@Column(name = "finePerDays")
+	private Double finePerDays;
 	
-	@Column(name="fineAmount")
-	private double fineAmount;
+	@Column(name = "fineAmount")
+	private Double fineAmount;
 }

@@ -11,12 +11,12 @@ public class PurchaseReturnRequestDTO {
 	private String invoiceNO;
 	private String invoiceDate;
 	private int ledgerId;
-	private int billTotal;
-	private int grandTotal;
-	private int discountPercent;
-	private int discountAmount;
-	private int gstPercent;
-	private int gstAmount;
-	private int totalAfterDiscount;
+	private double billTotal;
+	private double grandTotal;
+	private double discountPercent;
+	private double discountAmount;
+	private double gstPercent;
+	private double gstAmount;
+	private double totalAfterDiscount;
 	private List<PurchaseReturnBookDetailDTO> bookDetails;
 }

@@ -33,9 +33,6 @@ public class StockController {
         try {
             ApiResponseDTO<Void> response = stockService.createStock(stockRequestDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.NOT_FOUND.value()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponseDTO<>(false, "Internal server error", null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
@@ -56,12 +53,8 @@ public class StockController {
    
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponseDTO<Void>> deleteStockById(@PathVariable int id) {
-        try {
-            ApiResponseDTO<Void> response = stockService.deleteStockById(id);
-            return ResponseEntity.status(response.getStatusCode()).body(response);
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.NOT_FOUND.value()));
-        }
+        ApiResponseDTO<Void> response = stockService.deleteStockById(id);
+		return ResponseEntity.status(response.getStatusCode()).body(response);
     }
     
     

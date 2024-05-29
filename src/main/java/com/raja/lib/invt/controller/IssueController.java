@@ -47,9 +47,6 @@ public class IssueController {
 		try {
 			ApiResponseDTO<Stock> response = stockService.bookIssue(bookIssueRequestDto);
 			return ResponseEntity.status(response.getStatusCode()).body(response);
-		} catch (NotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.NOT_FOUND.value()));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
@@ -62,9 +59,6 @@ public class IssueController {
 		try {
 			ApiResponseDTO<Stock> response = stockService.updateBookIssue(stockId, bookIssueRequestDto);
 			return ResponseEntity.status(response.getStatusCode()).body(response);
-		} catch (NotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.NOT_FOUND.value()));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
@@ -78,12 +72,8 @@ public class IssueController {
 
 	@DeleteMapping("/{stockId}")
     public ResponseEntity<ApiResponseDTO<Void>> deleteBookIssue(@PathVariable int stockId) {
-        try {
-        	stockService.deleteBookIssue(stockId);
-            return ResponseEntity.ok(new ApiResponseDTO<>(true, "Book issue deleted successfully", null, HttpStatus.OK.value()));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        stockService.deleteBookIssue(stockId);
+		return ResponseEntity.ok(new ApiResponseDTO<>(true, "Book issue deleted successfully", null, HttpStatus.OK.value()));
     }
 	 
 //    ------------------------------------------------- Issue Return---------------------------------------------------
@@ -95,11 +85,7 @@ public class IssueController {
 	
 	@PostMapping("return/create")
     public ApiResponseDTO<Void> createIssueReturn(@RequestBody BookIssueReturnRequestDTO bookIssueReturnRequestDTO) {
-        try {
-            return stockService.createIssueReturn(bookIssueReturnRequestDTO);
-        } catch (NotFoundException e) {
-            return new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.NOT_FOUND.value());
-        }
+        return stockService.createIssueReturn(bookIssueReturnRequestDTO);
     }
 	
 	@GetMapping("/issueReturns")
@@ -121,9 +107,6 @@ public class IssueController {
         try {
             ApiResponseDTO<Void> response = stockService.createPurchaseReturn(purchaseReturnRequestDTO);
             return ResponseEntity.status(response.getStatusCode()).body(response);
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.NOT_FOUND.value()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
@@ -144,9 +127,6 @@ public class IssueController {
 	        try {
 	            ApiResponseDTO<Void> response = stockService.createBookLost(purchaseReturnRequestDTO);
 	            return ResponseEntity.status(response.getStatusCode()).body(response);
-	        } catch (NotFoundException e) {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-	                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.NOT_FOUND.value()));
 	        } catch (Exception e) {
 	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 	                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
@@ -165,9 +145,6 @@ public class IssueController {
 	        try {
 	            ApiResponseDTO<Void> response = stockService.createBookScrap(bookLostRequestDTO);
 	            return ResponseEntity.status(response.getStatusCode()).body(response);
-	        } catch (NotFoundException e) {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-	                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.NOT_FOUND.value()));
 	        } catch (Exception e) {
 	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 	                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
@@ -176,7 +153,7 @@ public class IssueController {
 	 
 	 @GetMapping("/book-scrap-all")
 	    public List<PurchaseReturnDTO> geScraptDetials() {
-	        return stockService.getScarpDetials();
+	        return stockService.getScrapDetials();
 	    }
 
 	 

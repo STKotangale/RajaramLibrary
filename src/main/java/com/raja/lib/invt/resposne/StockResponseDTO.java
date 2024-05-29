@@ -24,5 +24,8 @@ public class StockResponseDTO implements Serializable{
     private double gstAmount;
     private double grandTotal;
     private Ledger ledgerIDF;
+	private double fineDays;
+	private double finePerDays;
+	private double fineAmount; 
     private List<StockDetailResponseDTO> stockDetails;
 }
