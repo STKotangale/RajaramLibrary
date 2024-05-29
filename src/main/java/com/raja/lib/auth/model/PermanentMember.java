@@ -21,6 +21,9 @@ public class PermanentMember implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="permanentMemberId")
     private int memberId;
+    
+    @Column(name="libParMembNo")
+    private String libParMembNo;
 
     @Column(name="firstName")
     private String firstName;

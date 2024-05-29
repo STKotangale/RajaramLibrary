@@ -43,6 +43,7 @@ public class PermanentMemberService {
     public PermanentMember updatePermanentMember(int id, PermanentMemberRequestDTO requestDTO) {
         LOGGER.info("Updating permanent member with id: {}", id);
         PermanentMember existingMember = getPermanentMemberById(id);
+        existingMember.setLibParMembNo(requestDTO.getLibParMembNo()); 
         existingMember.setFirstName(requestDTO.getFirstName());
         existingMember.setMiddleName(requestDTO.getMiddleName());
         existingMember.setLastName(requestDTO.getLastName());
@@ -54,7 +55,7 @@ public class PermanentMemberService {
         existingMember.setMemberOccupation(requestDTO.getMemberOccupation());
         existingMember.setMobileNo(requestDTO.getMobileNo());
         existingMember.setConfirmDate(requestDTO.getConfirmDate());
-        existingMember.setIsBlock('N'); // Set default value 'N'
+        existingMember.setIsBlock('N'); 
         existingMember.setEmailId(requestDTO.getEmailId());
 
         return permanentMemberRepository.save(existingMember);
@@ -69,6 +70,7 @@ public class PermanentMemberService {
 
     private PermanentMember convertToEntity(PermanentMemberRequestDTO requestDTO) {
         PermanentMember member = new PermanentMember();
+        member.setLibParMembNo(requestDTO.getLibParMembNo()); 
         member.setFirstName(requestDTO.getFirstName());
         member.setMiddleName(requestDTO.getMiddleName());
         member.setLastName(requestDTO.getLastName());
@@ -80,7 +82,7 @@ public class PermanentMemberService {
         member.setMemberOccupation(requestDTO.getMemberOccupation());
         member.setMobileNo(requestDTO.getMobileNo());
         member.setConfirmDate(requestDTO.getConfirmDate());
-        member.setIsBlock('N'); // Set default value 'N'
+        member.setIsBlock('N');
         member.setEmailId(requestDTO.getEmailId());
         return member;
     }

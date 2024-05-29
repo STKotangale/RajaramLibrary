@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class GeneralMemberRequestDTO {
-
     private String firstName;
     private String middleName;
     private String lastName;

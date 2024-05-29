@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class PermanentMemberRequestDTO {
 
+    private String libParMembNo;  
     private String firstName;
     private String middleName;
     private String lastName;
@@ -16,7 +17,6 @@ public class PermanentMemberRequestDTO {
     private String memberOccupation;
     private long mobileNo;
     private String confirmDate;
-    private char isBlock;
     private String emailId;
 }
 
