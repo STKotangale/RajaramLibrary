@@ -48,129 +48,124 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-	@Autowired
-	AuthenticationManager authenticationManager;
 
-	@Autowired
-	UserRepository userRepository;
+    @Autowired
+    AuthenticationManager authenticationManager;
 
-	@Autowired
-	RoleRepository roleRepository;
+    @Autowired
+    UserRepository userRepository;
 
-	@Autowired
-	PasswordEncoder encoder;
+    @Autowired
+    RoleRepository roleRepository;
 
-	@Autowired
-	JwtUtils jwtUtils;
+    @Autowired
+    PasswordEncoder encoder;
 
-	@PostMapping("/signin")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+    @Autowired
+    JwtUtils jwtUtils;
 
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtUtils.generateJwtToken(authentication);
+    @PostMapping("/signin")
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
-				.collect(Collectors.toList());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
 
-		User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow(
-				() -> new UsernameNotFoundException("User Not Found with username: " + loginRequest.getUsername()));
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
+                .collect(Collectors.toList());
 
-		return ResponseEntity.ok(
-				new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles));
-	}
+        User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow(
+                () -> new UsernameNotFoundException("User Not Found with username: " + loginRequest.getUsername()));
 
-	@PostMapping("/signup")
-	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-	    if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-	        return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
-	    }
+        return ResponseEntity.ok(
+                new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles));
+    }
 
-	    if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-	        return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
-	    }
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+        }
 
-	    if (signUpRequest.getPassword().length() < 6) {
-	        return ResponseEntity.badRequest().body(new MessageResponse("Error: Password length must be at least 6 characters!"));
-	    }
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+        }
 
-	    User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
-	            encoder.encode(signUpRequest.getPassword()), 'N');
+        if (signUpRequest.getPassword().length() < 6) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Password length must be at least 6 characters!"));
+        }
 
-	    Set<Role> roles = new HashSet<>();
+        User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
+                encoder.encode(signUpRequest.getPassword()), 'N', signUpRequest.getMobileNo()); // Updated constructor
 
-	    if (signUpRequest.getRole() != null && !signUpRequest.getRole().isEmpty()) {
-	        signUpRequest.getRole().forEach(roleName -> {
-	            Role role = roleRepository.findByRoleName(roleName)
-	                    .orElseThrow(() -> new RuntimeException("Error: Role '" + roleName + "' not found."));
-	            roles.add(role);
-	        });
-	    } else {
-	        Role defaultRole = roleRepository.findByRoleName("admin")
-	                .orElseThrow(() -> new RuntimeException("Error: Default role 'admin' not found."));
-	        roles.add(defaultRole);
-	    }
+        Set<Role> roles = new HashSet<>();
 
-	    user.setRoles(roles);
-	    userRepository.save(user);
+        if (signUpRequest.getRole() != null && !signUpRequest.getRole().isEmpty()) {
+            signUpRequest.getRole().forEach(roleName -> {
+                Role role = roleRepository.findByRoleName(roleName)
+                        .orElseThrow(() -> new RuntimeException("Error: Role '" + roleName + "' not found."));
+                roles.add(role);
+            });
+        } else {
+            Role defaultRole = roleRepository.findByRoleName("admin")
+                    .orElseThrow(() -> new RuntimeException("Error: Default role 'admin' not found."));
+            roles.add(defaultRole);
+        }
 
-	    return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
-	}
+        user.setRoles(roles);
+        userRepository.save(user);
 
+        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    }
 
-	@GetMapping("/users")
-	List<User> getAllUser() {
-		return userRepository.getAllAdminUsers();
-	}
+    @GetMapping("/users")
+    List<User> getAllUser() {
+        return userRepository.getAllAdminUsers();
+    }
 
-	@GetMapping("/{id}")
-	Optional<User> getUserById(@PathVariable int id) {
-		return userRepository.findById(id);
-	}
+    @GetMapping("/{id}")
+    Optional<User> getUserById(@PathVariable int id) {
+        return userRepository.findById(id);
+    }
 
-	@DeleteMapping("/{id}")
-	void deleteUserById(@PathVariable int id) {
-		userRepository.deleteById(id);
-	}
+    @DeleteMapping("/{id}")
+    void deleteUserById(@PathVariable int id) {
+        userRepository.deleteById(id);
+    }
 
-	@PutMapping("/{id}")
-	public ResponseEntity<?> updateUserById(@PathVariable int id, @Valid @RequestBody User updatedUser) {
-	    Optional<User> optionalUser = userRepository.findById(id);
-	    if (optionalUser.isPresent()) {
-	        User user = optionalUser.get();
-	        user.setUsername(updatedUser.getUsername());
-	        
-	        if (updatedUser.getUseremail() != null) {
-	            user.setUseremail(updatedUser.getUseremail());
-	        }
-	        
-	        user.setIsBlock(updatedUser.getIsBlock());
-	        user.setGeneralMember(updatedUser.getGeneralMember());
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUserById(@PathVariable int id, @Valid @RequestBody User updatedUser) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setUsername(updatedUser.getUsername());
+            user.setUseremail(updatedUser.getUseremail());
+            user.setIsBlock(updatedUser.getIsBlock());
+            user.setMobileNo(updatedUser.getMobileNo()); // New field
+            user.setGeneralMember(updatedUser.getGeneralMember());
 
-	        if (updatedUser.getUserpassword() != null) {
-	            user.setUserpassword(encoder.encode(updatedUser.getUserpassword()));
-	        }
+            if (updatedUser.getUserpassword() != null) {
+                user.setUserpassword(encoder.encode(updatedUser.getUserpassword()));
+            }
 
-	        userRepository.save(user);
-	        return ResponseEntity.ok(new MessageResponse("User updated successfully"));
-	    } else {
-	        return ResponseEntity.notFound().build();
-	    }
-	}
+            userRepository.save(user);
+            return ResponseEntity.ok(new MessageResponse("User updated successfully"));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
-	    Map<String, String> errors = new HashMap<>();
-	    ex.getBindingResult().getAllErrors().forEach((error) -> {
-	        String fieldName = ((FieldError) error).getField();
-	        String errorMessage = error.getDefaultMessage();
-	        errors.put(fieldName, errorMessage);
-	    });
-	    return ResponseEntity.badRequest().body(errors);
-	}
-
-
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return ResponseEntity.badRequest().body(errors);
+    }
 }

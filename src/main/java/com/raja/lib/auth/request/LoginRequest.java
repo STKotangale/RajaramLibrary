@@ -11,7 +11,6 @@ public class LoginRequest {
 
     private boolean isBlock;
 
-    private String memberIdf;
 
     public String getUsername() {
         return username;
@@ -37,11 +36,5 @@ public class LoginRequest {
         this.isBlock = isBlock;
     }
 
-    public String getMemberIdf() {
-        return memberIdf;
-    }
 
-    public void setMemberIdf(String memberIdf) {
-        this.memberIdf = memberIdf;
-    }
 }

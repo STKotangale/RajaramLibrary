@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class GeneralMemberResponseDTO {
 
     private int memberId;
+    private String libGenMembNo; 
     private String firstName;
     private String middleName;
     private String lastName;

@@ -56,7 +56,7 @@ public interface GeneralMemberRepository extends JpaRepository<GeneralMember, In
 	List<BookIssueDetails> findBookIssueDetails(@Param("userId") int userId, @Param("startDate") String startDate,
 			@Param("endDate") String endDate);
 	
-    Optional<GeneralMember> findByMobileNo(long mobileNo);
+//    Optional<GeneralMember> findByMobileNo(long mobileNo);
 
 
 }

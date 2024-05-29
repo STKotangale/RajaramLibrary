@@ -61,20 +61,22 @@ public class User implements Serializable {
     @Column(name = "isBlock", columnDefinition = "char(1) default 'N'")
     private char isBlock;
 
-    
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "memberidF", referencedColumnName = "memberId")
-	private GeneralMember generalMember;
+    @Column(name = "mobileNo")
+    private String mobileNo; 
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "auth_user_roles", joinColumns = @JoinColumn(name = "userIdF"), inverseJoinColumns = @JoinColumn(name = "roleIdF"))
-	private Set<Role> roles = new HashSet<>();
-	
-	
-	public User(String username, String useremail, String userpassword, char isBlock) {
-	    this.username = username;
-	    this.useremail = useremail;
-	    this.userpassword = userpassword;
-	    this.isBlock = isBlock;
-	}
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "memberidF", referencedColumnName = "memberId")
+    private GeneralMember generalMember;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "auth_user_roles", joinColumns = @JoinColumn(name = "userIdF"), inverseJoinColumns = @JoinColumn(name = "roleIdF"))
+    private Set<Role> roles = new HashSet<>();
+
+    public User(String username, String useremail, String userpassword, char isBlock, String mobileNo) {
+        this.username = username;
+        this.useremail = useremail;
+        this.userpassword = userpassword;
+        this.isBlock = isBlock;
+        this.mobileNo = mobileNo; // New field
+    }
 }
