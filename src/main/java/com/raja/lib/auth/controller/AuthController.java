@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -168,4 +169,49 @@ public class AuthController {
         });
         return ResponseEntity.badRequest().body(errors);
     }
+    
+    
+    // ---------------------------------------- Password funnality-----------------------------------------------------
+    
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
+        String mobile = request.get("mobile");
+        String email = request.get("email");
+
+        Optional<User> userOptional = userRepository.findByUseremail(email);
+        if (userOptional.isPresent() && userOptional.get().getMobileNo().equals(mobile)) {
+            User user = userOptional.get();
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "User found");
+            response.put("userId", user.getUserId());
+            return ResponseEntity.ok(response);
+        } else {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "User not found");
+            response.put("userId", null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        int userId = Integer.parseInt(request.get("userId"));
+        String password = request.get("password");
+        String confirmPassword = request.get("confirmPassword");
+
+        if (!password.equals(confirmPassword)) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Passwords do not match"));
+        }
+
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setUserpassword(encoder.encode(password));
+            userRepository.save(user);
+            return ResponseEntity.ok(new MessageResponse("Password reset successfully"));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("User not found"));
+        }
+    }
+    
 }
