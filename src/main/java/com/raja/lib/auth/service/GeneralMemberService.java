@@ -158,28 +158,34 @@ public class GeneralMemberService {
 	}
 
 	private GeneralMemberResponseDTO convertToDTO(GeneralMember generalMember) {
-		GeneralMemberResponseDTO dto = new GeneralMemberResponseDTO();
-		dto.setMemberId(generalMember.getMemberId());
-		dto.setFirstName(generalMember.getFirstName());
-		dto.setMiddleName(generalMember.getMiddleName());
-		dto.setLastName(generalMember.getLastName());
-		dto.setRegisterDate(generalMember.getRegisterDate());
-		dto.setAdharCard(generalMember.getAdharCard());
-		dto.setMemberAddress(generalMember.getMemberAddress());
-		dto.setDateOfBirth(generalMember.getDateOfBirth());
-		dto.setMemberEducation(generalMember.getMemberEducation());
-		dto.setMemberOccupation(generalMember.getMemberOccupation());
-		dto.setConfirmDate(generalMember.getConfirmDate());
-		dto.setIsBlock(generalMember.getIsBlock());
-		dto.setLibGenMembNo(generalMember.getLibGenMembNo());
-		User user = generalMember.getUser();
-		if (user != null) {
-			dto.setUsername(user.getUsername());
-			dto.setEmail(user.getUseremail());
-			dto.setMobileNo(Long.parseLong(user.getMobileNo()));
-		}
-		return dto;
+	    GeneralMemberResponseDTO dto = new GeneralMemberResponseDTO();
+	    dto.setMemberId(generalMember.getMemberId());
+	    dto.setFirstName(generalMember.getFirstName());
+	    dto.setMiddleName(generalMember.getMiddleName());
+	    dto.setLastName(generalMember.getLastName());
+	    dto.setRegisterDate(generalMember.getRegisterDate());
+	    dto.setAdharCard(generalMember.getAdharCard());
+	    dto.setMemberAddress(generalMember.getMemberAddress());
+	    dto.setDateOfBirth(generalMember.getDateOfBirth());
+	    dto.setMemberEducation(generalMember.getMemberEducation());
+	    dto.setMemberOccupation(generalMember.getMemberOccupation());
+	    dto.setConfirmDate(generalMember.getConfirmDate());
+	    dto.setIsBlock(generalMember.getIsBlock());
+	    dto.setLibGenMembNo(generalMember.getLibGenMembNo());
+	    User user = generalMember.getUser();
+	    if (user != null) {
+	        dto.setUsername(user.getUsername());
+	        dto.setEmail(user.getUseremail());
+	        if (user.getMobileNo() != null && !user.getMobileNo().isEmpty()) {
+	            dto.setMobileNo(Long.parseLong(user.getMobileNo()));
+	        } else {
+	            dto.setMobileNo(0L); // or handle appropriately
+	        }
+	    }
+	    return dto;
 	}
+
+
 
 	public List<MemberBookInfo> getMemberBookInfo(int userId) {
 		return generalMemberRepository.findMemberBookInfoByUserId(userId);
