@@ -16,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.raja.lib.auth.service.UserDetailsServiceImpl;
 
 
@@ -100,12 +102,13 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
                   .requestMatchers("/api/issue/**").permitAll()
                   .requestMatchers("/api/fees/**").permitAll()
                   .requestMatchers("/api/excel/**").permitAll()
-                  .requestMatchers("/api/config/**").permitAll() 
-                  .requestMatchers("/api/monthly-member-fees/**").permitAll() 
+                  .requestMatchers("/api/config/**").permitAll()
+                  .requestMatchers("/api/monthly-member-fees/**").permitAll()
                   .requestMatchers("/api/membership-fees/**").permitAll()
+                  .requestMatchers("/api/member-bookings/**").permitAll()
                   .anyRequest().authenticated()
           );
+      return http.build(); 
 
-      return http.build();
   }
 }

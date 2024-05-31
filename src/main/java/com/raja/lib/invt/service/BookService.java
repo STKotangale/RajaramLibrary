@@ -67,6 +67,7 @@ public class BookService {
                 book.setPublicationIdF(publication); 
                 book.setBookTypeIdF(bookType); 
                 book.setBookLangIdF(bookLanguage); 
+                book.setIsBlock('N');
 
                 Book savedBook = bookRepository.save(book);
                 return new ApiResponseDTO<>(true, "Book created successfully", savedBook, HttpStatus.CREATED.value());
@@ -118,6 +119,7 @@ public class BookService {
                 existingBook.setPublicationIdF(optionalPublication.get());
                 existingBook.setBookTypeIdF(optionalBookType.get());
                 existingBook.setBookLangIdF(optionalBookLanguage.get());
+                existingBook.setIsBlock('N');
 
                 Book updatedBook = bookRepository.save(existingBook);
                 return new ApiResponseDTO<>(true, "Book updated successfully", updatedBook, HttpStatus.OK.value());

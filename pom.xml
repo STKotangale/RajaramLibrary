@@ -11,7 +11,6 @@
 	</parent>
 	<groupId>com.raja.lib</groupId>
 	<artifactId>RajaramLib</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>RajaramLib</name>
 	<description>Library Project for Spring Boot</description>
 	<properties>

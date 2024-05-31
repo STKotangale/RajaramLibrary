@@ -31,7 +31,7 @@ public class BookLanguageService {
         try {
             BookLanguage bookLanguage = new BookLanguage();
             bookLanguage.setBookLangName(request.getBookLangName());
-            bookLanguage.setIsBlock(request.getIsBlock());
+            bookLanguage.setIsBlock('N');
             BookLanguage savedBookLanguage = bookLanguageRepository.save(bookLanguage);
             return new ApiResponseDTO<>(true, "Book language created successfully", savedBookLanguage, HttpStatus.CREATED.value());
         } catch (DataIntegrityViolationException e) {
@@ -65,7 +65,7 @@ public class BookLanguageService {
         if (optionalBookLanguage.isPresent()) {
             BookLanguage existingBookLanguage = optionalBookLanguage.get();
             existingBookLanguage.setBookLangName(request.getBookLangName());
-            existingBookLanguage.setIsBlock(request.getIsBlock());
+            existingBookLanguage.setIsBlock('N');
             BookLanguage updatedBookLanguage = bookLanguageRepository.save(existingBookLanguage);
             return new ApiResponseDTO<>(true, "Book language updated successfully", updatedBookLanguage, HttpStatus.OK.value());
         } else {

@@ -31,7 +31,7 @@ public class BookTypeService {
         try {
             BookType bookType = new BookType();
             bookType.setBookTypeName(request.getBookTypeName());
-            bookType.setIsBlock(request.getIsBlock());
+            bookType.setIsBlock('N');
             BookType savedBookType = bookTypeRepository.save(bookType);
             return new ApiResponseDTO<>(true, "Book type created successfully", savedBookType, HttpStatus.CREATED.value());
         } catch (DataIntegrityViolationException e) {
@@ -65,7 +65,7 @@ public class BookTypeService {
         if (optionalBookType.isPresent()) {
             BookType existingBookType = optionalBookType.get();
             existingBookType.setBookTypeName(request.getBookTypeName());
-            existingBookType.setIsBlock(request.getIsBlock());
+            existingBookType.setIsBlock('N');
             BookType updatedBookType = bookTypeRepository.save(existingBookType);
             return new ApiResponseDTO<>(true, "Book type updated successfully", updatedBookType, HttpStatus.OK.value());
         } else {

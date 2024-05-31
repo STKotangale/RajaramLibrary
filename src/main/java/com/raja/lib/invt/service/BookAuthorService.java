@@ -58,6 +58,7 @@ public class BookAuthorService {
         bookAuthor.setAuthorContactNo1(requestDTO.getContactNo1());
         bookAuthor.setAuthorContactNo2(requestDTO.getContactNo2());
         bookAuthor.setAuthorEmailId(requestDTO.getEmailId());
+        bookAuthor.setIsblock('N');
 
         BookAuthor savedBookAuthor = bookAuthorRepository.save(bookAuthor);
         LOGGER.debug("Book author created with id {}", savedBookAuthor.getAuthorId());
@@ -77,7 +78,7 @@ public class BookAuthorService {
             existingBookAuthor.setAuthorContactNo1(requestDTO.getContactNo1());
             existingBookAuthor.setAuthorContactNo2(requestDTO.getContactNo2());
             existingBookAuthor.setAuthorEmailId(requestDTO.getEmailId());
-
+            existingBookAuthor.setIsblock('N');
             BookAuthor updatedBookAuthor = bookAuthorRepository.save(existingBookAuthor);
             LOGGER.debug("Book author updated with id {}", authorId);
             return new ApiResponseDTO<>(true, "Book author updated successfully.", updatedBookAuthor, 200);

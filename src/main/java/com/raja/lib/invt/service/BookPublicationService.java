@@ -62,6 +62,7 @@ public class BookPublicationService {
             bookPublication.setPublicationContactNo1(requestDTO.getContactNo1());
             bookPublication.setPublicationContactNo2(requestDTO.getContactNo2());
             bookPublication.setPublicationEmailId(requestDTO.getEmailId());
+            bookPublication.setIsblock('N');
 
             BookPublication savedBookPublication = bookPublicationRepository.save(bookPublication);
             LOGGER.debug("Book publication created with id {}", savedBookPublication.getPublicationId());
@@ -94,6 +95,7 @@ public class BookPublicationService {
             existingBookPublication.setPublicationContactNo1(requestDTO.getContactNo1());
             existingBookPublication.setPublicationContactNo2(requestDTO.getContactNo2());
             existingBookPublication.setPublicationEmailId(requestDTO.getEmailId());
+            existingBookPublication.setIsblock('N');
 
             BookPublication updatedBookPublication = bookPublicationRepository.save(existingBookPublication);
             LOGGER.debug("Book publication updated with id {}", publicationId);
