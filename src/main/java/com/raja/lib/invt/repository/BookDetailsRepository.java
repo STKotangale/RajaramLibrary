@@ -15,10 +15,10 @@ import com.raja.lib.invt.objects.BookDetailNameWithCopyNO;
 @Repository
 public interface BookDetailsRepository extends JpaRepository<BookDetails, Integer> {
 
-	@Query(value = "select ibd.bookDetailId , ibd.purchaseCopyNo , ib.bookName , is2.book_rate   from invt_book_details ibd left join\r\n"
-			+ "invt_book ib on ib.bookId = ibd.bookIdF left join \r\n"
-			+ "invt_stockdetail is2  on is2.stockDetailId = ibd.stockDetailIdF \r\n"
-			+ "where ibd.isbn IS null; ", nativeQuery = true)
+	@Query(value = "SELECT ibd.bookDetailId, \r\n" + "       ibd.purchaseCopyNo, \r\n" + "       ib.bookName, \r\n"
+			+ "       is2.book_rate,\r\n" + "       CASE WHEN ibd.isbn IS NULL THEN 0 ELSE 1 END AS status\r\n"
+			+ "FROM invt_book_details ibd\r\n" + "LEFT JOIN invt_book ib ON ib.bookId = ibd.bookIdF\r\n"
+			+ "LEFT JOIN invt_stockdetail is2 ON is2.stockDetailId = ibd.stockDetailIdF;\r\n" + "", nativeQuery = true)
 	List<BookDetail> findBooksByNullIsbn();
 
 	@Query(value = "SELECT ib.bookId, \r\n" + "       ib.bookName, \r\n"

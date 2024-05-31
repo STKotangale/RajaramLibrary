@@ -6,4 +6,5 @@ public interface BookDetail {
     String getPurchaseCopyNo(); 
     String getBookName(); 
     Long getbook_rate(); 
+    int getstatus();
 }
