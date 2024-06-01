@@ -18,5 +18,6 @@ public class MemberMonthlyFeesResponse {
 	private String chequeNo;
 	private String chequeDate;
 	private String monthlyDescription;
+    private String memberName; 
 
 }

@@ -1,13 +1,11 @@
 package com.raja.lib.invt.service;
 
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.raja.lib.acc.model.Ledger;
 import com.raja.lib.acc.repository.LedgerRepository;
 import com.raja.lib.auth.model.GeneralMember;
 import com.raja.lib.auth.repository.GeneralMemberRepository;
@@ -25,7 +23,6 @@ public class MemberMonthlyFeesService {
     
     @Autowired
     private MembershipFeesRepository feesrepository;
-
 
     @Autowired
     private LedgerRepository ledgerRepository;
@@ -74,10 +71,6 @@ public class MemberMonthlyFeesService {
         GeneralMember member = generalMemberRepository.findById(request.getMemberIdF())
                 .orElseThrow(() -> new RuntimeException("Member not found"));
         fee.setMember(member);
-
-//        Ledger ledger = ledgerRepository.findById(request.getLedgerIDF())
-//                .orElseThrow(() -> new RuntimeException("Ledger not found"));
-//        fee.setLedger(ledger);
     }
 
     private MemberMonthlyFeesResponse convertToResponse(MemberMonthlyFees fee) {
@@ -91,15 +84,12 @@ public class MemberMonthlyFeesService {
         response.setToDate(fee.getToDate());
         response.setTotalMonths(fee.getTotalMonths());
         response.setFeesType(fee.getFeesType());
-//        response.setLedgerIDF(fee.getLedger().getLedgerID());
+        //response.setLedgerIDF(fee.getLedger().getLedgerID());
         response.setBankName(fee.getBankName());
         response.setChequeNo(fee.getChequeNo());
         response.setChequeDate(fee.getChequeDate());
         response.setMonthlyDescription(fee.getMonthlyDescription());
+        response.setMemberName(fee.getMember().getFirstName() + " " + fee.getMember().getLastName()); // Set member's name
         return response;
     }
-    
-    
-    
-    
 }

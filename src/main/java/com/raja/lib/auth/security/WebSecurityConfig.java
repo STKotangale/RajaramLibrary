@@ -106,9 +106,9 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
                   .requestMatchers("/api/monthly-member-fees/**").permitAll()
                   .requestMatchers("/api/membership-fees/**").permitAll()
                   .requestMatchers("/api/member-bookings/**").permitAll()
+                  .requestMatchers("/api/reports/**").permitAll() // Add your report URL here
                   .anyRequest().authenticated()
           );
       return http.build(); 
-
   }
 }
