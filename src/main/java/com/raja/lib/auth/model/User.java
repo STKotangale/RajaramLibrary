@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -64,6 +66,7 @@ public class User implements Serializable {
     @Column(name = "mobileNo")
     private String mobileNo; 
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "memberidF", referencedColumnName = "memberId")
     private GeneralMember generalMember;

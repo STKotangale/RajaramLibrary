@@ -70,6 +70,7 @@ public class GeneralMember implements Serializable {
     @Column(name = "libGenMembNo")
     private String libGenMembNo;
     
+    
     @OneToOne(mappedBy = "generalMember", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User user;
 }

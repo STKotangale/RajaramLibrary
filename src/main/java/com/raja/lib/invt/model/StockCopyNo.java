@@ -1,6 +1,9 @@
 package com.raja.lib.invt.model;
 
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,10 +34,12 @@ public class StockCopyNo implements Serializable {
     @Column(name = "stockCopyId")
     private int stockCopyId ;
 
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stockDetailIdF", nullable = false)
     private StockDetail stockDetailIdF;
 
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bookDetailIdF", nullable = false)
     private BookDetails bookDetailIdF;
