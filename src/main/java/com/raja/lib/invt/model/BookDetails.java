@@ -105,9 +105,6 @@ public class BookDetails implements Serializable{
     @Column(name="accessionNo")
     private String accessionNo;
     
-    @Column(name="typeofbook")
-    private String typeofbook;
-    
     @Column(name="purchaseCopyNo")
     private int purchaseCopyNo;
     

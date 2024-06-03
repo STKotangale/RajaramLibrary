@@ -87,7 +87,6 @@ public class BookDetailsService {
             existingBookDetails.setFullCallNumber(request.getFullCallNumber());
             existingBookDetails.setCopyNo(request.getCopyNo());
             existingBookDetails.setAccessionNo(request.getAccessionNo());
-            existingBookDetails.setTypeofbook(request.getTypeofbook());
             existingBookDetails.setBookIssue("Y");
             existingBookDetails.setBookWorkingStart("Y");
             existingBookDetails.setBookLost("N");

@@ -27,5 +27,4 @@ public class UpdateBookDetailsRequest {
     private String fullCallNumber;
     private String copyNo;
     private String accessionNo;
-    private String typeofbook;
 }

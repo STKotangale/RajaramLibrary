@@ -32,7 +32,6 @@ public interface BookDetail {
     String getFullCallNumber();
     String getCopyNo();
     String getAccessionNo();
-    String getTypeofbook();
     String getBookIssue();
     String getBookWorkingStart();
     String getBookLost();
