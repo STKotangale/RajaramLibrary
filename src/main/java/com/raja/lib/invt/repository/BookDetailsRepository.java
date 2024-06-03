@@ -34,4 +34,9 @@ public interface BookDetailsRepository extends JpaRepository<BookDetails, Intege
 			+ "JOIN invt_book bk ON bk.bookId = bdet.bookIdF " + "WHERE bk.bookName = :bookName", nativeQuery = true)
 	List<BookDetailNameWithCopyNO> findBookDetailsByBookName(@Param("bookName") String bookName);
 
+
+	    @Query("SELECT MAX(b.purchaseCopyNo) FROM BookDetails b WHERE b.bookIdF.bookId = :bookId")
+	    Integer findMaxCopyNoByBookId(@Param("bookId") int bookId);
+	
+
 }

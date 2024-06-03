@@ -62,70 +62,74 @@ public class StockService {
 
 	@Transactional
 	public ApiResponseDTO<Void> createStock(StockRequestDTO stockRequestDTO) {
-		Ledger ledger = ledgerRepository.findById(stockRequestDTO.getLedgerIDF())
-				.orElseThrow(() -> new RuntimeException("Ledger not found"));
+	    Ledger ledger = ledgerRepository.findById(stockRequestDTO.getLedgerIDF())
+	            .orElseThrow(() -> new RuntimeException("Ledger not found"));
 
-		Stock stock = new Stock();
-		stock.setStock_type("A1");
-		stock.setInvoiceNo(stockRequestDTO.getInvoiceNo());
-		stock.setInvoiceDate(stockRequestDTO.getInvoiceDate());
-		stock.setBillTotal(stockRequestDTO.getBillTotal());
-		stock.setDiscountPercent(stockRequestDTO.getDiscountPercent());
-		stock.setDiscountAmount(stockRequestDTO.getDiscountAmount());
-		stock.setTotalAfterDiscount(stockRequestDTO.getTotalAfterDiscount());
-		stock.setGstPercent(stockRequestDTO.getGstPercent());
-		stock.setGstAmount(stockRequestDTO.getGstAmount());
-		stock.setGrandTotal(stockRequestDTO.getGrandTotal());
-		stock.setLedgerIDF(ledger);
+	    Stock stock = new Stock();
+	    stock.setStock_type("A1");
+	    stock.setInvoiceNo(stockRequestDTO.getInvoiceNo());
+	    stock.setInvoiceDate(stockRequestDTO.getInvoiceDate());
+	    stock.setBillTotal(stockRequestDTO.getBillTotal());
+	    stock.setDiscountPercent(stockRequestDTO.getDiscountPercent());
+	    stock.setDiscountAmount(stockRequestDTO.getDiscountAmount());
+	    stock.setTotalAfterDiscount(stockRequestDTO.getTotalAfterDiscount());
+	    stock.setGstPercent(stockRequestDTO.getGstPercent());
+	    stock.setGstAmount(stockRequestDTO.getGstAmount());
+	    stock.setGrandTotal(stockRequestDTO.getGrandTotal());
+	    stock.setLedgerIDF(ledger);
 
-		Integer maxSrno = stockDetailRepository.findMaxSrno();
-		int nextSrno = (maxSrno == null ? 0 : maxSrno) + 1;
+	    Integer maxSrno = stockDetailRepository.findMaxSrno();
+	    int nextSrno = (maxSrno == null ? 0 : maxSrno) + 1;
 
-		List<StockDetail> stockDetails = new ArrayList<>();
-		List<BookDetails> bookDetailsList = new ArrayList<>();
+	    List<StockDetail> stockDetails = new ArrayList<>();
+	    List<BookDetails> bookDetailsList = new ArrayList<>();
 
-		for (StockDetailRequestDTO detailDTO : stockRequestDTO.getStockDetails()) {
-			Book book = bookRepository.findById(detailDTO.getBookIdF())
-					.orElseThrow(() -> new RuntimeException("Book not found"));
+	    for (StockDetailRequestDTO detailDTO : stockRequestDTO.getStockDetails()) {
+	        Book book = bookRepository.findById(detailDTO.getBookIdF())
+	                .orElseThrow(() -> new RuntimeException("Book not found"));
 
-			StockDetail stockDetail = new StockDetail();
-			stockDetail.setStockIdF(stock);
-			stockDetail.setSrno(nextSrno++);
-			stockDetail.setBook_qty(detailDTO.getBookQty());
-			stockDetail.setBook_rate(detailDTO.getBookRate());
-			stockDetail.setStock_type("A1");
-			stockDetail.setBook_amount(detailDTO.getBookAmount());
-			stockDetail.setBook_idF(book);
-			stockDetails.add(stockDetail);
+	        StockDetail stockDetail = new StockDetail();
+	        stockDetail.setStockIdF(stock);
+	        stockDetail.setSrno(nextSrno++);
+	        stockDetail.setBook_qty(detailDTO.getBookQty());
+	        stockDetail.setBook_rate(detailDTO.getBookRate());
+	        stockDetail.setStock_type("A1");
+	        stockDetail.setBook_amount(detailDTO.getBookAmount());
+	        stockDetail.setBook_idF(book);
+	        stockDetails.add(stockDetail);
 
-			List<BookDetails> generatedBookDetails = generateBookDetails(stockDetail, detailDTO.getBookQty());
-			bookDetailsList.addAll(generatedBookDetails);
-		}
+	        List<BookDetails> generatedBookDetails = generateBookDetails(stockDetail, detailDTO.getBookQty());
+	        bookDetailsList.addAll(generatedBookDetails);
+	    }
 
-		stock.setStockDetails(stockDetails);
+	    stock.setStockDetails(stockDetails);
 
-		Stock savedStock = stockRepository.save(stock);
-		bookDetailsRepository.saveAll(bookDetailsList);
+	    Stock savedStock = stockRepository.save(stock);
+	    bookDetailsRepository.saveAll(bookDetailsList);
 
-		return new ApiResponseDTO<>(true, "Stock created successfully", null, HttpStatus.CREATED.value());
+	    return new ApiResponseDTO<>(true, "Stock created successfully", null, HttpStatus.CREATED.value());
 	}
 
 	private List<BookDetails> generateBookDetails(StockDetail stockDetail, int quantity) {
-		List<BookDetails> bookDetailsList = new ArrayList<>();
-		int purchaseCopyNo = 1;
+	    List<BookDetails> bookDetailsList = new ArrayList<>();
 
-		for (int i = 0; i < quantity; i++) {
-			BookDetails bookDetails = new BookDetails();
-			bookDetails.setStockDetailIdF(stockDetail);
-			bookDetails.setBookIdF(stockDetail.getBook_idF());
-			bookDetails.setPurchaseCopyNo(purchaseCopyNo);
+	    // Find the largest purchaseCopyNo for the given book
+	    Integer maxCopyNo = bookDetailsRepository.findMaxCopyNoByBookId(stockDetail.getBook_idF().getBookId());
+	    int purchaseCopyNo = (maxCopyNo == null ? 0 : maxCopyNo) + 1;
 
-			bookDetailsList.add(bookDetails);
+	    for (int i = 0; i < quantity; i++) {
+	        BookDetails bookDetails = new BookDetails();
+	        bookDetails.setStockDetailIdF(stockDetail);
+	        bookDetails.setBookIdF(stockDetail.getBook_idF());
+	        bookDetails.setPurchaseCopyNo(purchaseCopyNo);
 
-			purchaseCopyNo++;
-		}
-		return bookDetailsList;
+	        bookDetailsList.add(bookDetails);
+
+	        purchaseCopyNo++;
+	    }
+	    return bookDetailsList;
 	}
+
 
 	public ApiResponseDTO<StockResponseDTO> getStockById(int stockId) {
 	    Stock stock = stockRepository.findById(stockId)
