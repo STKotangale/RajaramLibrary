@@ -17,16 +17,21 @@ import com.raja.lib.invt.resposne.PurchaseReturnDTO;
 @Repository
 public interface StockRepository extends JpaRepository<Stock, Integer> {
 
-	@Query(value = "SELECT " + "JSON_OBJECT(" + "'stock_id', is2.stock_id, " + "'invoiceNo', is2.invoiceNo, "
-			+ "'memberIdF', is2.memberIdF, " + "'memberName', au.username, " + "'invoiceDate', is2.invoiceDate, "
-			+ "'bookDetails', JSON_ARRAYAGG(" + "JSON_OBJECT(" + "'bookId', ib.bookId, " + "'bookName', ib.bookName, "
-			+ "'purchaseCopyNo', ibd.purchaseCopyNo" + ")" + ") " + ") AS json_response " + "FROM " + "invt_stock is2 "
-			+ "JOIN " + "auth_users au ON au.memberIdF = is2.memberIdF " + "JOIN "
-			+ "invt_stockdetail is3 ON is3.stock_idF = is2.stock_id " + "JOIN "
-			+ "invt_book ib ON ib.bookId = is3.book_idF " + "JOIN "
-			+ "invt_stock_copy_no isc ON isc.stockDetailIdF = is3.stockDetailId " + "JOIN "
-			+ "invt_book_details ibd ON ibd.bookDetailId = isc.bookDetailIdF " + "GROUP BY "
-			+ "is2.stock_id, is2.invoiceNo, is2.memberIdF, au.username, is2.invoiceDate", nativeQuery = true)
+	@Query(value = "SELECT \r\n" + "    JSON_OBJECT(\r\n" + "        'stock_id', is2.stock_id,\r\n"
+			+ "        'invoiceNo', is2.invoiceNo,\r\n" + "        'memberIdF', is2.memberIdF,\r\n"
+			+ "        'memberName', au.username,\r\n" + "        'invoiceDate', is2.invoiceDate,\r\n"
+			+ "        'bookDetails', JSON_ARRAYAGG(\r\n" + "            JSON_OBJECT(\r\n"
+			+ "                'bookId', ib.bookId,\r\n" + "                'bookName', ib.bookName,\r\n"
+			+ "                'purchaseCopyNo', ibd.purchaseCopyNo,\r\n"
+			+ "                'AccessionNo', ibd.accessionNo -- Corrected spelling\r\n" + "            )\r\n"
+			+ "        )\r\n" + "    ) AS json_response \r\n" + "FROM \r\n" + "    invt_stock is2\r\n" + "JOIN \r\n"
+			+ "    auth_users au ON au.memberIdF = is2.memberIdF\r\n" + "JOIN \r\n"
+			+ "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id\r\n" + "JOIN \r\n"
+			+ "    invt_book ib ON ib.bookId = is3.book_idF\r\n" + "JOIN \r\n"
+			+ "    invt_stock_copy_no isc ON isc.stockDetailIdF = is3.stockDetailId\r\n" + "JOIN \r\n"
+			+ "    invt_book_details ibd ON ibd.bookDetailId = isc.bookDetailIdF\r\n" + "GROUP BY \r\n"
+			+ "    is2.stock_id, is2.invoiceNo, is2.memberIdF, au.username, is2.invoiceDate\r\n"
+			+ "", nativeQuery = true)
 	List<String> getStockDetailsAsJson();
 
 	@Query(value = "SELECT is2.stock_id, " + "is2.memberIdF, " + "is2.invoiceNo, " + "is2.invoiceDate, "

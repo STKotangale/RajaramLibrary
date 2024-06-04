@@ -65,9 +65,11 @@ public class IssueController {
 	}
 
 	@GetMapping(value = "/all", produces = "application/json")
-	public String getStockDetailsAsJson() {
-		return stockService.getStockDetailsAsJson();
+	public ResponseEntity<String> getStockDetailsAsJson() {
+	    String jsonResponse = stockService.getStockDetailsAsJson();
+	    return ResponseEntity.ok(jsonResponse);
 	}
+
 
 	@DeleteMapping("/{stockId}")
     public ResponseEntity<ApiResponseDTO<Void>> deleteBookIssue(@PathVariable int stockId) {
