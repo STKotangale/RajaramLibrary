@@ -252,6 +252,7 @@ public class StockService {
 					.orElseThrow(() -> new RuntimeException("Book not found"));
 			stockDetail.setBook_idF(book);
 			stockDetail.setStock_type("A2");
+			stockDetail.setBook_qty(bookIssueRequestDto.getQty());
 			stockDetailRepository.save(stockDetail);
 			StockCopyNo stockCopyNo = new StockCopyNo();
 			stockCopyNo.setStockType("A2");
