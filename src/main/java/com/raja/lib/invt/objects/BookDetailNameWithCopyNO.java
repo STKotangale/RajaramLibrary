@@ -4,6 +4,7 @@ public interface BookDetailNameWithCopyNO {
 	Double getBookRate();
 	String getBookName();
 	Integer getPurchaseCopyNo();
+    String getaccessionNo(); 
 	Integer getBookDetailId();
 	
 }

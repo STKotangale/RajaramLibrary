@@ -124,8 +124,10 @@ public class BookDetailsService {
         List<Map<String, Object>> details = bookDetails.stream().map(detail -> {
             Map<String, Object> bookMap = new HashMap<>();
             bookMap.put("bookRate", detail.getBookRate());
+            bookMap.put("bookName", detail.getBookName());
             bookMap.put("purchaseCopyNo", detail.getPurchaseCopyNo());
-            bookMap.put("bookDetailId", detail.getBookDetailId()); // Include bookDetailId
+            bookMap.put("accessionNo", detail.getaccessionNo()); // Include accessionNo
+            bookMap.put("bookDetailId", detail.getBookDetailId());
             return bookMap;
         }).collect(Collectors.toList());
 
@@ -135,6 +137,7 @@ public class BookDetailsService {
 
         return result;
     }
+
 
 }
 

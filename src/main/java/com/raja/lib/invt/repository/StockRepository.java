@@ -75,12 +75,15 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "WHERE al.ledgerName = :ledgerName", nativeQuery = true)
 	List<Object[]> findStockDetailsByLedgerName(@Param("ledgerName") String ledgerName);
 
-	@Query(value = "SELECT al.ledgerName, ibd.purchaseCopyNo, ibd.bookDetailId, is3.*, ib.bookName, is2.* "
-			+ "FROM invt_stock is2 " + "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
-			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF " + "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF "
-			+ "JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId "
-			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF " + "WHERE is2.stock_type = 'A4' "
-			+ "AND is3.stock_type = 'A4'", nativeQuery = true)
+	@Query(value = "SELECT \r\n" + "    al.ledgerName, \r\n" + "    ibd.purchaseCopyNo, \r\n"
+			+ "    ibd.accessionNo,\r\n" + "    ibd.bookDetailId, \r\n" + "    is3.*, \r\n" + "    ib.bookName, \r\n"
+			+ "    is2.* \r\n" + "FROM \r\n" + "    invt_stock is2 \r\n" + "JOIN \r\n"
+			+ "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id \r\n" + "JOIN \r\n"
+			+ "    invt_book ib ON ib.bookId = is3.book_idF \r\n" + "JOIN \r\n"
+			+ "    acc_ledger al ON al.ledgerID = is2.ledgerIDF \r\n" + "JOIN \r\n"
+			+ "    invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId \r\n" + "JOIN \r\n"
+			+ "    invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF \r\n" + "WHERE \r\n"
+			+ "    is2.stock_type = 'A4' \r\n" + "    AND is3.stock_type = 'A4'\r\n" + "", nativeQuery = true)
 	List<PurchaseReturnDTO> findStockDetailsByType();
 
 	@Query(value = "SELECT al.ledgerName, ibd.purchaseCopyNo, ibd.bookDetailId, is3.*, ib.bookName, is2.* "

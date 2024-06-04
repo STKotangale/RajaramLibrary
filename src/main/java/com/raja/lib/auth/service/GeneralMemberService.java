@@ -1,7 +1,4 @@
 package com.raja.lib.auth.service;
-
-
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -26,7 +23,6 @@ import com.raja.lib.auth.repository.RoleRepository;
 import com.raja.lib.auth.repository.UserRepository;
 import com.raja.lib.auth.request.GeneralMemberRequestDTO;
 import com.raja.lib.auth.request.PasswordUpdateRequestDTO;
-import com.raja.lib.auth.request.UserCheckRequestDTO;
 import com.raja.lib.auth.response.GeneralMemberResponseDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 
