@@ -86,12 +86,13 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "    is2.stock_type = 'A4' \r\n" + "    AND is3.stock_type = 'A4'\r\n" + "", nativeQuery = true)
 	List<PurchaseReturnDTO> findStockDetailsByType();
 
-	@Query(value = "SELECT al.ledgerName, ibd.purchaseCopyNo, ibd.bookDetailId, is3.*, ib.bookName, is2.* "
-			+ "FROM invt_stock is2 " + "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
-			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF " + "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF "
-			+ "JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId "
-			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF " + "WHERE is2.stock_type = 'A5' "
-			+ "AND is3.stock_type = 'A5'", nativeQuery = true)
+	@Query(value = "SELECT al.ledgerName, ibd.purchaseCopyNo,ibd.accessionNo ,ibd.bookDetailId, is3.*, ib.bookName, is2.*\r\n"
+			+ "FROM invt_stock is2\r\n" + "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id\r\n"
+			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF\r\n"
+			+ "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF\r\n"
+			+ "JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId\r\n"
+			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF\r\n"
+			+ "WHERE is2.stock_type = 'A5'\r\n" + "AND is3.stock_type = 'A5';\r\n" + "", nativeQuery = true)
 	List<PurchaseReturnDTO> findBookLost();
 
 	@Query(value = "SELECT al.ledgerName, ibd.purchaseCopyNo, ibd.bookDetailId, is3.*, ib.bookName, is2.* "
