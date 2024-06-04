@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,11 +47,19 @@ public class BookDetailsService {
             List<BookDetailResponse.CopyDetail> copyDetails = Stream.of(bookDetail.getPurchaseCopyNos().split(","))
                     .map(copyNo -> {
                         String[] parts = copyNo.split(":");
-                        return new BookDetailResponse.CopyDetail(
-                                Integer.parseInt(parts[0]),
-                                Integer.parseInt(parts[1])
-                        );
+                        if (parts.length >= 2) {
+                            String[] copyNoParts = parts[1].split("-");
+                            if (copyNoParts.length >= 2) {
+                                return new BookDetailResponse.CopyDetail(
+                                        Integer.parseInt(parts[0]),
+                                        copyNoParts[0], // accessionNo
+                                        Integer.parseInt(copyNoParts[1])
+                                );
+                            }
+                        }
+                        return null;
                     })
+                    .filter(copyDetail -> copyDetail != null)
                     .collect(Collectors.toList());
 
             response.setCopyDetails(copyDetails);
