@@ -11,6 +11,7 @@ import com.raja.lib.invt.model.Stock;
 import com.raja.lib.invt.objects.GetAllIssueBookDetailsByUsername;
 import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.objects.InvoiceDateProjection;
+import com.raja.lib.invt.objects.StockModel;
 import com.raja.lib.invt.resposne.CreateStockResponse;
 import com.raja.lib.invt.resposne.PurchaseReturnDTO;
 
@@ -110,4 +111,9 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "invt_book_details ibd on ibd.bookDetailId = iscn.bookDetailIdF \r\n"
 			+ "where ibd.bookDetailId= bookDetailId  and \r\n" + "is2.stock_type =\"A2\"", nativeQuery = true)
 	List<InvoiceDateProjection> findInvoiceDateByBookDetailId(@Param("bookDetailId") Long bookDetailId);
+
+	@Query(value = "SELECT is2.stock_id, is2.ledgerIDF, is2.invoiceNo, is2.invoiceDate, is2.grandTotal, al.ledgerName\r\n"
+			+ "FROM invt_stock is2\r\n" + "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF\r\n"
+			+ "WHERE is2.stock_type = 'A1';\r\n" + "", nativeQuery = true)
+	List<StockModel> getAllStock();
 }

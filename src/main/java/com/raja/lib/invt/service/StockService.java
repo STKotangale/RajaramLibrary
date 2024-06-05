@@ -23,6 +23,7 @@ import com.raja.lib.invt.model.StockDetail;
 import com.raja.lib.invt.objects.GetAllIssueBookDetailsByUsername;
 import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.objects.InvoiceDateProjection;
+import com.raja.lib.invt.objects.StockModel;
 import com.raja.lib.invt.repository.BookDetailsRepository;
 import com.raja.lib.invt.repository.BookRepository;
 import com.raja.lib.invt.repository.InvtConfigRepository;
@@ -563,5 +564,10 @@ public class StockService {
 
 	public List<PurchaseReturnDTO> getScrapDetials() {
 		return stockRepository.findBookScrap();
+	}
+	
+	
+	public List<StockModel> getStockDetials() {
+		return stockRepository.getAllStock();
 	}
 }

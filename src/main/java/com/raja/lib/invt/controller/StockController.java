@@ -3,7 +3,6 @@ package com.raja.lib.invt.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.raja.lib.invt.objects.StockModel;
 import com.raja.lib.invt.request.StockRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.resposne.StockResponseDTO;
@@ -57,7 +57,11 @@ public class StockController {
 		return ResponseEntity.status(response.getStatusCode()).body(response);
     }
     
-    
+    @GetMapping("only")
+    public ResponseEntity<List<StockModel>> getAllStocksonly() {
+        List<StockModel> stocks = stockService.getStockDetials();
+        return ResponseEntity.ok().body(stocks);
+    }
     
    
 }
