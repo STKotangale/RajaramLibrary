@@ -488,7 +488,7 @@ public class StockService {
 			StockDetail returnStockDetail = new StockDetail();
 			returnStockDetail.setStockIdF(stock);
 			returnStockDetail.setBook_idF(stockDetail.getBook_idF());
-			returnStockDetail.setBook_qty(0);
+			returnStockDetail.setBook_qty(stockDetail.getBook_qty());
 			returnStockDetail.setBook_rate(0);
 			returnStockDetail.setStock_type("A4");
 			returnStockDetail.setBook_amount(bookDetailDTO.getAmount());

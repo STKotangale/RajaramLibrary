@@ -18,5 +18,6 @@ public class PurchaseReturnRequestDTO {
 	private double gstPercent;
 	private double gstAmount;
 	private double totalAfterDiscount;
+	private int qty;
 	private List<PurchaseReturnBookDetailDTO> bookDetails;
 }
