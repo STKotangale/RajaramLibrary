@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.model.Stock;
+import com.raja.lib.invt.objects.BookIssue;
 import com.raja.lib.invt.objects.GetAllIssueBookDetailsByUsername;
 import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.request.BookIssueRequestDto;
@@ -24,6 +25,7 @@ import com.raja.lib.invt.request.BookIssueReturnRequestDTO;
 import com.raja.lib.invt.request.BookLostRequestDTO;
 import com.raja.lib.invt.request.PurchaseReturnRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
+import com.raja.lib.invt.resposne.IssueDetailsDTO;
 import com.raja.lib.invt.resposne.PurchaseReturnDTO;
 import com.raja.lib.invt.service.BookDetailsService;
 import com.raja.lib.invt.service.StockService;
@@ -38,6 +40,8 @@ public class IssueController {
 	
 	@Autowired
 	private BookDetailsService bookDetailservice;
+	
+
 	
 	
 
@@ -64,11 +68,16 @@ public class IssueController {
 		}
 	}
 
-	@GetMapping(value = "/all", produces = "application/json")
-	public ResponseEntity<String> getStockDetailsAsJson() {
-	    String jsonResponse = stockService.getStockDetailsAsJson();
-	    return ResponseEntity.ok(jsonResponse);
+	@GetMapping(value = "/all")
+	List<BookIssue> getAllIssue(){
+	    return stockService.getAllIssue();
 	}
+
+	  @GetMapping("/book-issue/{stockId}")
+	    public ResponseEntity<List<IssueDetailsDTO>> getInvoiceDetailsByStockId(@PathVariable Integer stockId) {
+	        List<IssueDetailsDTO> issueDetails = stockService.getInvoiceDetailsByStockId(stockId);
+	        return new ResponseEntity<>(issueDetails, HttpStatus.OK);
+	    }
 
 
 	@DeleteMapping("/{stockId}")

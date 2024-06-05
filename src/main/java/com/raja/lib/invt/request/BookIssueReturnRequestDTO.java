@@ -8,5 +8,6 @@ public class BookIssueReturnRequestDTO {
     private String issueNo;
     private String issueReturnDate;
     private int memberId;
+    private int qty;
     private List<BookDetailsDTO> bookDetailsList; 
 }

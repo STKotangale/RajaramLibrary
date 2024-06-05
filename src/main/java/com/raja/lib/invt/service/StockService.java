@@ -6,6 +6,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,7 @@ import com.raja.lib.invt.model.InvtConfig;
 import com.raja.lib.invt.model.Stock;
 import com.raja.lib.invt.model.StockCopyNo;
 import com.raja.lib.invt.model.StockDetail;
+import com.raja.lib.invt.objects.BookIssue;
 import com.raja.lib.invt.objects.GetAllIssueBookDetailsByUsername;
 import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.objects.InvoiceDateProjection;
@@ -40,7 +44,9 @@ import com.raja.lib.invt.request.PurchaseReturnRequestDTO;
 import com.raja.lib.invt.request.StockDetailRequestDTO;
 import com.raja.lib.invt.request.StockRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
+import com.raja.lib.invt.resposne.BookDetailss;
 import com.raja.lib.invt.resposne.BookResponseDTO;
+import com.raja.lib.invt.resposne.IssueDetailsDTO;
 import com.raja.lib.invt.resposne.PurchaseReturnBookDetailDTO;
 import com.raja.lib.invt.resposne.PurchaseReturnDTO;
 import com.raja.lib.invt.resposne.StockDetailResponseDTO;
@@ -269,19 +275,58 @@ public class StockService {
 		return new ApiResponseDTO<>(true, "Book issued successfully", savedStock, HttpStatus.CREATED.value());
 	}
 
-	public String getStockDetailsAsJson() {
-		List<String> jsonResults = stockRepository.getStockDetailsAsJson();
-		StringBuilder jsonResponse = new StringBuilder("[");
-		for (String jsonResult : jsonResults) {
-			jsonResponse.append(jsonResult).append(",");
-		}
-		if (jsonResponse.length() > 1) {
-			jsonResponse.deleteCharAt(jsonResponse.length() - 1);
-		}
-		jsonResponse.append("]");
-		return jsonResponse.toString();
+//	public String getStockDetailsAsJson() {
+//		List<String> jsonResults = stockRepository.getStockDetailsAsJson();
+//		StringBuilder jsonResponse = new StringBuilder("[");
+//		for (String jsonResult : jsonResults) {
+//			jsonResponse.append(jsonResult).append(",");
+//		}
+//		if (jsonResponse.length() > 1) {
+//			jsonResponse.deleteCharAt(jsonResponse.length() - 1);
+//		}
+//		jsonResponse.append("]");
+//		return jsonResponse.toString();
+//	}
+	
+	public List<BookIssue> getAllIssue()
+	{
+		return stockRepository.getAllIssue();
 	}
+	
+	
+	public List<IssueDetailsDTO> getInvoiceDetailsByStockId(Integer stockId) {
+        List<Object[]> result = stockRepository.findIssueDetailsById(stockId);
+        List<IssueDetailsDTO> issueDetailsList = new ArrayList<>();
 
+        for (Object[] row : result) {
+            IssueDetailsDTO issueDetails = new IssueDetailsDTO();
+            issueDetails.setId((Integer) row[0]);
+            issueDetails.setInvoiceNo((String) row[1]);
+            issueDetails.setInvoiceDate((String) row[2]);
+            issueDetails.setUser((String) row[3]);
+
+            String booksJson = (String) row[4];
+            List<BookDetailss> books = new ArrayList<>();
+            try {
+                JSONArray booksArray = new JSONArray(booksJson);
+                for (int i = 0; i < booksArray.length(); i++) {
+                    JSONObject bookObject = booksArray.getJSONObject(i);
+                    BookDetailss bookDetailss = new BookDetailss();
+                    bookDetailss.setBookName(bookObject.getString("bookName"));
+                    bookDetailss.setAccessionNo(bookObject.getString("accessionNo"));
+                    books.add(bookDetailss);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace(); // Handle exception appropriately
+            }
+            issueDetails.setBooks(books);
+
+            issueDetailsList.add(issueDetails);
+        }
+        return issueDetailsList;
+    }
+
+	
 	@Transactional
 	public ApiResponseDTO<Stock> updateBookIssue(int stockId, BookIssueRequestDto bookIssueRequestDto) {
 		Stock stockToUpdate = stockRepository.findById(stockId)
@@ -383,6 +428,7 @@ public class StockService {
 	        StockDetail stockDetail = new StockDetail();
 	        stockDetail.setStockIdF(savedStock);
 	        stockDetail.setStock_type("A3");
+	        stockDetail.setBook_qty(bookIssueReturnRequestDTO.getQty());
 
 	        Book book = bookRepository.findById(bookDetailsDTO.getBookId())
 	                .orElseThrow(() -> new RuntimeException("Book not found"));

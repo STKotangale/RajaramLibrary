@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.raja.lib.invt.model.Stock;
+import com.raja.lib.invt.objects.BookIssue;
 import com.raja.lib.invt.objects.GetAllIssueBookDetailsByUsername;
 import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.objects.InvoiceDateProjection;
@@ -116,4 +117,21 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "FROM invt_stock is2\r\n" + "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF\r\n"
 			+ "WHERE is2.stock_type = 'A1';\r\n" + "", nativeQuery = true)
 	List<StockModel> getAllStock();
+
+	@Query(value = "select is2.stock_id , is2.invoiceNo , is2.invoiceDate , au.username  from invt_stock is2 join\r\n"
+			+ "auth_general_members agm ON agm.memberId = is2.memberIdF join \r\n"
+			+ "auth_users au on au.memberIdF = agm.memberId \r\n" + "where is2.stock_type ='A2'", nativeQuery = true)
+	List<BookIssue> getAllIssue();
+
+	@Query(value = "SELECT is2.stock_id AS stockId, is2.invoiceNo AS action, is2.invoiceDate AS date, au.username AS user, JSON_ARRAYAGG(JSON_OBJECT('bookName', ib.bookName, 'accessionNo', ibd.accessionNo)) AS books "
+			+ "FROM invt_stock is2 " + "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF "
+			+ "JOIN auth_users au ON au.memberIdF = agm.memberId "
+			+ "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
+			+ "JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId "
+			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF "
+			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF "
+			+ "WHERE is2.stock_type = 'A2' AND is2.stock_id = :stockId "
+			+ "GROUP BY is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username", nativeQuery = true)
+	List<Object[]> findIssueDetailsById(@Param("stockId") Integer stockId);
+
 }
