@@ -11,6 +11,8 @@ public class BookLostRequestDTO {
 	private String invoiceDate;
 	private int ledgerId;
 	private double billTotal;
+    private int bookQty; 
+	
 
 	private List<BookLostBookDetailDTO> bookDetails;
 
