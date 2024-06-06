@@ -78,15 +78,15 @@ public class MembOnlineBookingService {
         return new MembOnlineBookingResponseDTO(
             booking.getMembOnlineId(),
             booking.getInvoiceNo(),
-            booking.getInvoiceDate(),
+            booking.getInvoiceDate(),	
             booking.getGeneralMember().getMemberId(),
             booking.getBook().getBookId()
         );
     }
     
     
-    public List<OnlineBookingDetails> getBookingsByUserId(int userId) {
-        return membOnlineBookingRepository.findOnlineBookingsByUserId(userId);
+    public List<OnlineBookingDetails> getBookingsByUserId(int memberId) {
+        return membOnlineBookingRepository.findOnlineBookingsByMemberId(memberId);
     }
 
 }
