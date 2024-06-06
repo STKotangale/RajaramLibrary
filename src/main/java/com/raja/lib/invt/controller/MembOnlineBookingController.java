@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.raja.lib.invt.objects.GetAllMemberBookings;
 import com.raja.lib.invt.objects.OnlineBookingDetails;
 import com.raja.lib.invt.request.MembOnlineBookingRequestDTO;
 import com.raja.lib.invt.resposne.MembOnlineBookingResponseDTO;
@@ -29,9 +29,9 @@ public class MembOnlineBookingController {
     @Autowired
     private MembOnlineBookingService bookingService;
 
-    @GetMapping
-    public List<MembOnlineBookingResponseDTO> getAllBookings() {
-        return bookingService.getAllBookings();
+    @GetMapping("/All/{userId}")
+    public List<GetAllMemberBookings> getAllBookings(@PathVariable int userId) {
+        return bookingService.getAllBookings(userId);
     }
 
     @GetMapping("/{id}")

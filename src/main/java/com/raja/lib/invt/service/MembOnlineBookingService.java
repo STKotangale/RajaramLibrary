@@ -1,7 +1,6 @@
 package com.raja.lib.invt.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +10,7 @@ import com.raja.lib.auth.model.GeneralMember;
 import com.raja.lib.auth.repository.GeneralMemberRepository;
 import com.raja.lib.invt.model.Book;
 import com.raja.lib.invt.model.MembOnlineBooking;
+import com.raja.lib.invt.objects.GetAllMemberBookings;
 import com.raja.lib.invt.objects.OnlineBookingDetails;
 import com.raja.lib.invt.repository.BookRepository;
 import com.raja.lib.invt.repository.MembOnlineBookingRepository;
@@ -29,10 +29,8 @@ public class MembOnlineBookingService {
     @Autowired
     private BookRepository bookRepository;
 
-    public List<MembOnlineBookingResponseDTO> getAllBookings() {
-        return membOnlineBookingRepository.findAll().stream()
-                .map(this::convertToResponseDTO)
-                .collect(Collectors.toList());
+    public List<GetAllMemberBookings> getAllBookings(int userId) {
+        return membOnlineBookingRepository.findAllMemberOnlineBooking(userId);
     }
 
     public MembOnlineBookingResponseDTO getBookingById(int bookingId) {
