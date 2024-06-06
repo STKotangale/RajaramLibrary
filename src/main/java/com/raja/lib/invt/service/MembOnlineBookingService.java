@@ -11,6 +11,7 @@ import com.raja.lib.auth.model.GeneralMember;
 import com.raja.lib.auth.repository.GeneralMemberRepository;
 import com.raja.lib.invt.model.Book;
 import com.raja.lib.invt.model.MembOnlineBooking;
+import com.raja.lib.invt.objects.OnlineBookingDetails;
 import com.raja.lib.invt.repository.BookRepository;
 import com.raja.lib.invt.repository.MembOnlineBookingRepository;
 import com.raja.lib.invt.request.MembOnlineBookingRequestDTO;
@@ -84,4 +85,10 @@ public class MembOnlineBookingService {
             booking.getBook().getBookId()
         );
     }
+    
+    
+    public List<OnlineBookingDetails> getBookingsByUserId(int userId) {
+        return membOnlineBookingRepository.findOnlineBookingsByUserId(userId);
+    }
+
 }

@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.raja.lib.invt.objects.OnlineBookingDetails;
 import com.raja.lib.invt.request.MembOnlineBookingRequestDTO;
 import com.raja.lib.invt.resposne.MembOnlineBookingResponseDTO;
 import com.raja.lib.invt.service.MembOnlineBookingService;
@@ -62,4 +64,10 @@ public class MembOnlineBookingController {
         bookingService.deleteBooking(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/bookings/{userId}")
+    public List<OnlineBookingDetails> getBookingsByUserId(@PathVariable int userId) {
+        return bookingService.getBookingsByUserId(userId);
+    }	
+
 }

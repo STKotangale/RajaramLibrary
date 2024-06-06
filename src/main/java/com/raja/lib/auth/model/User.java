@@ -80,6 +80,6 @@ public class User implements Serializable {
         this.useremail = useremail;
         this.userpassword = userpassword;
         this.isBlock = isBlock;
-        this.mobileNo = mobileNo; // New field
+        this.mobileNo = mobileNo;
     }
 }

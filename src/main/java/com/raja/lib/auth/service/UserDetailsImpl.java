@@ -13,92 +13,99 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.raja.lib.auth.model.User;
 
 public class UserDetailsImpl implements UserDetails {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private int id;
+  private int id;
+  private String username;
+  private String email;
 
-    private String username;
+  @JsonIgnore
+  private String password;
 
-    private String email;
+  private Collection<? extends GrantedAuthority> authorities;
+  private Integer memberId; 
 
-    @JsonIgnore
-    private String password;
+  public UserDetailsImpl(int id, String username, String email, String password,
+                         Collection<? extends GrantedAuthority> authorities, Integer memberId) {
+    this.id = id;
+    this.username = username;
+    this.email = email;
+    this.password = password;
+    this.authorities = authorities;
+    this.memberId = memberId; 
+  }
 
-    private Collection<? extends GrantedAuthority> authorities;
+  public static UserDetailsImpl build(User user) {
+    List<GrantedAuthority> authorities = user.getRoles().stream()
+            .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
+            .collect(Collectors.toList());
 
-    public UserDetailsImpl(int id, String username, String email, String password,
-                           Collection<? extends GrantedAuthority> authorities) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.authorities = authorities;
-    }
+    Integer memberId = user.getGeneralMember() != null ? user.getGeneralMember().getMemberId() : null;
 
-    public static UserDetailsImpl build(User user) {
-        List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRoleName())) // Use role name directly
-                .collect(Collectors.toList());
-
-        return new UserDetailsImpl(
-                user.getUserId(),
-                user.getUsername(),
-                user.getUseremail(),
-                user.getUserpassword(),
-                authorities);
-    }
+    return new UserDetailsImpl(
+            user.getUserId(),
+            user.getUsername(),
+            user.getUseremail(),
+            user.getUserpassword(),
+            authorities,
+            memberId); 
+  }
 
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public int getId() {
-        return id;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    public String getEmail() {
-        return email;
-    }
+  @Override
+  public String getPassword() {
+    return password;
+  }
 
-    @Override
-    public String getPassword() {
-        return password;
-    }
+  @Override
+  public String getUsername() {
+    return username;
+  }
 
-    @Override
-    public String getUsername() {
-        return username;
-    }
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+  @Override
+  public boolean isEnabled() {
+    return true;
+  }
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return authorities;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        UserDetailsImpl user = (UserDetailsImpl) o;
-        return Objects.equals(id, user.id);
-    }
+  public Integer getMemberId() {
+    return memberId;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+    UserDetailsImpl user = (UserDetailsImpl) o;
+    return Objects.equals(id, user.id);
+  }
 }
