@@ -45,4 +45,7 @@ public class MembOnlineBooking implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_idF", referencedColumnName = "bookId")
     private Book book;
+    
+    @Column(name = "isBlock", columnDefinition = "char(1) default 'N'")
+    private char isBlock; 
 }

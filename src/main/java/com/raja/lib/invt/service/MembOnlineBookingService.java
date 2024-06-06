@@ -88,5 +88,15 @@ public class MembOnlineBookingService {
     public List<OnlineBookingDetails> getBookingsByUserId(int memberId) {
         return membOnlineBookingRepository.findOnlineBookingsByMemberId(memberId);
     }
+    
+    @Transactional
+    public void updateBlockStatus(List<Integer> membOnlineIds) {
+        for (Integer id : membOnlineIds) {
+            MembOnlineBooking booking = membOnlineBookingRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid membOnlineId: " + id));
+            booking.setIsBlock('N');
+            membOnlineBookingRepository.save(booking);
+        }
+    }
 
 }
