@@ -6,4 +6,5 @@ public interface MemberBookInfo {
     Integer getpurchaseCopyNo();
     String getissueDate();
     String getreturnDate();
+    String getaccessionNo();
 }

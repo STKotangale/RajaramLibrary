@@ -24,18 +24,20 @@ public interface GeneralMemberRepository extends JpaRepository<GeneralMember, In
 	@Query(value = "SELECT * FROM auth_general_members agm JOIN auth_users au ON au.memberIdF = agm.memberId WHERE agm.memberId = :memberId", nativeQuery = true)
 	GenralMember getGeneralMemberById(@Param("memberId") int memberId);
 
-	@Query(value = "SELECT " + "agm.memberId AS memberId, " + "ib.bookName AS bookName, "
-			+ "ibd.purchaseCopyNo AS purchaseCopyNo, "
-			+ "MAX(CASE WHEN is2.stock_type = 'A2' THEN is2.invoiceDate END) AS issueDate, "
-			+ "MAX(CASE WHEN is2.stock_type = 'A3' THEN is2.invoiceDate END) AS returnDate " + "FROM invt_stock is2 "
-			+ "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
-			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF "
-			+ "JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId "
-			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF "
-			+ "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF "
-			+ "JOIN auth_users au ON au.memberIdF = agm.memberId " + "WHERE au.userId = :userId "
-			+ "GROUP BY agm.memberId, ib.bookName, ibd.purchaseCopyNo "
-			+ "HAVING MAX(CASE WHEN is2.stock_type = 'A3' THEN is2.invoiceDate END) IS NULL", nativeQuery = true)
+	@Query(value = "SELECT \r\n" + "    agm.memberId AS memberId,\r\n" + "    ib.bookName AS bookName,\r\n"
+			+ "    ibd.accessionNo AS accessionNo, -- Include accession number here\r\n"
+			+ "    ibd.purchaseCopyNo AS purchaseCopyNo,\r\n"
+			+ "    MAX(CASE WHEN is2.stock_type = 'A2' THEN is2.invoiceDate END) AS issueDate,\r\n"
+			+ "    MAX(CASE WHEN is2.stock_type = 'A3' THEN is2.invoiceDate END) AS returnDate\r\n" + "FROM \r\n"
+			+ "    invt_stock is2\r\n" + "JOIN \r\n" + "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id\r\n"
+			+ "JOIN \r\n" + "    invt_book ib ON ib.bookId = is3.book_idF\r\n" + "JOIN \r\n"
+			+ "    invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId\r\n" + "JOIN \r\n"
+			+ "    invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF\r\n" + "JOIN \r\n"
+			+ "    auth_general_members agm ON agm.memberId = is2.memberIdF\r\n" + "WHERE \r\n"
+			+ "    agm.memberId = :userId \n"
+			+ "GROUP BY \r\n" + "    agm.memberId, ib.bookName, ibd.accessionNo, ibd.purchaseCopyNo \r\n"
+			+ "HAVING \r\n" 
+			+ "    MAX(CASE WHEN is2.stock_type = 'A3' THEN is2.invoiceDate END) IS NULL;\r\n" + "", nativeQuery = true)
 	List<MemberBookInfo> findMemberBookInfoByUserId(@Param("userId") int userId);
 
 	@Query(value = "SELECT " + "agm.memberId AS memberId, " + "ib.bookName AS bookName, "
@@ -55,8 +57,7 @@ public interface GeneralMemberRepository extends JpaRepository<GeneralMember, In
 			+ "GROUP BY agm.memberId, ib.bookName, ibd.purchaseCopyNo", nativeQuery = true)
 	List<BookIssueDetails> findBookIssueDetails(@Param("userId") int userId, @Param("startDate") String startDate,
 			@Param("endDate") String endDate);
-	
-//    Optional<GeneralMember> findByMobileNo(long mobileNo);
 
+//    Optional<GeneralMember> findByMobileNo(long mobileNo);
 
 }
