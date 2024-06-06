@@ -1,7 +1,6 @@
 package com.raja.lib.auth.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.raja.lib.auth.model.GeneralMember;
-import com.raja.lib.auth.model.User;
 import com.raja.lib.auth.objects.BookIssueDetails;
 import com.raja.lib.auth.objects.GenralMember;
 import com.raja.lib.auth.objects.MemberBookInfo;
@@ -34,14 +32,13 @@ public interface GeneralMemberRepository extends JpaRepository<GeneralMember, In
 			+ "    invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId\r\n" + "JOIN \r\n"
 			+ "    invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF\r\n" + "JOIN \r\n"
 			+ "    auth_general_members agm ON agm.memberId = is2.memberIdF\r\n" + "WHERE \r\n"
-			+ "    agm.memberId = :userId \n"
-			+ "GROUP BY \r\n" + "    agm.memberId, ib.bookName, ibd.accessionNo, ibd.purchaseCopyNo \r\n"
-			+ "HAVING \r\n" 
+			+ "    agm.memberId = :userId \n" + "GROUP BY \r\n"
+			+ "    agm.memberId, ib.bookName, ibd.accessionNo, ibd.purchaseCopyNo \r\n" + "HAVING \r\n"
 			+ "    MAX(CASE WHEN is2.stock_type = 'A3' THEN is2.invoiceDate END) IS NULL;\r\n" + "", nativeQuery = true)
 	List<MemberBookInfo> findMemberBookInfoByUserId(@Param("userId") int userId);
 
 	@Query(value = "SELECT " + "agm.memberId AS memberId, " + "ib.bookName AS bookName, "
-			+ "ibd.purchaseCopyNo AS purchaseCopyNo, "
+			+ "ibd.purchaseCopyNo AS purchaseCopyNo, " + "ibd.accessionNo AS accessionNo, "
 			+ "MAX(CASE WHEN is2.stock_type = 'A2' THEN is2.invoiceDate END) AS issueDate, "
 			+ "MAX(CASE WHEN is2.stock_type = 'A3' THEN is2.invoiceDate END) AS confirmReturnDate, "
 			+ "MAX(is2.fineAmount) AS maxFineAmount, "
@@ -52,9 +49,10 @@ public interface GeneralMemberRepository extends JpaRepository<GeneralMember, In
 			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF "
 			+ "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF "
 			+ "JOIN auth_users au ON au.memberIdF = agm.memberId " + "CROSS JOIN invt_config ic "
-			+ "WHERE au.userId = :userId "
-			+ "AND STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y') BETWEEN STR_TO_DATE(:startDate, '%d-%m-%Y') AND STR_TO_DATE(:endDate, '%d-%m-%Y') "
-			+ "GROUP BY agm.memberId, ib.bookName, ibd.purchaseCopyNo", nativeQuery = true)
+			+ "WHERE agm.memberId = :userId "
+			+ "AND STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y') BETWEEN COALESCE(STR_TO_DATE(:startDate, '%d-%m-%Y'), STR_TO_DATE('01-01-2024', '%d-%m-%Y')) "
+			+ "AND COALESCE(STR_TO_DATE(:endDate, '%d-%m-%Y'), STR_TO_DATE('31-12-2024', '%d-%m-%Y')) "
+			+ "GROUP BY agm.memberId, ib.bookName, ibd.purchaseCopyNo, ibd.accessionNo", nativeQuery = true)
 	List<BookIssueDetails> findBookIssueDetails(@Param("userId") int userId, @Param("startDate") String startDate,
 			@Param("endDate") String endDate);
 

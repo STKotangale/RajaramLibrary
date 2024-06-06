@@ -20,7 +20,6 @@ import com.raja.lib.auth.objects.MemberBookInfo;
 import com.raja.lib.auth.request.BookIssueDetailsRequest;
 import com.raja.lib.auth.request.GeneralMemberRequestDTO;
 import com.raja.lib.auth.request.PasswordUpdateRequestDTO;
-import com.raja.lib.auth.request.UserCheckRequestDTO;
 import com.raja.lib.auth.response.GeneralMemberResponseDTO;
 import com.raja.lib.auth.service.GeneralMemberService;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
