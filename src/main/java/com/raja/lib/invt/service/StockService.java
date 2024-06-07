@@ -1,6 +1,7 @@
 package com.raja.lib.invt.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -76,6 +77,8 @@ public class StockService {
 	    stock.setStock_type("A1");
 	    stock.setInvoiceNo(stockRequestDTO.getInvoiceNo());
 	    stock.setInvoiceDate(stockRequestDTO.getInvoiceDate());
+	    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+	    stock.setInvoice_time(LocalDateTime.now().format(timeFormatter));
 	    stock.setBillTotal(stockRequestDTO.getBillTotal());
 	    stock.setDiscountPercent(stockRequestDTO.getDiscountPercent());
 	    stock.setDiscountAmount(stockRequestDTO.getDiscountAmount());
@@ -248,6 +251,8 @@ public class StockService {
 		stock.setStock_type("A2");
 		stock.setInvoiceNo(bookIssueRequestDto.getInvoiceNo());
 		stock.setInvoiceDate(bookIssueRequestDto.getInvoiceDate());
+		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+		stock.setInvoice_time(LocalDateTime.now().format(timeFormatter));
 		GeneralMember generalMember = generalMemberRepository.findById(bookIssueRequestDto.getGeneralMemberId())
 				.orElseThrow(() -> new RuntimeException("General member not found"));
 		stock.setGeneralMember(generalMember);
@@ -413,7 +418,9 @@ public class StockService {
 	    Stock stock = new Stock();
 	    stock.setStock_type("A3");
 	    stock.setInvoiceNo(bookIssueReturnRequestDTO.getIssueNo());
-	    stock.setInvoiceDate(bookIssueReturnRequestDTO.getIssueReturnDate()); // Directly set the string
+	    stock.setInvoiceDate(bookIssueReturnRequestDTO.getIssueReturnDate()); 
+	    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+		stock.setInvoice_time(LocalDateTime.now().format(timeFormatter));
 	    stock.setFineDays(totalFineDays);
 	    stock.setFinePerDays(totalFinePerDay);
 	    stock.setFineAmount(totalFineAmount);
@@ -469,6 +476,8 @@ public class StockService {
 		stock.setStock_type("A4");
 		stock.setInvoiceNo(purchaseReturnRequestDTO.getInvoiceNO());
 		stock.setInvoiceDate(purchaseReturnRequestDTO.getInvoiceDate());
+		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+		stock.setInvoice_time(LocalDateTime.now().format(timeFormatter));
 		stock.setBillTotal(purchaseReturnRequestDTO.getBillTotal());
 		stock.setDiscountPercent(purchaseReturnRequestDTO.getDiscountPercent());
 		stock.setDiscountAmount(purchaseReturnRequestDTO.getDiscountAmount());
@@ -523,6 +532,8 @@ public class StockService {
 		stock.setStock_type("A5");
 		stock.setInvoiceNo(purchaseReturnRequestDTO.getInvoiceNO());
 		stock.setInvoiceDate(purchaseReturnRequestDTO.getInvoiceDate());
+		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+		stock.setInvoice_time(LocalDateTime.now().format(timeFormatter));
 		stock.setBillTotal(purchaseReturnRequestDTO.getBillTotal());
 		stock.setDiscountPercent(purchaseReturnRequestDTO.getDiscountPercent());
 		stock.setDiscountAmount(purchaseReturnRequestDTO.getDiscountAmount());
@@ -577,6 +588,8 @@ public class StockService {
 		stock.setStock_type("A6");
 		stock.setInvoiceNo(bookLostRequestDTO.getInvoiceNO());
 		stock.setInvoiceDate(bookLostRequestDTO.getInvoiceDate());
+		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+		stock.setInvoice_time(LocalDateTime.now().format(timeFormatter));
 		stock.setBillTotal(bookLostRequestDTO.getBillTotal());
 		stock.setLedgerIDF(ledger);
 

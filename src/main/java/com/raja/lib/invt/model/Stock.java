@@ -48,6 +48,9 @@ public class Stock implements Serializable {
 
 	@Column(name = "invoiceDate")
 	private String invoiceDate;
+	
+	@Column(name="invoice_time")
+	private String invoice_time;
 
 	@Column(name = "billTotal")
 	private Double billTotal;
