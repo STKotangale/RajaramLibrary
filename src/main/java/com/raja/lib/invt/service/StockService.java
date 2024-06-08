@@ -387,40 +387,12 @@ public class StockService {
 	public ApiResponseDTO<Void> createIssueReturn(BookIssueReturnRequestDTO bookIssueReturnRequestDTO) {
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-	    double totalFineDays = 0;
-	    double totalFinePerDay = 0;
-	    double totalFineAmount = 0;
-
-	    if (!bookIssueReturnRequestDTO.getBookDetailsList().isEmpty()) {
-	        Long bookDetailId = (long) bookIssueReturnRequestDTO.getBookDetailsList().get(0).getBookDetailIds();
-	        List<InvoiceDateProjection> invoiceDates = stockRepository.findInvoiceDateByBookDetailId(bookDetailId);
-
-	        for (InvoiceDateProjection invoiceDate : invoiceDates) {
-	            LocalDate issueDate = LocalDate.parse(invoiceDate.getInvoiceDate(), formatter);
-	            LocalDate invoiceDateFromRequest = LocalDate.parse(bookIssueReturnRequestDTO.getIssueReturnDate(), formatter);
-	            long daysBetween = ChronoUnit.DAYS.between(issueDate, invoiceDateFromRequest);
-
-	            InvtConfig invtConfig = invtConfigRepository.findFirstByOrderBySrnoAsc();
-	            int bookDays = invtConfig.getBookDays();
-	            double finePerDay = invtConfig.getFinePerDays();
-
-	            if (daysBetween > bookDays) {
-	                totalFineDays = (int) (daysBetween - bookDays);
-	                totalFinePerDay = finePerDay;
-	                totalFineAmount = totalFineDays * totalFinePerDay;
-	            }
-	        }
-	    }
-
 	    Stock stock = new Stock();
 	    stock.setStock_type("A3");
 	    stock.setInvoiceNo(bookIssueReturnRequestDTO.getIssueNo());
-	    stock.setInvoiceDate(bookIssueReturnRequestDTO.getIssueReturnDate()); 
+	    stock.setInvoiceDate(bookIssueReturnRequestDTO.getIssueReturnDate());
 	    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-		stock.setInvoice_time(LocalDateTime.now().format(timeFormatter));
-//	    stock.setFineDays(totalFineDays);
-//	    stock.setFinePerDays(totalFinePerDay);
-//	    stock.setFineAmount(totalFineAmount);
+	    stock.setInvoice_time(LocalDateTime.now().format(timeFormatter));
 
 	    GeneralMember generalMember = generalMemberRepository.findById(bookIssueReturnRequestDTO.getMemberId())
 	            .orElseThrow(() -> new RuntimeException("General member not found"));
@@ -433,6 +405,11 @@ public class StockService {
 	        stockDetail.setStockIdF(savedStock);
 	        stockDetail.setStock_type("A3");
 	        stockDetail.setBook_qty(1);
+	        stockDetail.setRef_issue_date(bookDetailsDTO.getIssuedate());
+	        stockDetail.setRef_issue_stockDetailId(bookDetailsDTO.getStockDetailId());
+	        stockDetail.setFineDays(bookDetailsDTO.getFineDays());
+	        stockDetail.setFinePerDays(bookDetailsDTO.getFinePerDays());
+	        stockDetail.setFineAmount(bookDetailsDTO.getFineAmount());
 
 	        Book book = bookRepository.findById(bookDetailsDTO.getBookId())
 	                .orElseThrow(() -> new RuntimeException("Book not found"));
@@ -455,6 +432,7 @@ public class StockService {
 
 	    return new ApiResponseDTO<>(true, "Issue return created successfully", null, HttpStatus.OK.value());
 	}
+
 
 
 

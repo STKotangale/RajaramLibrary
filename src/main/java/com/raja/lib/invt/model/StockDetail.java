@@ -63,8 +63,23 @@
 	
 		@Column(name = "stock_type")
 		private String stock_type = "A1";
+		
+		@Column(name="ref_issue_stockDetailId")
+		private int ref_issue_stockDetailId;
 	
+		@Column(name="ref_issue_date")
+		private String ref_issue_date;
+		
+		@Column(name="fineDays")
+		private double fineDays;
+		
+		@Column(name="finePerDays")
+		private double finePerDays;
+
+		@Column(name="fineAmount")
+		private double fineAmount;		
+		
 		@OneToMany(mappedBy = "stockDetailIdF", cascade = CascadeType.ALL, orphanRemoval = true)
 		private List<StockCopyNo> stockCopyNos;
-	
+		
 	}
