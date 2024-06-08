@@ -87,11 +87,11 @@ public class IssueController {
     }
 	 
 //    ------------------------------------------------- Issue Return---------------------------------------------------
-	
-	@GetMapping("/detail/{username}")
-	public List<GetAllIssueBookDetailsByUsername> getStockDetailsByUsername(@PathVariable String username) {
-	    return stockService.getStockDetailsByUsername(username);
+	@GetMapping("/detail/{memberId}/{returnDate}")
+	public List<GetAllIssueBookDetailsByUsername> getStockDetailsByUsernameAndReturnDate(@PathVariable int memberId, @PathVariable String returnDate) {
+	    return stockService.getStockDetailsByUsernameAndReturnDate(memberId, returnDate);
 	}
+
 	
 	@PostMapping("return/create")
     public ApiResponseDTO<Void> createIssueReturn(@RequestBody BookIssueReturnRequestDTO bookIssueReturnRequestDTO) {

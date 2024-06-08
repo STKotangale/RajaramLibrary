@@ -36,18 +36,25 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "", nativeQuery = true)
 	List<String> getStockDetailsAsJson();
 
-	@Query(value = "SELECT is2.stock_id, " + "is2.memberIdF, " + "is2.invoiceNo, " + "is2.invoiceDate, "
-			+ "is3.stockDetailId, " + "is3.book_idF AS bookId, " + "ib.bookName, " + "iscn.stockCopyId, "
-			+ "au.username, " + "ibd.* " + "FROM invt_stock is2 "
-			+ "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
+	@Query(value = "WITH DateCalculations AS (" + "SELECT is2.stock_id, is2.memberIdF, is2.invoiceNo, is2.invoiceDate, "
+			+ "is3.stockDetailId, is3.book_idF AS bookId, ib.bookName, iscn.stockCopyId, "
+			+ "au.username, ibd.accessionNo, ic.bookDays, ic.finePerDays, "
+			+ "DATEDIFF(STR_TO_DATE(:returnDate, '%d-%m-%Y'), STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y')) AS daysKept, "
+			+ "CASE WHEN DATEDIFF(STR_TO_DATE(:returnDate, '%d-%m-%Y'), STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y')) > ic.bookDays "
+			+ "THEN DATEDIFF(STR_TO_DATE(:returnDate, '%d-%m-%Y'), STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y')) - ic.bookDays ELSE 0 END AS fineDays, "
+			+ "CASE WHEN DATEDIFF(STR_TO_DATE(:returnDate, '%d-%m-%Y'), STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y')) > ic.bookDays "
+			+ "THEN (DATEDIFF(STR_TO_DATE(:returnDate, '%d-%m-%Y'), STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y')) - ic.bookDays) * ic.finePerDays ELSE 0 END AS fineAmount "
+			+ "FROM invt_stock is2 " + "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
 			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF "
 			+ "JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId "
 			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF "
 			+ "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF "
-			+ "JOIN auth_users au ON au.memberIdF = agm.memberId " + "WHERE au.username = :username "
-			+ "AND is2.stock_type = 'A2' " + "AND is3.stock_type = 'A2' "
-			+ "AND iscn.stock_type = 'A2'", nativeQuery = true)
-	List<GetAllIssueBookDetailsByUsername> findStockDetailsByUsername(@Param("username") String username);
+			+ "JOIN auth_users au ON au.memberIdF = agm.memberId " + "JOIN invt_config ic ON 1 = 1 "
+			+ "WHERE agm.memberId = :memberId AND is2.stock_type = 'A2' AND is3.stock_type = 'A2' AND iscn.stock_type = 'A2' AND ibd.bookIssue = 'N') "
+			+ "SELECT stock_id, memberIdF, invoiceNo, invoiceDate, stockDetailId, bookId, bookName, stockCopyId, username, accessionNo, bookDays, finePerDays, daysKept, fineDays, fineAmount "
+			+ "FROM DateCalculations", nativeQuery = true)
+	List<GetAllIssueBookDetailsByUsername> findStockDetailsByUsernameAndReturnDate(@Param("memberId") int memberId,
+			@Param("returnDate") String returnDate);
 
 	@Query(value = "SELECT \r\n" + "    is2.stock_id, \r\n" + "    is2.invoiceNo, \r\n" + "    is2.fineDays,\r\n"
 			+ "    is2.finePerDays ,\r\n" + "    is2.fineAmount,\r\n" + "    is2.memberIdF,\r\n"

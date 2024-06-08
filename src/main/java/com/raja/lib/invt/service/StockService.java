@@ -186,9 +186,6 @@ public class StockService {
 	    stockResponseDTO.setGstAmount(stock.getGstAmount() != null ? stock.getGstAmount() : 0.0);
 	    stockResponseDTO.setGrandTotal(stock.getGrandTotal() != null ? stock.getGrandTotal() : 0.0);
 	    stockResponseDTO.setLedgerIDF(stock.getLedgerIDF());
-	    stockResponseDTO.setFineDays(stock.getFineDays() != null ? stock.getFineDays() : 0.0);
-	    stockResponseDTO.setFinePerDays(stock.getFinePerDays() != null ? stock.getFinePerDays() : 0.0);
-	    stockResponseDTO.setFineAmount(stock.getFineAmount() != null ? stock.getFineAmount() : 0.0);
 
 	    List<StockDetailResponseDTO> stockDetailResponseDTOs = new ArrayList<>();
 	    for (StockDetail stockDetail : stock.getStockDetails()) {
@@ -264,7 +261,7 @@ public class StockService {
 					.orElseThrow(() -> new RuntimeException("Book not found"));
 			stockDetail.setBook_idF(book);
 			stockDetail.setStock_type("A2");
-			stockDetail.setBook_qty(bookIssueRequestDto.getQty());
+			stockDetail.setBook_qty(1);
 			stockDetailRepository.save(stockDetail);
 			StockCopyNo stockCopyNo = new StockCopyNo();
 			stockCopyNo.setStockType("A2");
@@ -382,9 +379,9 @@ public class StockService {
 
 	// ------------------------------------------------------- Issue Return --------------------------------------------
 
-	public List<GetAllIssueBookDetailsByUsername> getStockDetailsByUsername(String username) {
-		return stockRepository.findStockDetailsByUsername(username);
-	}
+	public List<GetAllIssueBookDetailsByUsername> getStockDetailsByUsernameAndReturnDate(int memberId, String returnDate) {
+        return stockRepository.findStockDetailsByUsernameAndReturnDate(memberId, returnDate);
+    }
 
 	@Transactional
 	public ApiResponseDTO<Void> createIssueReturn(BookIssueReturnRequestDTO bookIssueReturnRequestDTO) {
@@ -421,9 +418,9 @@ public class StockService {
 	    stock.setInvoiceDate(bookIssueReturnRequestDTO.getIssueReturnDate()); 
 	    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 		stock.setInvoice_time(LocalDateTime.now().format(timeFormatter));
-	    stock.setFineDays(totalFineDays);
-	    stock.setFinePerDays(totalFinePerDay);
-	    stock.setFineAmount(totalFineAmount);
+//	    stock.setFineDays(totalFineDays);
+//	    stock.setFinePerDays(totalFinePerDay);
+//	    stock.setFineAmount(totalFineAmount);
 
 	    GeneralMember generalMember = generalMemberRepository.findById(bookIssueReturnRequestDTO.getMemberId())
 	            .orElseThrow(() -> new RuntimeException("General member not found"));
@@ -435,7 +432,7 @@ public class StockService {
 	        StockDetail stockDetail = new StockDetail();
 	        stockDetail.setStockIdF(savedStock);
 	        stockDetail.setStock_type("A3");
-	        stockDetail.setBook_qty(bookIssueReturnRequestDTO.getQty());
+	        stockDetail.setBook_qty(1);
 
 	        Book book = bookRepository.findById(bookDetailsDTO.getBookId())
 	                .orElseThrow(() -> new RuntimeException("Book not found"));
@@ -497,7 +494,7 @@ public class StockService {
 			StockDetail returnStockDetail = new StockDetail();
 			returnStockDetail.setStockIdF(stock);
 			returnStockDetail.setBook_idF(stockDetail.getBook_idF());
-			returnStockDetail.setBook_qty(purchaseReturnRequestDTO.getQty());
+			returnStockDetail.setBook_qty(1);
 			returnStockDetail.setBook_rate(0);
 			returnStockDetail.setStock_type("A4");
 			returnStockDetail.setBook_amount(bookDetailDTO.getAmount());
@@ -553,7 +550,7 @@ public class StockService {
 			StockDetail returnStockDetail = new StockDetail();
 			returnStockDetail.setStockIdF(stock);
 			returnStockDetail.setBook_idF(stockDetail.getBook_idF());
-			returnStockDetail.setBook_qty(purchaseReturnRequestDTO.getQty());
+			returnStockDetail.setBook_qty(1);
 			returnStockDetail.setBook_rate(0);
 			returnStockDetail.setStock_type("A5");
 			returnStockDetail.setBook_amount(bookDetailDTO.getAmount());
@@ -604,7 +601,7 @@ public class StockService {
 			returnStockDetail.setStockIdF(stock);
 			returnStockDetail.setBook_idF(stockDetail.getBook_idF());
 			returnStockDetail.setStock_type("A6");
-	        returnStockDetail.setBook_qty(bookLostRequestDTO.getBookQty()); // Set bookQty
+	        returnStockDetail.setBook_qty(1); // Set bookQty
 			returnStockDetail.setBook_rate(bookDetailDTO.getAmount());
 			bookDetails.setBookScrap("Y");
 			stockDetails.add(returnStockDetail);

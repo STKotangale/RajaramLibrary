@@ -84,12 +84,5 @@ public class Stock implements Serializable {
 	@JoinColumn(name = "memberIdF")
 	private GeneralMember generalMember;
 	
-	@Column(name = "fineDays")
-	private Double fineDays;
-
-	@Column(name = "finePerDays")
-	private Double finePerDays;
 	
-	@Column(name = "fineAmount")
-	private Double fineAmount;
 }
