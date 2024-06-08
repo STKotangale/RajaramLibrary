@@ -16,5 +16,6 @@ public interface GetAllIssueBookDetailsByUsername {
     int getdaysKept();
     int getfineDays();
     double getfineAmount();
+    int getbookdetailId();
 
 }
