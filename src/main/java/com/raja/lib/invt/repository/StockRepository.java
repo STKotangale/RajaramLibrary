@@ -1,6 +1,7 @@
 package com.raja.lib.invt.repository;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -155,4 +156,19 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "GROUP BY is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username", nativeQuery = true)
 	List<Object[]> findIssueDetailsById(@Param("stockId") Integer stockId);
 
+	@Query(value = "SELECT " + "    is2.stock_id, " + "    is2.invoiceNo, " + "    is2.invoiceDate, "
+			+ "    au.username, " + "    JSON_ARRAYAGG(JSON_OBJECT(" + "        'bookId', ib.bookId, "
+			+ "        'fineDays', is3.fineDays, " + "        'issuedate', is3.ref_issue_date, "
+			+ "        'fineAmount', is3.fineAmount, " + "        'finePerDays', is3.finePerDays, "
+			+ "        'bookDetailIds', ibd.bookDetailId, " + "        'stockDetailId', is3.stockDetailId"
+			+ "    )) AS bookDetailsList " + "FROM " + "    invt_stock is2 " + "JOIN "
+			+ "    auth_general_members agm ON agm.memberId = is2.memberIdF " + "JOIN "
+			+ "    auth_users au ON au.memberIdF = agm.memberId " + "JOIN "
+			+ "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id " + "JOIN "
+			+ "    invt_book ib ON ib.bookId = is3.book_idF " + "JOIN "
+			+ "    invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId " + "JOIN "
+			+ "    invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF " + "WHERE "
+			+ "    is2.stock_type = 'A3' AND is3.stock_type = 'A3' " + "GROUP BY "
+			+ "    is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username", nativeQuery = true)
+	List<Map<String, Object>> getStockDetailsWithBookDetails();
 }

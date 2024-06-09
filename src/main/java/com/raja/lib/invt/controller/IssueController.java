@@ -37,13 +37,9 @@ public class IssueController {
 
 	@Autowired
 	private StockService stockService;
-	
+
 	@Autowired
 	private BookDetailsService bookDetailservice;
-	
-
-	
-	
 
 	@PostMapping("/book-issue")
 	public ResponseEntity<ApiResponseDTO<Stock>> bookIssue(@RequestBody BookIssueRequestDto bookIssueRequestDto) {
@@ -69,102 +65,101 @@ public class IssueController {
 	}
 
 	@GetMapping(value = "/all")
-	List<BookIssue> getAllIssue(){
-	    return stockService.getAllIssue();
+	List<BookIssue> getAllIssue() {
+		return stockService.getAllIssue();
 	}
 
-	  @GetMapping("/book-issue/{stockId}")
-	    public ResponseEntity<List<IssueDetailsDTO>> getInvoiceDetailsByStockId(@PathVariable Integer stockId) {
-	        List<IssueDetailsDTO> issueDetails = stockService.getInvoiceDetailsByStockId(stockId);
-	        return new ResponseEntity<>(issueDetails, HttpStatus.OK);
-	    }
-
+	@GetMapping("/book-issue/{stockId}")
+	public ResponseEntity<List<IssueDetailsDTO>> getInvoiceDetailsByStockId(@PathVariable Integer stockId) {
+		List<IssueDetailsDTO> issueDetails = stockService.getInvoiceDetailsByStockId(stockId);
+		return new ResponseEntity<>(issueDetails, HttpStatus.OK);
+	}
 
 	@DeleteMapping("/{stockId}")
-    public ResponseEntity<ApiResponseDTO<Void>> deleteBookIssue(@PathVariable int stockId) {
-        stockService.deleteBookIssue(stockId);
-		return ResponseEntity.ok(new ApiResponseDTO<>(true, "Book issue deleted successfully", null, HttpStatus.OK.value()));
-    }
-	 
-//    ------------------------------------------------- Issue Return---------------------------------------------------
-	@GetMapping("/detail/{memberId}/{returnDate}")
-	public List<GetAllIssueBookDetailsByUsername> getStockDetailsByUsernameAndReturnDate(@PathVariable int memberId, @PathVariable String returnDate) {
-	    return stockService.getStockDetailsByUsernameAndReturnDate(memberId, returnDate);
+	public ResponseEntity<ApiResponseDTO<Void>> deleteBookIssue(@PathVariable int stockId) {
+		stockService.deleteBookIssue(stockId);
+		return ResponseEntity
+				.ok(new ApiResponseDTO<>(true, "Book issue deleted successfully", null, HttpStatus.OK.value()));
 	}
 
-	
+//    ------------------------------------------------- Issue Return---------------------------------------------------
+	@GetMapping("/detail/{memberId}/{returnDate}")
+	public List<GetAllIssueBookDetailsByUsername> getStockDetailsByUsernameAndReturnDate(@PathVariable int memberId,
+			@PathVariable String returnDate) {
+		return stockService.getStockDetailsByUsernameAndReturnDate(memberId, returnDate);
+	}
+
 	@PostMapping("return/create")
-    public ApiResponseDTO<Void> createIssueReturn(@RequestBody BookIssueReturnRequestDTO bookIssueReturnRequestDTO) {
-        return stockService.createIssueReturn(bookIssueReturnRequestDTO);
-    }
-	
+	public ApiResponseDTO<Void> createIssueReturn(@RequestBody BookIssueReturnRequestDTO bookIssueReturnRequestDTO) {
+		return stockService.createIssueReturn(bookIssueReturnRequestDTO);
+	}
+
 	@GetMapping("/issueReturns")
-    public List<GetIssueDetilsByUser> getAllIssueReturns() {
-        return stockService.findAllIssueReturn();
-    }
-	
-	
+	public ResponseEntity<List<Map<String, Object>>> findAllIssueReturn() {
+		List<Map<String, Object>> stockDetails = stockService.findAllIssueReturn();
+		return ResponseEntity.ok(stockDetails);
+	}
 //  ------------------------------------------------- Purchase Return---------------------------------------------------
 
-
 	@GetMapping("/details/{bookName}")
-    public Map<String, Object> getBookDetails(@PathVariable String bookName) {
-        return bookDetailservice.getBookDetailsByBookName(bookName);
-    }
-	
+	public Map<String, Object> getBookDetails(@PathVariable String bookName) {
+		return bookDetailservice.getBookDetailsByBookName(bookName);
+	}
+
 	@PostMapping("/purchase-return")
-    public ResponseEntity<ApiResponseDTO<Void>> createPurchaseReturn(@RequestBody PurchaseReturnRequestDTO purchaseReturnRequestDTO) {
-        try {
-            ApiResponseDTO<Void> response = stockService.createPurchaseReturn(purchaseReturnRequestDTO);
-            return ResponseEntity.status(response.getStatusCode()).body(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
-        }
-    }
+	public ResponseEntity<ApiResponseDTO<Void>> createPurchaseReturn(
+			@RequestBody PurchaseReturnRequestDTO purchaseReturnRequestDTO) {
+		try {
+			ApiResponseDTO<Void> response = stockService.createPurchaseReturn(purchaseReturnRequestDTO);
+			return ResponseEntity.status(response.getStatusCode()).body(response);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
+		}
+	}
 
-	
-	
-	 @GetMapping("/purchase-return-all")
-	    public List<PurchaseReturnDTO> getStockDetails() {
-	        return stockService.getStockDetailsByType();
-	    }
-	 
-	//  ------------------------------------------------- Book Lost---------------------------------------------------
-	 
-	 @PostMapping("/book-lost")
-	    public ResponseEntity<ApiResponseDTO<Void>> createBookLost(@RequestBody PurchaseReturnRequestDTO purchaseReturnRequestDTO) {
-	        try {
-	            ApiResponseDTO<Void> response = stockService.createBookLost(purchaseReturnRequestDTO);
-	            return ResponseEntity.status(response.getStatusCode()).body(response);
-	        } catch (Exception e) {
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
-	        }
-	    }
-	 
-	 @GetMapping("/book-lost-all")
-	    public List<PurchaseReturnDTO> getLostDetials() {
-	        return stockService.getLostDetials();
-	    }
+	@GetMapping("/purchase-return-all")
+	public List<PurchaseReturnDTO> getStockDetails() {
+		return stockService.getStockDetailsByType();
+	}
 
-		//  ------------------------------------------------- Book scrap---------------------------------------------------
-	 
-	 @PostMapping("/book-scrap")
-	    public ResponseEntity<ApiResponseDTO<Void>> createBookScrap(@RequestBody BookLostRequestDTO bookLostRequestDTO) {
-	        try {
-	            ApiResponseDTO<Void> response = stockService.createBookScrap(bookLostRequestDTO);
-	            return ResponseEntity.status(response.getStatusCode()).body(response);
-	        } catch (Exception e) {
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                    .body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
-	        }
-	    }
-	 
-	 @GetMapping("/book-scrap-all")
-	    public List<PurchaseReturnDTO> geScraptDetials() {
-	        return stockService.getScrapDetials();
-	    }
+	// ------------------------------------------------- Book
+	// Lost---------------------------------------------------
 
-	 
+	@PostMapping("/book-lost")
+	public ResponseEntity<ApiResponseDTO<Void>> createBookLost(
+			@RequestBody PurchaseReturnRequestDTO purchaseReturnRequestDTO) {
+		try {
+			ApiResponseDTO<Void> response = stockService.createBookLost(purchaseReturnRequestDTO);
+			return ResponseEntity.status(response.getStatusCode()).body(response);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
+		}
+	}
+
+	@GetMapping("/book-lost-all")
+	public List<PurchaseReturnDTO> getLostDetials() {
+		return stockService.getLostDetials();
+	}
+
+	// ------------------------------------------------- Book
+	// scrap---------------------------------------------------
+
+	@PostMapping("/book-scrap")
+	public ResponseEntity<ApiResponseDTO<Void>> createBookScrap(@RequestBody BookLostRequestDTO bookLostRequestDTO) {
+		try {
+			ApiResponseDTO<Void> response = stockService.createBookScrap(bookLostRequestDTO);
+			return ResponseEntity.status(response.getStatusCode()).body(response);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
+		}
+	}
+
+	@GetMapping("/book-scrap-all")
+	public List<PurchaseReturnDTO> geScraptDetials() {
+		return stockService.getScrapDetials();
+	}
+
 }
