@@ -42,8 +42,10 @@ public class MembOnlineBookingService {
     public MembOnlineBookingResponseDTO saveBooking(MembOnlineBookingRequestDTO bookingRequest) {
         MembOnlineBooking booking = new MembOnlineBooking();
         updateBookingFromRequest(booking, bookingRequest);
+        booking.setIsBlock('Y');
         return convertToResponseDTO(membOnlineBookingRepository.save(booking));
     }
+
 
     @Transactional
     public MembOnlineBookingResponseDTO updateBooking(int bookingId, MembOnlineBookingRequestDTO bookingRequest) {
