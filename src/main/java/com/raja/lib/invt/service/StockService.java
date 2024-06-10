@@ -435,26 +435,26 @@ public class StockService {
 	}
 
 	public List<Map<String, Object>> findAllIssueReturn() {
-		List<Map<String, Object>> stockDetails = stockRepository.getStockDetailsWithBookDetails();
-		ObjectMapper objectMapper = new ObjectMapper();
-		List<Map<String, Object>> result = new ArrayList<>();
+	    List<Map<String, Object>> stockDetails = stockRepository.getStockDetailsWithBookDetails();
+	    ObjectMapper objectMapper = new ObjectMapper();
+	    List<Map<String, Object>> result = new ArrayList<>();
 
-		for (Map<String, Object> stockDetail : stockDetails) {
-			try {
-				String bookDetailsListStr = (String) stockDetail.get("bookDetailsList");
-				JsonNode bookDetailsListJson = objectMapper.readTree(bookDetailsListStr);
+	    for (Map<String, Object> stockDetail : stockDetails) {
+	        try {
+	            String bookDetailsListStr = (String) stockDetail.get("bookDetailsList");
+	            JsonNode bookDetailsListJson = objectMapper.readTree(bookDetailsListStr);
 
-				Map<String, Object> newStockDetail = new HashMap<>(stockDetail);
-				newStockDetail.put("bookDetailsList", bookDetailsListJson);
+	            Map<String, Object> newStockDetail = new HashMap<>(stockDetail);
+	            newStockDetail.put("bookDetailsList", bookDetailsListJson);
 
-				result.add(newStockDetail);
-			} catch (Exception e) {
-				// Handle parsing error
-				e.printStackTrace();
-			}
-		}
-		return result;
+	            result.add(newStockDetail);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return result;
 	}
+
 	// ------------------------------------------ Purchase Return
 	// ---------------------------------------------
 

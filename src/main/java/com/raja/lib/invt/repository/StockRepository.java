@@ -157,11 +157,12 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 	List<Object[]> findIssueDetailsById(@Param("stockId") Integer stockId);
 
 	@Query(value = "SELECT " + "    is2.stock_id, " + "    is2.invoiceNo, " + "    is2.invoiceDate, "
-			+ "    au.username, " + "    JSON_ARRAYAGG(JSON_OBJECT(" + "        'bookId', ib.bookId, "
-			+ "        'fineDays', is3.fineDays, " + "        'issuedate', is3.ref_issue_date, "
-			+ "        'fineAmount', is3.fineAmount, " + "        'finePerDays', is3.finePerDays, "
-			+ "        'bookDetailIds', ibd.bookDetailId, " + "        'stockDetailId', is3.stockDetailId"
-			+ "    )) AS bookDetailsList " + "FROM " + "    invt_stock is2 " + "JOIN "
+			+ "    au.username, " + "    JSON_ARRAYAGG(" + "        JSON_OBJECT(" + "            'bookId', ib.bookId, "
+			+ "            'fineDays', is3.fineDays, " + "            'issuedate', is3.ref_issue_date, "
+			+ "            'fineAmount', is3.fineAmount, " + "            'finePerDays', is3.finePerDays, "
+			+ "            'bookDetailIds', ibd.bookDetailId, " + "            'stockDetailId', is3.stockDetailId, "
+			+ "            'AcessionNo', ibd.accessionNo, " + "            'BookName', ib.bookName" + "        )"
+			+ "    ) AS bookDetailsList " + "FROM " + "    invt_stock is2 " + "JOIN "
 			+ "    auth_general_members agm ON agm.memberId = is2.memberIdF " + "JOIN "
 			+ "    auth_users au ON au.memberIdF = agm.memberId " + "JOIN "
 			+ "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id " + "JOIN "
@@ -171,4 +172,5 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "    is2.stock_type = 'A3' AND is3.stock_type = 'A3' " + "GROUP BY "
 			+ "    is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username", nativeQuery = true)
 	List<Map<String, Object>> getStockDetailsWithBookDetails();
+
 }

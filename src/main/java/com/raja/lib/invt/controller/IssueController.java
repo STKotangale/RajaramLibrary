@@ -100,9 +100,10 @@ public class IssueController {
 
 	@GetMapping("/issueReturns")
 	public ResponseEntity<List<Map<String, Object>>> findAllIssueReturn() {
-		List<Map<String, Object>> stockDetails = stockService.findAllIssueReturn();
-		return ResponseEntity.ok(stockDetails);
+	    List<Map<String, Object>> stockDetails = stockService.findAllIssueReturn();
+	    return ResponseEntity.ok(stockDetails);
 	}
+
 //  ------------------------------------------------- Purchase Return---------------------------------------------------
 
 	@GetMapping("/details/{bookName}")
