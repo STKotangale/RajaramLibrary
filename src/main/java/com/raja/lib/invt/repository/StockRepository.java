@@ -145,7 +145,7 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "auth_users au on au.memberIdF = agm.memberId \r\n" + "where is2.stock_type ='A2'", nativeQuery = true)
 	List<BookIssue> getAllIssue();
 
-	@Query(value = "SELECT is2.stock_id AS stockId, is2.invoiceNo AS action, is2.invoiceDate AS date, au.username AS user, JSON_ARRAYAGG(JSON_OBJECT('bookName', ib.bookName, 'accessionNo', ibd.accessionNo)) AS books "
+	@Query(value = "SELECT is2.stock_id AS stockId, is2.invoiceNo AS action, is2.invoiceDate AS date, au.username AS user, JSON_ARRAYAGG(JSON_OBJECT('bookName', ib.bookName, 'accessionNo', ibd.accessionNo, 'bookDetailId', ibd.bookDetailId)) AS books "
 			+ "FROM invt_stock is2 " + "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF "
 			+ "JOIN auth_users au ON au.memberIdF = agm.memberId "
 			+ "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "

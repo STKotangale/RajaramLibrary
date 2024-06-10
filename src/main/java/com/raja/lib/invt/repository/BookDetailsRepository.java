@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.raja.lib.invt.model.BookDetails;
+import com.raja.lib.invt.model.StockDetail;
 import com.raja.lib.invt.objects.BookDetail;
 import com.raja.lib.invt.objects.BookDetailNameCopyNO;
 import com.raja.lib.invt.objects.BookDetailNameWithCopyNO;
@@ -39,5 +40,8 @@ public interface BookDetailsRepository extends JpaRepository<BookDetails, Intege
 
 	@Query("SELECT MAX(b.purchaseCopyNo) FROM BookDetails b WHERE b.bookIdF.bookId = :bookId")
 	Integer findMaxCopyNoByBookId(@Param("bookId") int bookId);
+	
+	
+
 
 }

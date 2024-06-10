@@ -312,6 +312,7 @@ public class StockService {
 					BookDetailss bookDetailss = new BookDetailss();
 					bookDetailss.setBookName(bookObject.getString("bookName"));
 					bookDetailss.setAccessionNo(bookObject.getString("accessionNo"));
+	                bookDetailss.setBookDetailId(bookObject.getInt("bookDetailId")); // Set bookDetailId
 					books.add(bookDetailss);
 				}
 			} catch (JSONException e) {
@@ -371,6 +372,9 @@ public class StockService {
 
 		return new ApiResponseDTO<>(true, "Book issue deleted successfully", null, HttpStatus.OK.value());
 	}
+
+
+
 
 	// ------------------------------------------------------- Issue Return
 	// --------------------------------------------

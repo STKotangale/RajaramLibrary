@@ -74,13 +74,17 @@ public class IssueController {
 		List<IssueDetailsDTO> issueDetails = stockService.getInvoiceDetailsByStockId(stockId);
 		return new ResponseEntity<>(issueDetails, HttpStatus.OK);
 	}
-
+	
 	@DeleteMapping("/{stockId}")
 	public ResponseEntity<ApiResponseDTO<Void>> deleteBookIssue(@PathVariable int stockId) {
-		stockService.deleteBookIssue(stockId);
-		return ResponseEntity
-				.ok(new ApiResponseDTO<>(true, "Book issue deleted successfully", null, HttpStatus.OK.value()));
+	    stockService.deleteBookIssue(stockId);
+	    return ResponseEntity
+	            .ok(new ApiResponseDTO<>(true, "Book issue deleted successfully", null, HttpStatus.OK.value()));
 	}
+
+
+
+
 
 //    ------------------------------------------------- Issue Return---------------------------------------------------
 	@GetMapping("/detail/{memberId}/{returnDate}")

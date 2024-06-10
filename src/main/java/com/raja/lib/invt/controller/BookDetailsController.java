@@ -54,4 +54,19 @@ public class BookDetailsController {
         return response;
     }
     
+    
+    @PostMapping("/update-status")
+    public Map<String, Object> updateBookIssueStatus(@RequestBody List<Integer> bookDetailIds) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            String result = bookDetailsService.updateBookIssueStatus(bookDetailIds);
+            response.put("success", true);
+            response.put("message", result);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
+    }
+    
 }

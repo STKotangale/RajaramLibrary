@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -139,5 +139,22 @@ public class BookDetailsService {
     }
 
 
+    public String updateBookIssueStatus(List<Integer> bookDetailIds) {
+        try {
+            for (Integer id : bookDetailIds) {
+                Optional<BookDetails> optionalBookDetails = bookDetailsRepository.findById(id);
+                if (optionalBookDetails.isPresent()) {
+                    BookDetails bookDetails = optionalBookDetails.get();
+                    bookDetails.setBookIssue("Y");
+                    bookDetailsRepository.save(bookDetails);
+                } else {
+                    throw new Exception("Book details not found with id: " + id);
+                }
+            }
+            return "Book issue status updated successfully.";
+        } catch (Exception e) {
+            return "An error occurred while updating book issue status: " + e.getMessage();
+        }
+    }
 }
 
