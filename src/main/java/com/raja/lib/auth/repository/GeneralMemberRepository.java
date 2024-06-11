@@ -41,7 +41,7 @@ public interface GeneralMemberRepository extends JpaRepository<GeneralMember, In
 			+ "ibd.purchaseCopyNo AS purchaseCopyNo, " + "ibd.accessionNo AS accessionNo, "
 			+ "MAX(CASE WHEN is2.stock_type = 'A2' THEN is2.invoiceDate END) AS issueDate, "
 			+ "MAX(CASE WHEN is2.stock_type = 'A3' THEN is2.invoiceDate END) AS confirmReturnDate, "
-			+ "MAX(is2.fineAmount) AS maxFineAmount, "
+			+ "MAX(is3.fineAmount) AS maxFineAmount, "
 			+ "DATE_FORMAT(DATE_ADD(MAX(CASE WHEN is2.stock_type = 'A2' THEN STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y') END), INTERVAL MAX(ic.bookDays) DAY), '%d-%m-%Y') AS returnDate "
 			+ "FROM invt_stock is2 " + "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
 			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF "
