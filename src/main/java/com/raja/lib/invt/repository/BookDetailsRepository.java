@@ -22,26 +22,21 @@ public interface BookDetailsRepository extends JpaRepository<BookDetails, Intege
 			+ "LEFT JOIN invt_stockdetail is2 ON is2.stockDetailId = ibd.stockDetailIdF;\r\n" + "", nativeQuery = true)
 	List<BookDetail> findBooksByNullIsbn();
 
-	@Query(value = "SELECT ib.bookId, " + "ib.bookName, "
-			+ "GROUP_CONCAT(CONCAT(ibd.bookDetailId, ':', ibd.accessionNo, '-', ibd.purchaseCopyNo) ORDER BY ibd.purchaseCopyNo ASC) AS purchaseCopyNos "
-			+ "FROM invt_book_details ibd " + "JOIN invt_book ib ON ibd.bookIdF = ib.bookId "
-			+ "WHERE ibd.accessionNo IS NOT NULL " + "AND ibd.bookIssue = 'Y' " + "AND ibd.bookWorkingStart = 'Y' "
-			+ "AND ibd.bookLost  = 'N' " + "AND ibd.bookScrap ='N' " + "AND ibd.copyNo IS NOT NULL "
-			+ "GROUP BY ib.bookId, ib.bookName", nativeQuery = true)
+	@Query(value = "SELECT ib.bookId,\r\n" + "       ib.bookName,\r\n"
+			+ "       GROUP_CONCAT(CONCAT(ibd.bookDetailId, ':', ibd.accessionNo, '-', ibd.purchaseCopyNo) ORDER BY ibd.purchaseCopyNo ASC) AS purchaseCopyNos\r\n"
+			+ "FROM invt_book_details ibd\r\n" + "JOIN invt_book ib ON ibd.bookIdF = ib.bookId\r\n"
+			+ "WHERE ibd.accessionNo IS NOT NULL\r\n" + "  AND ibd.bookIssue = 'Y'\r\n"
+			+ "  AND ibd.bookWorkingStart = 'Y'\r\n" + "  AND ibd.bookLost = 'N'\r\n" + "  AND ibd.bookScrap = 'N'\r\n"
+			+ "  AND ibd.book_return ='N'\r\n" + "  AND ibd.bookScrap ='N'\r\n" + "  AND ibd.copyNo IS NOT NULL\r\n"
+			+ "GROUP BY ib.bookId, ib.bookName;\r\n" + "", nativeQuery = true)
 	List<BookDetailNameCopyNO> findBooksDetail();
 
 	@Query(value = "SELECT sdet.book_rate AS bookRate, bk.bookName AS bookName, bdet.purchaseCopyNo AS purchaseCopyNo, bdet.accessionNo as accessionNo, bdet.bookDetailId AS bookDetailId "
-	        + "FROM invt_book_details bdet "
-	        + "JOIN invt_stockdetail sdet ON bdet.stockDetailIdF = sdet.stockDetailId "
-	        + "JOIN invt_book bk ON bk.bookId = bdet.bookIdF "
-	        + "WHERE bk.bookName = :bookName", nativeQuery = true)
+			+ "FROM invt_book_details bdet " + "JOIN invt_stockdetail sdet ON bdet.stockDetailIdF = sdet.stockDetailId "
+			+ "JOIN invt_book bk ON bk.bookId = bdet.bookIdF " + "WHERE bk.bookName = :bookName", nativeQuery = true)
 	List<BookDetailNameWithCopyNO> findBookDetailsByBookName(@Param("bookName") String bookName);
-
 
 	@Query("SELECT MAX(b.purchaseCopyNo) FROM BookDetails b WHERE b.bookIdF.bookId = :bookId")
 	Integer findMaxCopyNoByBookId(@Param("bookId") int bookId);
-	
-	
-
 
 }

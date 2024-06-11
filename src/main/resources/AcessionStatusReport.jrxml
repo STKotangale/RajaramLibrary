@@ -35,7 +35,8 @@
             IFNULL((SELECT stdet.book_rate FROM invt_stockdetail stdet WHERE stdet.stockDetailId = bd.stockDetailIdF), 'Null') AS book_rate,
             IFNULL((SELECT led.ledgerName FROM acc_ledger led, invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND stk.stock_id = stdet.stock_idF AND led.ledgerID = stk.ledgerIDF), 'Null') AS ledgerName, 
             IFNULL((SELECT stk.invoiceNo FROM invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND stk.stock_id = stdet.stock_idF), 'Null') AS invoiceNo,
-            IFNULL((SELECT stk.invoiceDate FROM invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND stk.stock_id = stdet.stock_idF), 'Null') AS invoiceDate
+            IFNULL((SELECT stk.invoiceDate FROM invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND stk.stock_id = stdet.stock_idF), 'Null') AS invoiceDate,  
+            (SELECT CASE WHEN bda.bookLost = 'Y' THEN 'Lost' WHEN bda.bookScrap = 'Y' THEN 'Scrap' WHEN bda.book_return = 'Y' THEN 'Return' WHEN bda.bookIssue = 'Y' THEN 'Issued' WHEN bda.bookIssue = 'N' THEN 'Available' ELSE '' END AS StatusText FROM invt_book_details bda WHERE bda.bookDetailId = bd.bookDetailId ) StatusText
         FROM 
             invt_book_details bd 
         ORDER BY 
@@ -53,6 +54,7 @@
     <field name="ledgerName" class="java.lang.String"/>
     <field name="invoiceNo" class="java.lang.String"/>
     <field name="invoiceDate" class="java.lang.String"/>
+    <field name="StatusText" class="java.lang.String"/>
     <variable name="srno" class="java.lang.Integer" resetType="None" calculation="System">
         <variableExpression><![CDATA[$V{REPORT_COUNT} + 1]]></variableExpression>
     </variable>
@@ -60,7 +62,7 @@
         <band height="80" splitType="Stretch">
             <image>
                 <reportElement x="10" y="10" width="50" height="50" uuid="1639351a-2867-41e6-8aff-a8cdb9ba0e01"/>
-<imageExpression><![CDATA["src/main/resources/images/RajaramLogo.png"]]></imageExpression>
+                <imageExpression><![CDATA["src/main/resources/images/RajaramLogo.png"]]></imageExpression>
             </image>
             <frame>
                 <reportElement positionType="FixRelativeToBottom" mode="Opaque" x="60" y="10" width="752" height="30" forecolor="#080502" backcolor="#BBDFFF" uuid="75968b5b-d9b9-408c-944c-158c077dc5cf"/>
@@ -69,7 +71,7 @@
                     <textElement textAlignment="Right">
                         <font size="14" isBold="true"/>
                     </textElement>
-                    <text><![CDATA[Accession Report]]></text>
+                    <text><![CDATA[Accession Status Report]]></text>
                 </staticText>
             </frame>
             <frame>
@@ -120,7 +122,7 @@
                 <text><![CDATA[Author Name]]></text>
             </staticText>
             <staticText>
-                <reportElement style="Column header" x="310" y="0" width="60" height="20" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
+                <reportElement style="Column header" x="310" y="0" width="100" height="20" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -130,7 +132,7 @@
                 <text><![CDATA[Book Name]]></text>
             </staticText>
             <staticText>
-                <reportElement style="Column header" x="370" y="0" width="30" height="20" uuid="d80d4a95-cc0e-4f2c-88c6-b5d17753f3e2"/>
+                <reportElement style="Column header" x="410" y="0" width="30" height="20" uuid="d80d4a95-cc0e-4f2c-88c6-b5d17753f3e2"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -140,7 +142,7 @@
                 <text><![CDATA[Edition]]></text>
             </staticText>
             <staticText>
-                <reportElement style="Column header" x="400" y="0" width="100" height="20" uuid="0df98b78-5178-4f6c-8215-62218e5c11d4"/>
+                <reportElement style="Column header" x="440" y="0" width="100" height="20" uuid="0df98b78-5178-4f6c-8215-62218e5c11d4"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -150,7 +152,7 @@
                 <text><![CDATA[Publication Name]]></text>
             </staticText>
             <staticText>
-                <reportElement style="Column header" x="500" y="0" width="40" height="20" uuid="4e08a704-2fe5-4e62-9606-fc7b3c040347"/>
+                <reportElement style="Column header" x="540" y="0" width="40" height="20" uuid="4e08a704-2fe5-4e62-9606-fc7b3c040347"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -160,7 +162,7 @@
                 <text><![CDATA[P- Year]]></text>
             </staticText>
             <staticText>
-                <reportElement style="Column header" x="540" y="0" width="40" height="20" uuid="d0629c5d-1405-4f5f-8d5d-5cb4a5932472"/>
+                <reportElement style="Column header" x="580" y="0" width="40" height="20" uuid="d0629c5d-1405-4f5f-8d5d-5cb4a5932472"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -170,17 +172,17 @@
                 <text><![CDATA[Page-No]]></text>
             </staticText>
             <staticText>
-                <reportElement style="Column header" x="580" y="0" width="40" height="20" uuid="e2336d0c-65b8-47ae-816f-f64cb85ff6e4"/>
+                <reportElement style="Column header" x="620" y="0" width="40" height="20" uuid="e2336d0c-65b8-47ae-816f-f64cb85ff6e4"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="9" isBold="true"/>
                 </textElement>
-                <text><![CDATA[Book rate]]></text>
+                <text><![CDATA[Book Rate]]></text>
             </staticText>
             <staticText>
-                <reportElement style="Column header" x="620" y="0" width="90" height="20" uuid="0f9472e1-3e7d-4fd7-bf43-402cfe19f75e"/>
+                <reportElement style="Column header" x="660" y="0" width="90" height="20" uuid="0f9472e1-3e7d-4fd7-bf43-402cfe19f75e"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -190,7 +192,7 @@
                 <text><![CDATA[Ledger Name]]></text>
             </staticText>
             <staticText>
-                <reportElement style="Column header" x="710" y="0" width="60" height="20" uuid="257715b8-ec3d-4b5b-b7a0-68e923b89cd3"/>
+                <reportElement style="Column header" x="750" y="0" width="60" height="20" uuid="257715b8-ec3d-4b5b-b7a0-68e923b89cd3"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -200,7 +202,7 @@
                 <text><![CDATA[Invoice No]]></text>
             </staticText>
             <staticText>
-                <reportElement style="Column header" x="770" y="0" width="52" height="20" uuid="5e90bb3f-1e64-47f5-a679-d2e88a9e3f4a"/>
+                <reportElement style="Column header" x="810" y="0" width="52" height="20" uuid="5e90bb3f-1e64-47f5-a679-d2e88a9e3f4a"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -208,6 +210,16 @@
                     <font size="9" isBold="true"/>
                 </textElement>
                 <text><![CDATA[Invoice Date]]></text>
+            </staticText>
+            <staticText>
+                <reportElement style="Column header" x="870" y="0" width="80" height="20" uuid="0fd12a57-2c08-4a53-bab4-2a340ff02444"/>
+                <box>
+                    <pen lineWidth="1.0" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Status]]></text>
             </staticText>
         </band>
     </columnHeader>
@@ -254,7 +266,7 @@
                 <textFieldExpression><![CDATA[$F{authorName}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement style="Detail" x="310" y="0" width="60" height="15" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
+                <reportElement style="Detail" x="310" y="0" width="100" height="15" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -264,7 +276,7 @@
                 <textFieldExpression><![CDATA[$F{bookName}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement style="Detail" x="370" y="0" width="30" height="15" uuid="d80d4a95-cc0e-4f2c-88c6-b5d17753f3e2"/>
+                <reportElement style="Detail" x="410" y="0" width="30" height="15" uuid="d80d4a95-cc0e-4f2c-88c6-b5d17753f3e2"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -274,7 +286,7 @@
                 <textFieldExpression><![CDATA[$F{edition}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement style="Detail" x="400" y="0" width="100" height="15" uuid="0df98b78-5178-4f6c-8215-62218e5c11d4"/>
+                <reportElement style="Detail" x="440" y="0" width="100" height="15" uuid="0df98b78-5178-4f6c-8215-62218e5c11d4"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -284,7 +296,7 @@
                 <textFieldExpression><![CDATA[$F{publicationName}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement style="Detail" x="500" y="0" width="40" height="15" uuid="4e08a704-2fe5-4e62-9606-fc7b3c040347"/>
+                <reportElement style="Detail" x="540" y="0" width="40" height="15" uuid="4e08a704-2fe5-4e62-9606-fc7b3c040347"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -294,7 +306,7 @@
                 <textFieldExpression><![CDATA[$F{publicationYear}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement style="Detail" x="540" y="0" width="40" height="15" uuid="d0629c5d-1405-4f5f-8d5d-5cb4a5932472"/>
+                <reportElement style="Detail" x="580" y="0" width="40" height="15" uuid="d0629c5d-1405-4f5f-8d5d-5cb4a5932472"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -304,7 +316,7 @@
                 <textFieldExpression><![CDATA[$F{numberOfPages}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement style="Detail" x="580" y="0" width="40" height="15" uuid="e2336d0c-65b8-47ae-816f-f64cb85ff6e4"/>
+                <reportElement style="Detail" x="620" y="0" width="40" height="15" uuid="e2336d0c-65b8-47ae-816f-f64cb85ff6e4"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -314,7 +326,7 @@
                 <textFieldExpression><![CDATA[$F{book_rate}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement style="Detail" x="620" y="0" width="90" height="15" uuid="0f9472e1-3e7d-4fd7-bf43-402cfe19f75e"/>
+                <reportElement style="Detail" x="660" y="0" width="90" height="15" uuid="0f9472e1-3e7d-4fd7-bf43-402cfe19f75e"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -324,7 +336,7 @@
                 <textFieldExpression><![CDATA[$F{ledgerName}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement style="Detail" x="710" y="0" width="60" height="15" uuid="257715b8-ec3d-4b5b-b7a0-68e923b89cd3"/>
+                <reportElement style="Detail" x="750" y="0" width="60" height="15" uuid="257715b8-ec3d-4b5b-b7a0-68e923b89cd3"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -334,7 +346,7 @@
                 <textFieldExpression><![CDATA[$F{invoiceNo}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement style="Detail" x="770" y="0" width="52" height="15" uuid="5e90bb3f-1e64-47f5-a679-d2e88a9e3f4a"/>
+                <reportElement style="Detail" x="810" y="0" width="52" height="15" uuid="5e90bb3f-1e64-47f5-a679-d2e88a9e3f4a"/>
                 <box>
                     <pen lineWidth="1.0" lineColor="#000000"/>
                 </box>
@@ -342,6 +354,16 @@
                     <paragraph leftIndent="2" rightIndent="2"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{invoiceDate}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement style="Detail" x="870" y="0" width="80" height="15" uuid="0fd12a57-2c08-4a53-bab4-2a340ff02444"/>
+                <box>
+                    <pen lineWidth="1.0" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Left" verticalAlignment="Bottom">
+                    <paragraph leftIndent="2" rightIndent="2"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{StatusText}]]></textFieldExpression>
             </textField>
         </band>
     </detail>
