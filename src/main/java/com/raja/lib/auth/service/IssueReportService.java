@@ -12,13 +12,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class ReportService {
+public class IssueReportService {
 
     @Autowired
     private DataSource dataSource;
 
-    public void generateReport(String outputFilePath) throws Exception {
-        JasperReport jasperReport = JasperCompileManager.compileReport("src/main/resources/AcessionReport.jrxml");
+    public void generateIssueReport(String outputFilePath) throws Exception {
+        JasperReport jasperReport = JasperCompileManager.compileReport("src/main/resources/IssueReport.jrxml");
 
         Map<String, Object> parameters = new HashMap<>();
 

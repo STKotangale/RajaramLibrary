@@ -574,46 +574,51 @@ public class StockService {
 
 	@Transactional
 	public ApiResponseDTO<Void> createBookScrap(BookLostRequestDTO bookLostRequestDTO) {
-		Ledger ledger = ledgerRepository.findById(bookLostRequestDTO.getLedgerId())
-				.orElseThrow(() -> new RuntimeException("Ledger not found"));
+	    Ledger ledger = ledgerRepository.findById(bookLostRequestDTO.getLedgerId())
+	            .orElseThrow(() -> new RuntimeException("Ledger not found"));
 
-		Stock stock = new Stock();
-		stock.setStock_type("A6");
-		stock.setInvoiceNo(bookLostRequestDTO.getInvoiceNO());
-		stock.setInvoiceDate(bookLostRequestDTO.getInvoiceDate());
-		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-		stock.setInvoice_time(LocalDateTime.now().format(timeFormatter));
-		stock.setBillTotal(bookLostRequestDTO.getBillTotal());
-		stock.setLedgerIDF(ledger);
+	    Stock stock = new Stock();
+	    stock.setStock_type("A6");
+	    stock.setInvoiceNo(bookLostRequestDTO.getInvoiceNO());
+	    stock.setInvoiceDate(bookLostRequestDTO.getInvoiceDate());
+	    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+	    stock.setInvoice_time(LocalDateTime.now().format(timeFormatter));
+	    stock.setBillTotal(bookLostRequestDTO.getBillTotal());
+	    stock.setDiscountPercent(bookLostRequestDTO.getDiscountPercent()); // Set discount percentage
+	    stock.setDiscountAmount(bookLostRequestDTO.getDiscountAmount()); // Set discount amount
+	    stock.setTotalAfterDiscount(bookLostRequestDTO.getTotalAfterDiscount()); // Set total after discount
+	    stock.setGrandTotal(bookLostRequestDTO.getGrandTotal()); // Set grand total
+	    stock.setLedgerIDF(ledger);
 
-		List<StockDetail> stockDetails = new ArrayList<>();
-		List<StockCopyNo> stockCopyNos = new ArrayList<>();
+	    List<StockDetail> stockDetails = new ArrayList<>();
+	    List<StockCopyNo> stockCopyNos = new ArrayList<>();
 
-		for (BookLostBookDetailDTO bookDetailDTO : bookLostRequestDTO.getBookDetails()) {
-			BookDetails bookDetails = bookDetailsRepository.findById(bookDetailDTO.getBookdetailId())
-					.orElseThrow(() -> new RuntimeException("Book details not found"));
-			StockDetail stockDetail = bookDetails.getStockDetailIdF();
-			StockDetail returnStockDetail = new StockDetail();
-			returnStockDetail.setStockIdF(stock);
-			returnStockDetail.setBook_idF(stockDetail.getBook_idF());
-			returnStockDetail.setStock_type("A6");
-			returnStockDetail.setBook_qty(1); // Set bookQty
-			returnStockDetail.setBook_rate(bookDetailDTO.getAmount());
-			bookDetails.setBookScrap("Y");
-			stockDetails.add(returnStockDetail);
-			bookDetailsRepository.save(bookDetails);
-			StockCopyNo stockCopyNo = new StockCopyNo();
-			stockCopyNo.setStockDetailIdF(returnStockDetail);
-			stockCopyNo.setBookDetailIdF(bookDetails);
-			stockCopyNo.setStockType("A6");
-			stockCopyNos.add(stockCopyNo);
-		}
-		stock.setStockDetails(stockDetails);
-		stockRepository.save(stock);
-		stockDetailRepository.saveAll(stockDetails);
-		stockCopyNoRepository.saveAll(stockCopyNos);
-		return new ApiResponseDTO<>(true, "Book scrap recorded successfully", null, HttpStatus.CREATED.value());
+	    for (BookLostBookDetailDTO bookDetailDTO : bookLostRequestDTO.getBookDetails()) {
+	        BookDetails bookDetails = bookDetailsRepository.findById(bookDetailDTO.getBookdetailId())
+	                .orElseThrow(() -> new RuntimeException("Book details not found"));
+	        StockDetail stockDetail = bookDetails.getStockDetailIdF();
+	        StockDetail returnStockDetail = new StockDetail();
+	        returnStockDetail.setStockIdF(stock);
+	        returnStockDetail.setBook_idF(stockDetail.getBook_idF());
+	        returnStockDetail.setStock_type("A6");
+	        returnStockDetail.setBook_qty(1); // Set bookQty
+	        returnStockDetail.setBook_rate(bookDetailDTO.getAmount());
+	        bookDetails.setBookScrap("Y");
+	        stockDetails.add(returnStockDetail);
+	        bookDetailsRepository.save(bookDetails);
+	        StockCopyNo stockCopyNo = new StockCopyNo();
+	        stockCopyNo.setStockDetailIdF(returnStockDetail);
+	        stockCopyNo.setBookDetailIdF(bookDetails);
+	        stockCopyNo.setStockType("A6");
+	        stockCopyNos.add(stockCopyNo);
+	    }
+	    stock.setStockDetails(stockDetails);
+	    stockRepository.save(stock);
+	    stockDetailRepository.saveAll(stockDetails);
+	    stockCopyNoRepository.saveAll(stockCopyNos);
+	    return new ApiResponseDTO<>(true, "Book scrap recorded successfully", null, HttpStatus.CREATED.value());
 	}
+
 
 	public List<PurchaseReturnDTO> getScrapDetials() {
 		return stockRepository.findBookScrap();
