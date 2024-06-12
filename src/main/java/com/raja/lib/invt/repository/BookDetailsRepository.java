@@ -31,9 +31,12 @@ public interface BookDetailsRepository extends JpaRepository<BookDetails, Intege
 			+ "GROUP BY ib.bookId, ib.bookName;\r\n" + "", nativeQuery = true)
 	List<BookDetailNameCopyNO> findBooksDetail();
 
-	@Query(value = "SELECT sdet.book_rate AS bookRate, bk.bookName AS bookName, bdet.purchaseCopyNo AS purchaseCopyNo, bdet.accessionNo as accessionNo, bdet.bookDetailId AS bookDetailId "
-			+ "FROM invt_book_details bdet " + "JOIN invt_stockdetail sdet ON bdet.stockDetailIdF = sdet.stockDetailId "
-			+ "JOIN invt_book bk ON bk.bookId = bdet.bookIdF " + "WHERE bk.bookName = :bookName", nativeQuery = true)
+	@Query(value = "SELECT sdet.book_rate AS bookRate, " + "bk.bookName AS bookName, "
+			+ "bdet.purchaseCopyNo AS purchaseCopyNo, " + "bdet.accessionNo AS accessionNo, "
+			+ "bdet.bookDetailId AS bookDetailId " + "FROM invt_book_details bdet "
+			+ "JOIN invt_stockdetail sdet ON bdet.stockDetailIdF = sdet.stockDetailId "
+			+ "JOIN invt_book bk ON bk.bookId = bdet.bookIdF " + "WHERE bk.bookName = :bookName "
+			+ "AND bdet.bookLost ='N' " + "AND bdet.bookScrap ='N' " + "AND bdet.book_return ='N'", nativeQuery = true)
 	List<BookDetailNameWithCopyNO> findBookDetailsByBookName(@Param("bookName") String bookName);
 
 	@Query("SELECT MAX(b.purchaseCopyNo) FROM BookDetails b WHERE b.bookIdF.bookId = :bookId")
