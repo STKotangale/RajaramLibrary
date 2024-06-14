@@ -1,0 +1,54 @@
+== Accession Report
+SELECT 
+bd.accessionNo, bd.classificationNumber,
+ifnull( (SELECT ba.authorName FROM invt_book_author ba, invt_book bk WHERE bk.bookId = bd.bookIdF AND bk.authorIdF = ba.authorId), 'Null') authorName, 
+ifnull( (SELECT bk.bookName FROM invt_book bk WHERE bk.bookId = bd.bookIdF), 'Null') authorName, bd.edition, 
+ifnull( (SELECT concat(bp.publicationName,', ', bp.publicationAddress) publicationName FROM invt_book_publication bp, invt_book bk WHERE bk.bookId = bd.bookIdF AND bk.publicationIdF = bp.publicationId), 'Null') publicationName, 
+bd.publicationYear, bd.numberOfPages, 
+ifnull( (SELECT stdet.book_rate FROM invt_stockdetail stdet WHERE stdet.stockDetailId = bd.stockDetailIdF), 'Null') book_rate,
+ifnull( (SELECT led.ledgerName FROM acc_ledger led, invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND  stk.stock_id = stdet.stock_idF AND led.ledgerID = stk.ledgerIDF), 'Null') ledgerName, 
+ifnull( (SELECT stk.invoiceNo FROM invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND  stk.stock_id = stdet.stock_idF), 'Null') invoiceNo,
+ifnull( (SELECT stk.invoiceDate FROM invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND  stk.stock_id = stdet.stock_idF), 'Null') invoiceDate
+from 
+invt_book_details bd 
+ORDER BY bd.accessionNo
+
+== Accession Report Status
+SELECT 
+bd.accessionNo, bd.classificationNumber,
+ifnull( (SELECT ba.authorName FROM invt_book_author ba, invt_book bk WHERE bk.bookId = bd.bookIdF AND bk.authorIdF = ba.authorId), 'Null') authorName, 
+ifnull( (SELECT bk.bookName FROM invt_book bk WHERE bk.bookId = bd.bookIdF), 'Null') authorName, bd.edition, 
+ifnull( (SELECT concat(bp.publicationName,', ', bp.publicationAddress) publicationName FROM invt_book_publication bp, invt_book bk WHERE bk.bookId = bd.bookIdF AND bk.publicationIdF = bp.publicationId), 'Null') publicationName, 
+bd.publicationYear, bd.numberOfPages, 
+ifnull( (SELECT stdet.book_rate FROM invt_stockdetail stdet WHERE stdet.stockDetailId = bd.stockDetailIdF), 'Null') book_rate,
+ifnull( (SELECT led.ledgerName FROM acc_ledger led, invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND  stk.stock_id = stdet.stock_idF AND led.ledgerID = stk.ledgerIDF), 'Null') ledgerName, 
+ifnull( (SELECT stk.invoiceNo FROM invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND  stk.stock_id = stdet.stock_idF), 'Null') invoiceNo,
+ifnull( (SELECT stk.invoiceDate FROM invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND  stk.stock_id = stdet.stock_idF), 'Null') invoiceDate,  
+(SELECT CASE WHEN bda.bookLost = 'Y' THEN 'Lost' WHEN bda.bookScrap = 'Y' THEN 'Scrap' WHEN bda.book_return = 'Y' THEN 'Return' WHEN bda.bookIssue = 'Y' THEN 'Issued' WHEN bda.bookIssue = 'N' THEN 'Available' ELSE '' END AS StatusText FROM invt_book_details bda WHERE bda.bookDetailId = bd.bookDetailId ) StatusText
+from 
+invt_book_details bd 
+ORDER BY bd.accessionNo
+
+== Issue Return
+SELECT 
+stk.invoiceDate, stk.invoice_time, libGenMembNo, concat(gmem.firstName,' ',gmem.middleName,' ', gmem.lastName) as memName, bk.bookName, 
+ifnull( (SELECT bdet.accessionNo FROM invt_book_details bdet WHERE bdet.stockDetailIdF = stdet.stockDetailId), 'Null') accessionNo, 
+ifnull( (SELECT bdet.classificationNumber FROM invt_book_details bdet WHERE bdet.stockDetailIdF = stdet.stockDetailId), 'Null') classificationNumber, 
+date(concat(SUBSTRING(invoiceDate,7,4), '-', SUBSTRING(invoiceDate,4,2) , '-', SUBSTRING(invoiceDate,1,2) )) as sortDate 
+FROM 
+invt_stockdetail stdet, invt_stock stk, auth_general_members gmem, invt_book bk 
+WHERE stk.stock_type = "A2" AND 
+stdet.stock_idF = stk.stock_id AND gmem.memberId = stk.memberIdF AND bk.bookId = stdet.book_idF 
+ORDER BY sortDate
+
+== Issue Return Report
+SELECT 
+stk.invoiceDate, stk.invoice_time, libGenMembNo, concat(gmem.firstName,' ',gmem.middleName,' ', gmem.lastName) as memName, bk.bookName, 
+ifnull( (SELECT bdet.accessionNo FROM invt_book_details bdet WHERE bdet.stockDetailIdF = stdet.stockDetailId), 'Null') accessionNo, 
+ifnull( (SELECT bdet.classificationNumber FROM invt_book_details bdet WHERE bdet.stockDetailIdF = stdet.stockDetailId), 'Null') classificationNumber, 
+date(concat(SUBSTRING(invoiceDate,7,4), '-', SUBSTRING(invoiceDate,4,2) , '-', SUBSTRING(invoiceDate,1,2) )) as sortDate 
+FROM 
+invt_stockdetail stdet, invt_stock stk, auth_general_members gmem, invt_book bk 
+WHERE stk.stock_type = "A3" AND 
+stdet.stock_idF = stk.stock_id AND gmem.memberId = stk.memberIdF AND bk.bookId = stdet.book_idF 
+ORDER BY sortDate

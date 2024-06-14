@@ -10,6 +10,7 @@ import lombok.Data;
 public class PurchaseReturnRequestDTO {
 	private String invoiceNO;
 	private String invoiceDate;
+	private int memberId; 
 	private int ledgerId;
 	private double billTotal;
 	private double grandTotal;
