@@ -39,7 +39,6 @@ public class BookDetailsController {
         return bookDetailsService.getBookDetails();
     }
 
-    
     @PostMapping("/update/book-details/{id}")
     public Map<String, Object> updateBookDetails(@PathVariable int id, @RequestBody UpdateBookDetailsRequest request) {
         Map<String, Object> response = new HashMap<>();

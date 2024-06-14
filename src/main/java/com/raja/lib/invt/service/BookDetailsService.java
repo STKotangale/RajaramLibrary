@@ -102,11 +102,20 @@ public class BookDetailsService {
             existingBookDetails.setBookScrap("N");
             existingBookDetails.setBook_return("N");
             BookDetails updatedBookDetails = bookDetailsRepository.save(existingBookDetails);
-            StockCopyNo stockCopyNo = new StockCopyNo();
-            stockCopyNo.setStockDetailIdF(existingBookDetails.getStockDetailIdF());
-            stockCopyNo.setBookDetailIdF(existingBookDetails);
-            stockCopyNo.setStockType("A1");
-            stockCopyNoRepository.save(stockCopyNo);
+
+            Optional<StockCopyNo> existingStockCopyNo = stockCopyNoRepository.findByBookDetailIdF(existingBookDetails);
+            if (existingStockCopyNo.isPresent()) {
+                StockCopyNo stockCopyNo = existingStockCopyNo.get();
+                stockCopyNo.setStockDetailIdF(existingBookDetails.getStockDetailIdF());
+                stockCopyNo.setStockType("A1");
+                stockCopyNoRepository.save(stockCopyNo);
+            } else {
+                StockCopyNo stockCopyNo = new StockCopyNo();
+                stockCopyNo.setStockDetailIdF(existingBookDetails.getStockDetailIdF());
+                stockCopyNo.setBookDetailIdF(existingBookDetails);
+                stockCopyNo.setStockType("A1");
+                stockCopyNoRepository.save(stockCopyNo);
+            }
 
             return "Book details updated successfully.";
 
@@ -116,7 +125,6 @@ public class BookDetailsService {
             return "An error occurred while updating book details.";
         }
     }
-    
     
     public Map<String, Object> getBookDetailsByBookName(String bookName) {
         List<BookDetailNameWithCopyNO> bookDetails = bookDetailsRepository.findBookDetailsByBookName(bookName);
