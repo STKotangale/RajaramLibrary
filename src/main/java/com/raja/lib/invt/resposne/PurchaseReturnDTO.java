@@ -1,7 +1,7 @@
 package com.raja.lib.invt.resposne;
 
 public interface PurchaseReturnDTO {
-    String getLedgerName();
+    String getusername();
     int getPurchaseCopyNo();
     Long getBookDetailId();
     Long getStockDetailId();

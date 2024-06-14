@@ -110,13 +110,17 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "    is2.stock_type = 'A4' \r\n" + "    AND is3.stock_type = 'A4'\r\n" + "", nativeQuery = true)
 	List<PurchaseReturnDTO> findStockDetailsByType();
 
-	@Query(value = "SELECT al.ledgerName, ibd.purchaseCopyNo,ibd.accessionNo ,ibd.bookDetailId, is3.*, ib.bookName, is2.*\r\n"
-			+ "FROM invt_stock is2\r\n" + "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id\r\n"
-			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF\r\n"
-			+ "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF\r\n"
-			+ "JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId\r\n"
-			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF\r\n"
-			+ "WHERE is2.stock_type = 'A5'\r\n" + "AND is3.stock_type = 'A5';\r\n" + "", nativeQuery = true)
+	@Query(value = "SELECT \r\n" + "    ibd.purchaseCopyNo, \r\n" + "    ibd.accessionNo, \r\n"
+			+ "    ibd.bookDetailId, \r\n" + "    is3.*, \r\n" + "    ib.bookName, \r\n" + "    is2.*, \r\n"
+			+ "    au.username \r\n" + "FROM \r\n" + "    invt_stock is2\r\n" + "LEFT JOIN \r\n"
+			+ "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id AND is3.stock_type = 'A5'\r\n"
+			+ "LEFT JOIN \r\n" + "    invt_book ib ON ib.bookId = is3.book_idF\r\n" + "LEFT JOIN \r\n"
+			+ "    acc_ledger al ON al.ledgerID = is2.ledgerIDF\r\n" + "LEFT JOIN \r\n"
+			+ "    invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId\r\n" + "LEFT JOIN \r\n"
+			+ "    invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF\r\n" + "LEFT JOIN \r\n"
+			+ "    auth_general_members agm ON agm.memberId = is2.memberIdF\r\n" + "LEFT JOIN \r\n"
+			+ "    auth_users au ON au.memberIdF = agm.memberId\r\n" + "WHERE \r\n" + "    is2.stock_type = 'A5';\r\n"
+			+ "", nativeQuery = true)
 	List<PurchaseReturnDTO> findBookLost();
 
 	@Query(value = "SELECT al.ledgerName, ibd.purchaseCopyNo, ibd.bookDetailId,ibd.accessionNo , is3.*, ib.bookName, is2.*\r\n"
