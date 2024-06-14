@@ -82,4 +82,47 @@ public class BookDetailsController {
         }
         return response;
     }
+    
+    
+    @PostMapping("/update-status-purchase-return")
+    public Map<String, Object> updatePurchasereturnStatus(@RequestBody List<Integer> bookDetailIds) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            String result = bookDetailsService.updatePurchasereturnStatus(bookDetailIds);
+            response.put("success", true);
+            response.put("message", result);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
+    }
+    
+    @PostMapping("/update-status-book-lost")
+    public Map<String, Object> updateBookLostreturnStatus(@RequestBody List<Integer> bookDetailIds) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            String result = bookDetailsService.updateBookLostreturnStatus(bookDetailIds);
+            response.put("success", true);
+            response.put("message", result);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
+    }
+    
+    @PostMapping("/update-status-book-scrap")
+    public Map<String, Object> updateBookScraptreturnStatus(@RequestBody List<Integer> bookDetailIds) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            String result = bookDetailsService.updateBookScraptreturnStatus(bookDetailIds);
+            response.put("success", true);
+            response.put("message", result);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
+    }
 }

@@ -175,5 +175,62 @@ public class BookDetailsService {
             return "An error occurred while updating book issue status: " + e.getMessage();
         }
     }
+    
+    
+    public String updatePurchasereturnStatus(List<Integer> bookDetailIds) {
+        try {
+            for (Integer id : bookDetailIds) {
+                Optional<BookDetails> optionalBookDetails = bookDetailsRepository.findById(id);
+                if (optionalBookDetails.isPresent()) {
+                    BookDetails bookDetails = optionalBookDetails.get();
+                    bookDetails.setBook_return("N");
+                    bookDetailsRepository.save(bookDetails);
+                } else {
+                    throw new Exception("Book details not found with id: " + id);
+                }
+            }
+            return "Book issue status updated successfully.";
+        } catch (Exception e) {
+            return "An error occurred while updating book issue status: " + e.getMessage();
+        }
+    }
+    
+    
+    public String updateBookLostreturnStatus(List<Integer> bookDetailIds) {
+        try {
+            for (Integer id : bookDetailIds) {
+                Optional<BookDetails> optionalBookDetails = bookDetailsRepository.findById(id);
+                if (optionalBookDetails.isPresent()) {
+                    BookDetails bookDetails = optionalBookDetails.get();
+                    bookDetails.setBookLost("N");
+                    bookDetailsRepository.save(bookDetails);
+                } else {
+                    throw new Exception("Book details not found with id: " + id);
+                }
+            }
+            return "Book issue status updated successfully.";
+        } catch (Exception e) {
+            return "An error occurred while updating book issue status: " + e.getMessage();
+        }
+    }
+    
+    
+    public String updateBookScraptreturnStatus(List<Integer> bookDetailIds) {
+        try {
+            for (Integer id : bookDetailIds) {
+                Optional<BookDetails> optionalBookDetails = bookDetailsRepository.findById(id);
+                if (optionalBookDetails.isPresent()) {
+                    BookDetails bookDetails = optionalBookDetails.get();
+                    bookDetails.setBookScrap("N");
+                    bookDetailsRepository.save(bookDetails);
+                } else {
+                    throw new Exception("Book details not found with id: " + id);
+                }
+            }
+            return "Book issue status updated successfully.";
+        } catch (Exception e) {
+            return "An error occurred while updating book issue status: " + e.getMessage();
+        }
+    }
 }
 
