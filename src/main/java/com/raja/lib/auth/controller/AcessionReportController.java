@@ -5,39 +5,31 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.raja.lib.auth.service.IssueReportService;
+import com.raja.lib.auth.service.ReportService;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.ByteArrayOutputStream;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/reports")
-public class IssueReportController {
+public class AcessionReportController {
 
     @Autowired
-    private IssueReportService issueReportService;
+    private ReportService reportService;
 
-    @GetMapping("/issue")
-    public ResponseEntity<byte[]> getIssueReport() {
+    @GetMapping("/acession")
+    public ResponseEntity<byte[]> getAcessionReport() {
         try {
-            String outputFilePath = "IssueReport.pdf";
-            issueReportService.generateIssueReport(outputFilePath);
-
-            Path path = Paths.get(outputFilePath);
-            byte[] reportBytes = Files.readAllBytes(path);
+            ByteArrayOutputStream outputStream = reportService.generateReport();
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.add("Content-Disposition", "inline; filename=IssueReport.pdf");
+            headers.add("Content-Disposition", "inline; filename=AcessionReport.pdf");
 
-            return new ResponseEntity<>(reportBytes, headers, HttpStatus.OK);
+            return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
