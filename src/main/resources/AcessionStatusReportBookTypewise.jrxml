@@ -3,11 +3,11 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AcessionReport" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="792" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10" uuid="ba1c2fcf-4c66-4d60-9df8-cfc83011c3a1">
 	<property name="template.engine" value="tabular_template"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="RajaLib"/>
-	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="24" isBold="true"/>
-	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="12" isBold="false"/>
-	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="8" isBold="true"/>
-	<style name="Detail" mode="Transparent" fontName="Times New Roman" fontSize="8" pdfFontName="Times-Roman"/>
-	<style name="Row" mode="Transparent" fontName="Times New Roman" fontSize="8" pdfFontName="Times-Roman">
+	<style name="Title" forecolor="#FFFFFF" fontName="DejaVu Sans" fontSize="24" isBold="true"/>
+	<style name="SubTitle" forecolor="#CCCCCC" fontName="DejaVu Sans" fontSize="12" isBold="false"/>
+	<style name="Column header" forecolor="#666666" fontName="DejaVu Sans" fontSize="8" isBold="true"/>
+	<style name="Detail" mode="Transparent" fontName="DejaVu Sans" fontSize="8" pdfFontName="Times-Roman"/>
+	<style name="Row" mode="Transparent" fontName="DejaVu Sans" fontSize="8" pdfFontName="Times-Roman">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
 			<style mode="Opaque" backcolor="#F0EFEF"/>

@@ -160,21 +160,25 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "GROUP BY is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username", nativeQuery = true)
 	List<Object[]> findIssueDetailsById(@Param("stockId") Integer stockId);
 
-	@Query(value = "SELECT " + "    is2.stock_id, " + "    is2.invoiceNo, " + "    is2.invoiceDate, "
-			+ "    au.username, " + "    JSON_ARRAYAGG(" + "        JSON_OBJECT(" + "            'bookId', ib.bookId, "
-			+ "            'fineDays', is3.fineDays, " + "            'issuedate', is3.ref_issue_date, "
-			+ "            'fineAmount', is3.fineAmount, " + "            'finePerDays', is3.finePerDays, "
-			+ "            'bookDetailIds', ibd.bookDetailId, " + "            'stockDetailId', is3.stockDetailId, "
-			+ "            'AcessionNo', ibd.accessionNo, " + "            'BookName', ib.bookName" + "        )"
-			+ "    ) AS bookDetailsList " + "FROM " + "    invt_stock is2 " + "JOIN "
-			+ "    auth_general_members agm ON agm.memberId = is2.memberIdF " + "JOIN "
-			+ "    auth_users au ON au.memberIdF = agm.memberId " + "JOIN "
-			+ "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id " + "JOIN "
-			+ "    invt_book ib ON ib.bookId = is3.book_idF " + "JOIN "
-			+ "    invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId " + "JOIN "
-			+ "    invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF " + "WHERE "
-			+ "    is2.stock_type = 'A3' AND is3.stock_type = 'A3' " + "GROUP BY "
-			+ "    is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username", nativeQuery = true)
+	@Query(value = "SELECT\r\n" + "    is2.stock_id,\r\n" + "    is2.invoiceNo,\r\n" + "    is2.invoiceDate,\r\n"
+			+ "    au.username,\r\n" + "    CONCAT('[', GROUP_CONCAT(\r\n" + "        '{',\r\n"
+			+ "        '\"bookId\": ', ib.bookId,\r\n" + "        ', \"fineDays\": ', is3.fineDays,\r\n"
+			+ "        ', \"issuedate\": \"', is3.ref_issue_date, '\"',\r\n"
+			+ "        ', \"fineAmount\": ', is3.fineAmount,\r\n"
+			+ "        ', \"finePerDays\": ', is3.finePerDays,\r\n"
+			+ "        ', \"bookDetailIds\": ', ibd.bookDetailId,\r\n"
+			+ "        ', \"stockDetailId\": ', is3.stockDetailId,\r\n"
+			+ "        ', \"AcessionNo\": ', ibd.accessionNo,\r\n"
+			+ "        ', \"BookName\": \"', ib.bookName, '\"',\r\n" + "        '}'\r\n" + "        SEPARATOR ','\r\n"
+			+ "    ), ']') AS bookDetailsList\r\n" + "FROM\r\n" + "    invt_stock is2\r\n" + "JOIN\r\n"
+			+ "    auth_general_members agm ON agm.memberId = is2.memberIdF\r\n" + "JOIN\r\n"
+			+ "    auth_users au ON au.memberIdF = agm.memberId\r\n" + "JOIN\r\n"
+			+ "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id\r\n" + "JOIN\r\n"
+			+ "    invt_book ib ON ib.bookId = is3.book_idF\r\n" + "JOIN\r\n"
+			+ "    invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId\r\n" + "JOIN\r\n"
+			+ "    invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF\r\n" + "WHERE\r\n"
+			+ "    is2.stock_type = 'A3' AND is3.stock_type = 'A3'\r\n" + "GROUP BY\r\n"
+			+ "    is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username;\r\n" + "", nativeQuery = true)
 	List<Map<String, Object>> getStockDetailsWithBookDetails();
 
 }
