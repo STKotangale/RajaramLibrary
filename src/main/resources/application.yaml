@@ -1,11 +1,17 @@
 spring:
-  application:
-    name: RajaLib
   datasource:
-    url: jdbc:mysql://103.159.239.26:3306/rajalib?serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/rajalib?serverTimezone=UTC
     username: root
-    password: Ww!_h0tLpsm5nqI4
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      minimum-idle: 10 # Minimum number of idle connections in the pool
+      maximum-pool-size: 50 # Maximum number of connections in the pool
+      idle-timeout: 600000 # Maximum time that a connection is allowed to sit idle in the pool (10 minutes)
+      max-lifetime: 1800000 # Maximum lifetime of a connection in the pool (30 minutes)
+      connection-timeout: 30000 # Maximum time to wait for a connection from the pool (30 seconds)
+      pool-name: HikariPool-1 # Name of the pool
+
   jpa:
     properties:
       hibernate:
@@ -14,7 +20,7 @@ spring:
     hibernate:
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl 	
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl   
       ddl-auto: none
     show-sql: true
 
