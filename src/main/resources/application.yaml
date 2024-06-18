@@ -2,9 +2,9 @@ spring:
   application:
     name: RajaLib
   datasource:
-    url: jdbc:mysql://localhost:3306/rajalib?serverTimezone=UTC
+    url: jdbc:mysql://103.159.239.26:3306/rajalib?serverTimezone=UTC
     username: root
-    password: root
+    password: Ww!_h0tLpsm5nqI4
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     properties:
@@ -19,7 +19,7 @@ spring:
     show-sql: true
 
 server:
-  port: 8080
+  port: 8090
 
 logging:
   level:
