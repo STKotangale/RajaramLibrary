@@ -1,4 +1,4 @@
-package com.raja.lib.auth.service;
+package com.raja.lib.invt.report.service;
 
 import net.sf.jasperreports.engine.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ public class ReportService {
     private DataSource dataSource;
 
     public ByteArrayOutputStream generateReport() throws Exception {
-        JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/AcessionReport.jrxml"));
+        JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Accession/AcessionReport.jrxml"));
 
         Map<String, Object> parameters = new HashMap<>();
 

@@ -63,7 +63,7 @@ ORDER BY sortDate;]]>
 		<band height="80" splitType="Stretch">
 			<image>
 				<reportElement x="10" y="10" width="50" height="50" uuid="1639351a-2867-41e6-8aff-a8cdb9ba0e01"/>
-				<imageExpression><![CDATA["./Images/RajaramLogo.png"]]></imageExpression>
+				<imageExpression><![CDATA["/Images/RajaramLogo.png"]]></imageExpression>
 			</image>
 			<frame>
 				<reportElement positionType="FixRelativeToBottom" mode="Opaque" x="60" y="10" width="752" height="30" forecolor="#080502" backcolor="#BBDFFF" uuid="75968b5b-d9b9-408c-944c-158c077dc5cf"/>

@@ -90,27 +90,27 @@
 				<text><![CDATA[S.No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="30" y="0" width="70" height="20" uuid="accf9b6f-30e6-4081-b0b2-d251953f48c4"/>
+				<reportElement style="Column header" x="30" y="0" width="50" height="20" uuid="accf9b6f-30e6-4081-b0b2-d251953f48c4"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Acc-No]]></text>
+				<text><![CDATA[Acc:No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="100" y="0" width="80" height="20" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
+				<reportElement style="Column header" x="80" y="0" width="80" height="20" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Classification No]]></text>
+				<text><![CDATA[Class:No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="180" y="0" width="100" height="20" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
+				<reportElement style="Column header" x="160" y="0" width="110" height="20" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -120,7 +120,7 @@
 				<text><![CDATA[Author Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="280" y="0" width="90" height="20" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
+				<reportElement style="Column header" x="270" y="0" width="100" height="20" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -224,7 +224,7 @@
 				<textFieldExpression><![CDATA[$V{srno}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="30" y="0" width="70" height="15" uuid="accf9b6f-30e6-4081-b0b2-d251953f48c4"/>
+				<reportElement style="Detail" x="30" y="0" width="50" height="15" uuid="accf9b6f-30e6-4081-b0b2-d251953f48c4"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -234,7 +234,7 @@
 				<textFieldExpression><![CDATA[$F{accessionNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="100" y="0" width="80" height="15" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
+				<reportElement style="Detail" x="80" y="0" width="80" height="15" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -244,7 +244,7 @@
 				<textFieldExpression><![CDATA[$F{classificationNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="180" y="0" width="100" height="15" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
+				<reportElement style="Detail" x="160" y="0" width="110" height="15" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -254,7 +254,7 @@
 				<textFieldExpression><![CDATA[$F{authorName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="280" y="0" width="90" height="15" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
+				<reportElement style="Detail" x="270" y="0" width="100" height="15" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>

@@ -1,4 +1,6 @@
-package com.raja.lib.auth.controller;
+package com.raja.lib.invt.report.controller;
+
+import java.io.ByteArrayOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -10,9 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.raja.lib.auth.service.ReportService;
-
-import java.io.ByteArrayOutputStream;
+import com.raja.lib.invt.report.service.ReportService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController

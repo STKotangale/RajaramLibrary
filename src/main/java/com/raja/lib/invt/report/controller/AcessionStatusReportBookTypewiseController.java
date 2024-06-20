@@ -1,4 +1,4 @@
-package com.raja.lib.auth.controller;
+package com.raja.lib.invt.report.controller;
 
 import java.io.ByteArrayOutputStream;
 
@@ -13,24 +13,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.raja.lib.auth.service.AcessionStatusReportAutherwiseService;
+import com.raja.lib.invt.report.service.AcessionStatusReportBookTypewiseService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/reports")
-public class AcessionStatusReportAutherwiseController {
-
+public class AcessionStatusReportBookTypewiseController {
+    
     @Autowired
-    private AcessionStatusReportAutherwiseService reportService;
+    private AcessionStatusReportBookTypewiseService reportService;
 
-    @GetMapping("/acession-status-autherwise/{authorName}")
-    public ResponseEntity<byte[]> getAcessionStatusReportPublicationwise(@PathVariable String authorName) {
+    @GetMapping("/acession-status-booktype-wise/{bookType}")
+    public ResponseEntity<byte[]> getAcessionStatusReportBookTypewise(@PathVariable String bookType) {
         try {
-            ByteArrayOutputStream outputStream = reportService.generateAcessionStatusReportPublicationwise(authorName);
+            ByteArrayOutputStream outputStream = reportService.generateAcessionStatusReportPublicationwise(bookType);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.add("Content-Disposition", "inline; filename=AcessionStatusReportPublicationwise.pdf");
+            headers.add("Content-Disposition", "inline; filename=AcessionStatusReportBookTypewise.pdf");
 
             return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
         } catch (Exception e) {

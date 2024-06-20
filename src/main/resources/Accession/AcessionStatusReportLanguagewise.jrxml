@@ -25,29 +25,31 @@
 	<parameter name="publicationName" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT 
-            bd.accessionNo, 
-            bd.classificationNumber,
-            IFNULL((SELECT ba.authorName FROM invt_book_author ba, invt_book bk WHERE bk.bookId = bd.bookIdF AND bk.authorIdF = ba.authorId), 'Null') AS authorName, 
-            IFNULL((SELECT bk.bookName FROM invt_book bk WHERE bk.bookId = bd.bookIdF), 'Null') AS bookName, 
-            bd.edition, 
-            IFNULL((SELECT CONCAT(bp.publicationName, ', ', bp.publicationAddress) FROM invt_book_publication bp, invt_book bk WHERE bk.bookId = bd.bookIdF AND bk.publicationIdF = bp.publicationId), 'Null') AS publicationName, 
-            bd.publicationYear, 
-            bd.numberOfPages, 
-            IFNULL((SELECT stdet.book_rate FROM invt_stockdetail stdet WHERE stdet.stockDetailId = bd.stockDetailIdF), 'Null') AS book_rate,
-            IFNULL((SELECT led.ledgerName FROM acc_ledger led, invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND stk.stock_id = stdet.stock_idF AND led.ledgerID = stk.ledgerIDF), 'Null') AS ledgerName, 
-            IFNULL((SELECT stk.invoiceNo FROM invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND stk.stock_id = stdet.stock_idF), 'Null') AS invoiceNo,
-            IFNULL((SELECT stk.invoiceDate FROM invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND stk.stock_id = stdet.stock_idF), 'Null') AS invoiceDate,  
-            (SELECT CASE WHEN bda.bookLost = 'Y' THEN 'Lost' WHEN bda.bookScrap = 'Y' THEN 'Scrap' WHEN bda.book_return = 'Y' THEN 'Return' WHEN bda.bookIssue = 'Y' THEN 'Issued' WHEN bda.bookIssue = 'N' THEN 'Available' ELSE '' END FROM invt_book_details bda WHERE bda.bookDetailId = bd.bookDetailId) AS StatusText
-        FROM 
-            invt_book_details bd
-        JOIN 
-            invt_book bk ON bk.bookId = bd.bookIdF
-        JOIN 
-            invt_book_publication bp ON bk.publicationIdF = bp.publicationId
-        WHERE 
-            bp.publicationName = $P{publicationName}
-        ORDER BY 
-            bd.accessionNo;]]>
+    bd.accessionNo, 
+    bd.classificationNumber,
+    IFNULL((SELECT ba.authorName FROM invt_book_author ba, invt_book bk WHERE bk.bookId = bd.bookIdF AND bk.authorIdF = ba.authorId), 'Null') AS authorName, 
+    IFNULL((SELECT bk.bookName FROM invt_book bk WHERE bk.bookId = bd.bookIdF), 'Null') AS bookName, 
+    bd.edition, 
+    IFNULL((SELECT CONCAT(bp.publicationName, ', ', bp.publicationAddress) FROM invt_book_publication bp, invt_book bk WHERE bk.bookId = bd.bookIdF AND bk.publicationIdF = bp.publicationId), 'Null') AS publicationName, 
+    bd.publicationYear, 
+    bd.numberOfPages, 
+    IFNULL((SELECT stdet.book_rate FROM invt_stockdetail stdet WHERE stdet.stockDetailId = bd.stockDetailIdF), 'Null') AS book_rate,
+    IFNULL((SELECT led.ledgerName FROM acc_ledger led, invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND stk.stock_id = stdet.stock_idF AND led.ledgerID = stk.ledgerIDF), 'Null') AS ledgerName, 
+    IFNULL((SELECT stk.invoiceNo FROM invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND stk.stock_id = stdet.stock_idF), 'Null') AS invoiceNo,
+    IFNULL((SELECT stk.invoiceDate FROM invt_stockdetail stdet, invt_stock stk WHERE stdet.stockDetailId = bd.stockDetailIdF AND stk.stock_id = stdet.stock_idF), 'Null') AS invoiceDate,  
+    (SELECT CASE WHEN bda.bookLost = 'Y' THEN 'Lost' WHEN bda.bookScrap = 'Y' THEN 'Scrap' WHEN bda.book_return = 'Y' THEN 'Return' WHEN bda.bookIssue = 'Y' THEN 'Issued' WHEN bda.bookIssue = 'N' THEN 'Available' ELSE '' END FROM invt_book_details bda WHERE bda.bookDetailId = bd.bookDetailId) AS StatusText
+FROM 
+    invt_book_details bd
+JOIN 
+    invt_book bk ON bk.bookId = bd.bookIdF
+JOIN 
+    invt_book_publication bp ON bk.publicationIdF = bp.publicationId
+join 	
+	invt_book_language ibl ON ibl.bookLangId = bk.bookLangIdF 
+WHERE 
+    ibl.bookLangName = $P{publicationName}
+ORDER BY 
+    bd.accessionNo;]]>
 	</queryString>
 	<field name="accessionNo" class="java.lang.String"/>
 	<field name="classificationNumber" class="java.lang.String"/>
@@ -74,11 +76,11 @@
 			<frame>
 				<reportElement positionType="FixRelativeToBottom" mode="Opaque" x="60" y="10" width="752" height="30" forecolor="#080502" backcolor="#BBDFFF" uuid="75968b5b-d9b9-408c-944c-158c077dc5cf"/>
 				<staticText>
-					<reportElement style="SubTitle" x="-20" y="10" width="370" height="20" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="3a7d8fe4-20ac-4134-b16f-10c7ae3547f4"/>
-					<textElement textAlignment="Right">
+					<reportElement style="SubTitle" x="10" y="10" width="360" height="20" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="3a7d8fe4-20ac-4134-b16f-10c7ae3547f4"/>
+					<textElement>
 						<font size="14" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Accession Status Report Publication Wise]]></text>
+					<text><![CDATA[Accession Status Language Wise Report]]></text>
 				</staticText>
 			</frame>
 			<frame>
@@ -99,27 +101,27 @@
 				<text><![CDATA[S.No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="40" y="0" width="70" height="20" uuid="accf9b6f-30e6-4081-b0b2-d251953f48c4"/>
+				<reportElement style="Column header" x="40" y="0" width="50" height="20" uuid="accf9b6f-30e6-4081-b0b2-d251953f48c4"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Accession No]]></text>
+				<text><![CDATA[Acc:No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="110" y="0" width="80" height="20" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
+				<reportElement style="Column header" x="90" y="0" width="70" height="20" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Classification No]]></text>
+				<text><![CDATA[Class:No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="190" y="0" width="70" height="20" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
+				<reportElement style="Column header" x="160" y="0" width="80" height="20" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -129,7 +131,7 @@
 				<text><![CDATA[Author Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="260" y="0" width="90" height="20" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
+				<reportElement style="Column header" x="240" y="0" width="110" height="20" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -243,7 +245,7 @@
 				<textFieldExpression><![CDATA[$V{srno}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="40" y="0" width="70" height="15" uuid="accf9b6f-30e6-4081-b0b2-d251953f48c4"/>
+				<reportElement style="Detail" x="40" y="0" width="50" height="15" uuid="accf9b6f-30e6-4081-b0b2-d251953f48c4"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -253,7 +255,7 @@
 				<textFieldExpression><![CDATA[$F{accessionNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="110" y="0" width="80" height="15" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
+				<reportElement style="Detail" x="90" y="0" width="70" height="15" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -263,7 +265,7 @@
 				<textFieldExpression><![CDATA[$F{classificationNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="190" y="0" width="70" height="15" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
+				<reportElement style="Detail" x="160" y="0" width="80" height="15" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -273,7 +275,7 @@
 				<textFieldExpression><![CDATA[$F{authorName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="260" y="0" width="90" height="15" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
+				<reportElement style="Detail" x="240" y="0" width="110" height="15" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -357,7 +359,7 @@
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<paragraph leftIndent="2" rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{invoiceDate}]]></textFieldExpression>

@@ -1,4 +1,6 @@
-package com.raja.lib.auth.controller;
+package com.raja.lib.invt.report.controller;
+
+import java.io.ByteArrayOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -7,29 +9,28 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.raja.lib.auth.service.AcessionStatusReportService;
-
-import java.io.ByteArrayOutputStream;
+import com.raja.lib.invt.report.service.AcessionStatusReportPublicationwiseService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/reports")
-public class AcessionStatusReportController {
+public class AcessionStatusReportPublicationwiseController {
 
     @Autowired
-    private AcessionStatusReportService reportService;
+    private AcessionStatusReportPublicationwiseService reportService;
 
-    @GetMapping("/acession-status")
-    public ResponseEntity<byte[]> getAcessionStatusReport() {
+    @GetMapping("/acession-status-publicationwise/{publicationName}")
+    public ResponseEntity<byte[]> getAcessionStatusReportPublicationwise(@PathVariable String publicationName) {
         try {
-            ByteArrayOutputStream outputStream = reportService.generateAcessionStatusReport();
+            ByteArrayOutputStream outputStream = reportService.generateAcessionStatusReportPublicationwise(publicationName);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.add("Content-Disposition", "inline; filename=AcessionStatusReport.pdf");
+            headers.add("Content-Disposition", "inline; filename=AcessionStatusReportPublicationwise.pdf");
 
             return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
         } catch (Exception e) {

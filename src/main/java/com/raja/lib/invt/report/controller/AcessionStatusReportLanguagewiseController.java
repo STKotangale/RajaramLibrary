@@ -1,4 +1,4 @@
-package com.raja.lib.auth.controller;
+package com.raja.lib.invt.report.controller;
 
 import java.io.ByteArrayOutputStream;
 
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.raja.lib.auth.service.AcessionStatusReportLanguagewiseService;
+import com.raja.lib.invt.report.service.AcessionStatusReportLanguagewiseService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController

@@ -1,4 +1,4 @@
-package com.raja.lib.auth.service;
+package com.raja.lib.invt.report.service;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class AcessionStatusReportLanguagewiseService {
     private DataSource dataSource;
 
     public ByteArrayOutputStream generateAcessionStatusReportPublicationwise(String publicationName) throws Exception {
-        JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/AcessionStatusReportLanguagewise.jrxml"));
+        JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Accession/AcessionStatusReportLanguagewise.jrxml"));
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("publicationName", publicationName);

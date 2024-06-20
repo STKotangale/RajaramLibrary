@@ -1,4 +1,4 @@
-package com.raja.lib.auth.service;
+package com.raja.lib.invt.report.service;
 
 import net.sf.jasperreports.engine.*;
 import org.springframework.beans.factory.annotation.Autowired;

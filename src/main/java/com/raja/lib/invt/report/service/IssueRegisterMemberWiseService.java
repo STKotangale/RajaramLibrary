@@ -1,4 +1,4 @@
-package com.raja.lib.auth.service;
+package com.raja.lib.invt.report.service;
 
 import net.sf.jasperreports.engine.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,17 +11,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class IssueRegisterService {
+public class IssueRegisterMemberWiseService {
 
     @Autowired
     private DataSource dataSource;
 
-    public ByteArrayOutputStream generateReport(Date startDate, Date endDate) throws Exception {
-        JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/IssueRegister.jrxml"));
+    public ByteArrayOutputStream generateReport(Date startDate, Date endDate, String fullName) throws Exception {
+        JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/IssueRegisterMemberWise.jrxml"));
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("startDate", startDate);
         parameters.put("endDate", endDate);
+        parameters.put("fullName", fullName);
 
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource.getConnection());
 
@@ -31,3 +32,4 @@ public class IssueRegisterService {
         return outputStream;
     }
 }
+	
