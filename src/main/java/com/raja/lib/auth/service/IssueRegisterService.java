@@ -11,13 +11,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class IssueReportService {
+public class IssueRegisterService {
 
     @Autowired
     private DataSource dataSource;
 
     public ByteArrayOutputStream generateReport(Date startDate, Date endDate) throws Exception {
-        JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/IssueReport.jrxml"));
+        JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/IssueRegister.jrxml"));
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("startDate", startDate);

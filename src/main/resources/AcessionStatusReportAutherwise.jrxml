@@ -86,16 +86,16 @@ ORDER BY
 		<band height="80" splitType="Stretch">
 			<image>
 				<reportElement x="10" y="10" width="50" height="50" uuid="1639351a-2867-41e6-8aff-a8cdb9ba0e01"/>
-				<imageExpression><![CDATA["/Images/RajaramLogo.png"]]></imageExpression>
+				<imageExpression><![CDATA["./Images/RajaramLogo.png"]]></imageExpression>
 			</image>
 			<frame>
 				<reportElement positionType="FixRelativeToBottom" mode="Opaque" x="60" y="10" width="752" height="30" forecolor="#080502" backcolor="#BBDFFF" uuid="75968b5b-d9b9-408c-944c-158c077dc5cf"/>
 				<staticText>
-					<reportElement style="SubTitle" x="-20" y="10" width="330" height="20" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="3a7d8fe4-20ac-4134-b16f-10c7ae3547f4"/>
+					<reportElement style="SubTitle" x="-10" y="10" width="360" height="20" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="3a7d8fe4-20ac-4134-b16f-10c7ae3547f4"/>
 					<textElement textAlignment="Right">
 						<font size="14" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Accession Status Report Author Wise]]></text>
+					<text><![CDATA[Accession Status  Report Author Wise]]></text>
 				</staticText>
 			</frame>
 			<frame>
@@ -106,7 +106,7 @@ ORDER BY
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<staticText>
-				<reportElement style="Column header" x="20" y="0" width="20" height="20" uuid="4e33f747-75c8-4942-87b2-5a4587c5e33d"/>
+				<reportElement style="Column header" x="10" y="0" width="30" height="20" uuid="4e33f747-75c8-4942-87b2-5a4587c5e33d"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -116,7 +116,7 @@ ORDER BY
 				<text><![CDATA[S.No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="40" y="0" width="80" height="20" uuid="accf9b6f-30e6-4081-b0b2-d251953f48c4"/>
+				<reportElement style="Column header" x="40" y="0" width="70" height="20" uuid="accf9b6f-30e6-4081-b0b2-d251953f48c4"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -126,7 +126,7 @@ ORDER BY
 				<text><![CDATA[Accession No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="120" y="0" width="80" height="20" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
+				<reportElement style="Column header" x="110" y="0" width="80" height="20" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -136,7 +136,7 @@ ORDER BY
 				<text><![CDATA[Classification No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="200" y="0" width="80" height="20" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
+				<reportElement style="Column header" x="190" y="0" width="70" height="20" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -146,7 +146,7 @@ ORDER BY
 				<text><![CDATA[Author Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="280" y="0" width="80" height="20" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
+				<reportElement style="Column header" x="260" y="0" width="90" height="20" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -156,7 +156,7 @@ ORDER BY
 				<text><![CDATA[Book Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="360" y="0" width="30" height="20" uuid="d80d4a95-cc0e-4f2c-88c6-b5d17753f3e2"/>
+				<reportElement style="Column header" x="350" y="0" width="40" height="20" uuid="d80d4a95-cc0e-4f2c-88c6-b5d17753f3e2"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -183,30 +183,30 @@ ORDER BY
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[P- Year]]></text>
+				<text><![CDATA[P:Year]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="510" y="0" width="40" height="20" uuid="d0629c5d-1405-4f5f-8d5d-5cb4a5932472"/>
+				<reportElement style="Column header" x="510" y="0" width="30" height="20" uuid="d0629c5d-1405-4f5f-8d5d-5cb4a5932472"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Page-No]]></text>
+				<text><![CDATA[P-No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="550" y="0" width="40" height="20" uuid="e2336d0c-65b8-47ae-816f-f64cb85ff6e4"/>
+				<reportElement style="Column header" x="540" y="0" width="40" height="20" uuid="e2336d0c-65b8-47ae-816f-f64cb85ff6e4"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Book Rate]]></text>
+				<text><![CDATA[B:Rate]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="590" y="0" width="80" height="20" uuid="0f9472e1-3e7d-4fd7-bf43-402cfe19f75e"/>
+				<reportElement style="Column header" x="580" y="0" width="90" height="20" uuid="0f9472e1-3e7d-4fd7-bf43-402cfe19f75e"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -216,24 +216,24 @@ ORDER BY
 				<text><![CDATA[Ledger Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="670" y="0" width="50" height="20" uuid="257715b8-ec3d-4b5b-b7a0-68e923b89cd3"/>
+				<reportElement style="Column header" x="670" y="0" width="40" height="20" uuid="257715b8-ec3d-4b5b-b7a0-68e923b89cd3"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Invoice No]]></text>
+				<text><![CDATA[Inv: No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="720" y="0" width="50" height="20" uuid="5e90bb3f-1e64-47f5-a679-d2e88a9e3f4a"/>
+				<reportElement style="Column header" x="710" y="0" width="60" height="20" uuid="5e90bb3f-1e64-47f5-a679-d2e88a9e3f4a"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Invoice Date]]></text>
+				<text><![CDATA[Inv:Date]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" x="770" y="0" width="40" height="20" uuid="0fd12a57-2c08-4a53-bab4-2a340ff02444"/>
@@ -250,7 +250,7 @@ ORDER BY
 	<detail>
 		<band height="15" splitType="Stretch">
 			<textField>
-				<reportElement style="Detail" x="20" y="0" width="20" height="15" uuid="4e33f747-75c8-4942-87b2-5a4587c5e33d"/>
+				<reportElement style="Detail" x="10" y="0" width="30" height="15" uuid="4e33f747-75c8-4942-87b2-5a4587c5e33d"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -260,7 +260,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$V{srno}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="40" y="0" width="80" height="15" uuid="accf9b6f-30e6-4081-b0b2-d251953f48c4"/>
+				<reportElement style="Detail" x="40" y="0" width="70" height="15" uuid="accf9b6f-30e6-4081-b0b2-d251953f48c4"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -270,7 +270,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{accessionNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="120" y="0" width="80" height="15" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
+				<reportElement style="Detail" x="110" y="0" width="80" height="15" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -280,7 +280,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{classificationNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="200" y="0" width="80" height="15" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
+				<reportElement style="Detail" x="190" y="0" width="70" height="15" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -290,7 +290,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{authorName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="280" y="0" width="80" height="15" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
+				<reportElement style="Detail" x="260" y="0" width="90" height="15" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -300,11 +300,11 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{bookName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="360" y="0" width="30" height="15" uuid="d80d4a95-cc0e-4f2c-88c6-b5d17753f3e2"/>
+				<reportElement style="Detail" x="350" y="0" width="40" height="15" uuid="d80d4a95-cc0e-4f2c-88c6-b5d17753f3e2"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<paragraph leftIndent="2" rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{edition}]]></textFieldExpression>
@@ -324,23 +324,23 @@ ORDER BY
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<paragraph leftIndent="2" rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{publicationYear}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="510" y="0" width="40" height="15" uuid="d0629c5d-1405-4f5f-8d5d-5cb4a5932472"/>
+				<reportElement style="Detail" x="510" y="0" width="30" height="15" uuid="d0629c5d-1405-4f5f-8d5d-5cb4a5932472"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<paragraph leftIndent="2" rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numberOfPages}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="550" y="0" width="40" height="15" uuid="e2336d0c-65b8-47ae-816f-f64cb85ff6e4"/>
+				<reportElement style="Detail" x="540" y="0" width="40" height="15" uuid="e2336d0c-65b8-47ae-816f-f64cb85ff6e4"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -350,7 +350,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{book_rate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="590" y="0" width="80" height="15" uuid="0f9472e1-3e7d-4fd7-bf43-402cfe19f75e"/>
+				<reportElement style="Detail" x="580" y="0" width="90" height="15" uuid="0f9472e1-3e7d-4fd7-bf43-402cfe19f75e"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -360,7 +360,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{ledgerName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="670" y="0" width="50" height="15" uuid="257715b8-ec3d-4b5b-b7a0-68e923b89cd3"/>
+				<reportElement style="Detail" x="670" y="0" width="40" height="15" uuid="257715b8-ec3d-4b5b-b7a0-68e923b89cd3"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -370,11 +370,11 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{invoiceNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="720" y="0" width="50" height="15" uuid="5e90bb3f-1e64-47f5-a679-d2e88a9e3f4a"/>
+				<reportElement style="Detail" x="710" y="0" width="60" height="15" uuid="5e90bb3f-1e64-47f5-a679-d2e88a9e3f4a"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<paragraph leftIndent="2" rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{invoiceDate}]]></textFieldExpression>

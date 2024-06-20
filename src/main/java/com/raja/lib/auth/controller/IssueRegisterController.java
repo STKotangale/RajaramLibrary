@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.raja.lib.auth.service.IssueReportService;
+import com.raja.lib.auth.service.IssueRegisterService;
 
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
@@ -22,10 +22,10 @@ import java.util.Map;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/reports")
-public class IssueReportController {
+public class IssueRegisterController {
 
     @Autowired
-    private IssueReportService issueReportService;
+    private IssueRegisterService issueReportService;
 
     @PostMapping("/issue")
     public ResponseEntity<byte[]> getIssueReport(@RequestBody Map<String, String> dateRange) {
