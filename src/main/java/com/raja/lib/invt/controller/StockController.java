@@ -1,6 +1,8 @@
 package com.raja.lib.invt.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,10 +31,46 @@ public class StockController {
     private StockService stockService;
     
     
+    @GetMapping("/latest-purchaseNo")
+    public ResponseEntity<Map<String, String>> getNextPurchaseNo() {
+        Map<String, String> response = new HashMap<>();
+        response.put("nextInvoiceNo", stockService.getNextPurchaseNo());
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/latest-issueNo")
-    public String getLatestInvoiceNumber()
-    {
-    	return stockService.getLatestInvoiceNumber();
+    public ResponseEntity<Map<String, String>> getNextIssueNo() {
+        Map<String, String> response = new HashMap<>();
+        response.put("nextInvoiceNo", stockService.getNextIssueNo());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/latest-issueReturnNo")
+    public ResponseEntity<Map<String, String>> getNextIssueReturnNo() {
+        Map<String, String> response = new HashMap<>();
+        response.put("nextInvoiceNo", stockService.getNextIssueReturnNo());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/latest-purchaseReturnNo")
+    public ResponseEntity<Map<String, String>> getNextPurchaseReturnNo() {
+        Map<String, String> response = new HashMap<>();
+        response.put("nextInvoiceNo", stockService.getNextPurchaseReturnNo());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/latest-bookLostNo")
+    public ResponseEntity<Map<String, String>> getNextBookLostNo() {
+        Map<String, String> response = new HashMap<>();
+        response.put("nextInvoiceNo", stockService.getNextBookLostNo());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/latest-bookScrapNo")
+    public ResponseEntity<Map<String, String>> getNextBookScrapNo() {
+        Map<String, String> response = new HashMap<>();
+        response.put("nextInvoiceNo", stockService.getNextBookScrapNo());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("")
