@@ -177,5 +177,10 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "    is2.stock_type = 'A3' AND is3.stock_type = 'A3'\r\n" + "GROUP BY\r\n"
 			+ "    is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username;\r\n" + "", nativeQuery = true)
 	List<Map<String, Object>> getStockDetailsWithBookDetails();
+	
+	@Query(value = "SELECT invoiceNo FROM invt_stock WHERE stock_type = 'A2' ORDER BY invoiceNo DESC LIMIT 1", nativeQuery = true)
+	String findLatestIssueNo();
 
+
+	
 }

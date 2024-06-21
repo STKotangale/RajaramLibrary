@@ -67,6 +67,24 @@ public class StockService {
 	private final StockCopyNoRepository stockCopyNoRepository;
 	private final InvtConfigRepository invtConfigRepository;
 
+	
+	
+	 public String getLatestInvoiceNumber() {
+	        String latestInvoiceNumber = stockRepository.findLatestIssueNo();
+
+	        if (latestInvoiceNumber != null) {
+	            try {
+	                int nextInvoiceNumber = Integer.parseInt(latestInvoiceNumber) + 1;
+	                return String.valueOf(nextInvoiceNumber);
+	            } catch (NumberFormatException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	        return null; 
+	    }
+	
+	
+	
 	@Transactional
 	public ApiResponseDTO<Void> createStock(StockRequestDTO stockRequestDTO) {
 		Ledger ledger = ledgerRepository.findById(stockRequestDTO.getLedgerIDF())

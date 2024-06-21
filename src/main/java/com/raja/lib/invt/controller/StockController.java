@@ -27,6 +27,13 @@ public class StockController {
 
     @Autowired
     private StockService stockService;
+    
+    
+    @GetMapping("/latest-issueNo")
+    public String getLatestInvoiceNumber()
+    {
+    	return stockService.getLatestInvoiceNumber();
+    }
 
     @PostMapping("")
     public ResponseEntity<ApiResponseDTO<Void>> createStock(@RequestBody StockRequestDTO stockRequestDTO) {
