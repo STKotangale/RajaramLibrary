@@ -6,5 +6,5 @@ import lombok.Data;
 public class BookDetailss {
     private String bookName;
     private String accessionNo;
-    private Integer bookDetailId; 
+    private Integer bookDetailId;
 }

@@ -6,5 +6,8 @@ public interface BookIssue {
 	String getinvoiceNo();
 	String getinvoiceDate();
 	String getusername();
+	String getfirstName();
+	String getmiddleName();
+	String getlastName();
 	
 }

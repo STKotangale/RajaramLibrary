@@ -133,20 +133,28 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "WHERE is2.stock_type = 'A1';\r\n" + "", nativeQuery = true)
 	List<StockModel> getAllStock();
 
-	@Query(value = "select is2.stock_id , is2.invoiceNo , is2.invoiceDate , au.username  from invt_stock is2 join\r\n"
-			+ "auth_general_members agm ON agm.memberId = is2.memberIdF join \r\n"
-			+ "auth_users au on au.memberIdF = agm.memberId \r\n" + "where is2.stock_type ='A2'", nativeQuery = true)
+	@Query(value = "SELECT is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username, agm.firstName, agm.middleName, agm.lastName\r\n"
+			+ "FROM invt_stock is2\r\n"
+			+ "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF\r\n"
+			+ "JOIN auth_users au ON au.memberIdF = agm.memberId\r\n"
+			+ "WHERE is2.stock_type = 'A2'\r\n"
+			+ "ORDER BY is2.invoiceDate;\r\n"
+			+ "", nativeQuery = true)
 	List<BookIssue> getAllIssue();
 
-	@Query(value = "SELECT is2.stock_id AS stockId, is2.invoiceNo AS action, is2.invoiceDate AS date, au.username AS user, JSON_ARRAYAGG(JSON_OBJECT('bookName', ib.bookName, 'accessionNo', ibd.accessionNo, 'bookDetailId', ibd.bookDetailId)) AS books "
-			+ "FROM invt_stock is2 " + "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF "
+	@Query(value = "SELECT " + "is2.stock_id AS stockId, " + "is2.invoiceNo AS action, " + "is2.invoiceDate AS date, "
+			+ "au.username AS user, " + "agm.firstname AS firstName, " + "agm.middlename AS middleName, "
+			+ "agm.lastname AS lastName, " + "CONCAT('[', GROUP_CONCAT(" + "   CONCAT("
+			+ "       '{\"bookName\":\"', ib.bookName, '\",', '\"accessionNo\":\"', ibd.accessionNo, '\",', '\"bookDetailId\":', ibd.bookDetailId, '}'"
+			+ "   )" + "   ORDER BY ibd.bookDetailId SEPARATOR ','" + "), ']') AS books " + "FROM invt_stock is2 "
+			+ "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF "
 			+ "JOIN auth_users au ON au.memberIdF = agm.memberId "
 			+ "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
 			+ "JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId "
 			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF "
 			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF "
 			+ "WHERE is2.stock_type = 'A2' AND is2.stock_id = :stockId "
-			+ "GROUP BY is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username", nativeQuery = true)
+			+ "GROUP BY is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username, agm.firstname, agm.middlename, agm.lastname", nativeQuery = true)
 	List<Object[]> findIssueDetailsById(@Param("stockId") Integer stockId);
 
 	@Query(value = "SELECT\r\n" + "    is2.stock_id,\r\n" + "    is2.invoiceNo,\r\n" + "    is2.invoiceDate,\r\n"

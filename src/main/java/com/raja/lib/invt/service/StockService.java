@@ -293,38 +293,41 @@ public class StockService {
 	}
 
 	public List<IssueDetailsDTO> getInvoiceDetailsByStockId(Integer stockId) {
-		List<Object[]> result = stockRepository.findIssueDetailsById(stockId);
-		List<IssueDetailsDTO> issueDetailsList = new ArrayList<>();
+        List<Object[]> result = stockRepository.findIssueDetailsById(stockId);
+        List<IssueDetailsDTO> issueDetailsList = new ArrayList<>();
 
-		for (Object[] row : result) {
-			IssueDetailsDTO issueDetails = new IssueDetailsDTO();
-			issueDetails.setId((Integer) row[0]);
-			issueDetails.setInvoiceNo((String) row[1]);
-			issueDetails.setInvoiceDate((String) row[2]);
-			issueDetails.setUser((String) row[3]);
+        for (Object[] row : result) {
+            IssueDetailsDTO issueDetails = new IssueDetailsDTO();
+            issueDetails.setId((Integer) row[0]);
+            issueDetails.setInvoiceNo(String.valueOf(row[1])); // Casting to String
+            issueDetails.setInvoiceDate(String.valueOf(row[2])); // Casting to String
+            issueDetails.setUser(String.valueOf(row[3])); // Casting to String
+            issueDetails.setFirstName(String.valueOf(row[4])); // Casting to String
+            issueDetails.setMiddleName(String.valueOf(row[5])); // Casting to String
+            issueDetails.setLastName(String.valueOf(row[6])); // Casting to String
 
-			String booksJson = (String) row[4];
-			List<BookDetailss> books = new ArrayList<>();
-			try {
-				JSONArray booksArray = new JSONArray(booksJson);
-				for (int i = 0; i < booksArray.length(); i++) {
-					JSONObject bookObject = booksArray.getJSONObject(i);
-					BookDetailss bookDetailss = new BookDetailss();
-					bookDetailss.setBookName(bookObject.getString("bookName"));
-					bookDetailss.setAccessionNo(bookObject.getString("accessionNo"));
-	                bookDetailss.setBookDetailId(bookObject.getInt("bookDetailId")); // Set bookDetailId
-					books.add(bookDetailss);
-				}
-			} catch (JSONException e) {
-				e.printStackTrace(); // Handle exception appropriately
-			}
-			issueDetails.setBooks(books);
+            String booksJson = String.valueOf(row[7]); // Casting to String
+            List<BookDetailss> books = new ArrayList<>();
+            try {
+                JSONArray booksArray = new JSONArray(booksJson);
+                for (int i = 0; i < booksArray.length(); i++) {
+                    JSONObject bookObject = booksArray.getJSONObject(i);
+                    BookDetailss bookDetailss = new BookDetailss();
+                    bookDetailss.setBookName(bookObject.getString("bookName"));
+                    bookDetailss.setAccessionNo(bookObject.getString("accessionNo"));
+                    bookDetailss.setBookDetailId(bookObject.getInt("bookDetailId"));
+                    books.add(bookDetailss);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace(); // Handle exception appropriately
+            }
+            issueDetails.setBooks(books);
 
-			issueDetailsList.add(issueDetails);
-		}
-		return issueDetailsList;
-	}
-
+            issueDetailsList.add(issueDetails);
+        }
+        return issueDetailsList;
+    }
+	
 	@Transactional
 	public ApiResponseDTO<Stock> updateBookIssue(int stockId, BookIssueRequestDto bookIssueRequestDto) {
 		Stock stockToUpdate = stockRepository.findById(stockId)
