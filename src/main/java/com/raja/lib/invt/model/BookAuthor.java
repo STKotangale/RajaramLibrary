@@ -47,7 +47,7 @@ public class BookAuthor implements Serializable {
 	@Column(name = "authorContactNo2")
 	private String authorContactNo2;
 
-	@NotBlank
+	
 	@Size(max = 100)
 	@Column(name = "authorEmailId")
 	private String authorEmailId;

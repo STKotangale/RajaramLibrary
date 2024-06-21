@@ -9,4 +9,6 @@ import com.raja.lib.invt.model.BookAuthor;
 public interface BookAuthorRepository extends JpaRepository<BookAuthor, Integer> {
 	
 	boolean existsByAuthorName(String authorName);
+	
+    boolean existsByAuthorNameAndAuthorIdNot(String authorName, int authorId);
 }

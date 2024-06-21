@@ -17,7 +17,7 @@ public class IssueRegisterMemberWiseService {
     private DataSource dataSource;
 
     public ByteArrayOutputStream generateReport(Date startDate, Date endDate, String fullName) throws Exception {
-        JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/IssueRegisterMemberWise.jrxml"));
+        JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Issue/IssueRegisterMemberWise.jrxml"));
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("startDate", startDate);

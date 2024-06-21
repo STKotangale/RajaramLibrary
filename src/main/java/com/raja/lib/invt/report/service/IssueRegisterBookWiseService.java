@@ -17,7 +17,7 @@ public class IssueRegisterBookWiseService {
     private DataSource dataSource;
 
     public ByteArrayOutputStream generateReport(Date startDate, Date endDate, String bookName) throws Exception {
-        JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/IssueRegisterBookWise.jrxml"));
+        JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Issue/IssueRegisterBookWise.jrxml"));
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("startDate", startDate);

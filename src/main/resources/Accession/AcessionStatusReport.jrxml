@@ -71,7 +71,7 @@ ORDER BY bd.accessionNo;]]>
 		<band height="80" splitType="Stretch">
 			<image>
 				<reportElement x="10" y="10" width="50" height="50" uuid="1639351a-2867-41e6-8aff-a8cdb9ba0e01"/>
-				<imageExpression><![CDATA["./Images/RajaramLogo.png"]]></imageExpression>
+				<imageExpression><![CDATA["/Images/RajaramLogo.png"]]></imageExpression>
 			</image>
 			<frame>
 				<reportElement positionType="FixRelativeToBottom" mode="Opaque" x="60" y="10" width="752" height="30" forecolor="#080502" backcolor="#BBDFFF" uuid="75968b5b-d9b9-408c-944c-158c077dc5cf"/>
@@ -111,7 +111,7 @@ ORDER BY bd.accessionNo;]]>
 				<text><![CDATA[Acc:No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="90" y="0" width="70" height="20" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
+				<reportElement style="Column header" x="90" y="0" width="60" height="20" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -121,7 +121,7 @@ ORDER BY bd.accessionNo;]]>
 				<text><![CDATA[Class:No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="160" y="0" width="80" height="20" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
+				<reportElement style="Column header" x="150" y="0" width="80" height="20" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -131,7 +131,7 @@ ORDER BY bd.accessionNo;]]>
 				<text><![CDATA[Author Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="240" y="0" width="110" height="20" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
+				<reportElement style="Column header" x="230" y="0" width="130" height="20" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -141,7 +141,7 @@ ORDER BY bd.accessionNo;]]>
 				<text><![CDATA[Book Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="350" y="0" width="40" height="20" uuid="d80d4a95-cc0e-4f2c-88c6-b5d17753f3e2"/>
+				<reportElement style="Column header" x="360" y="0" width="40" height="20" uuid="d80d4a95-cc0e-4f2c-88c6-b5d17753f3e2"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -151,7 +151,7 @@ ORDER BY bd.accessionNo;]]>
 				<text><![CDATA[Edition]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="390" y="0" width="80" height="20" uuid="0df98b78-5178-4f6c-8215-62218e5c11d4"/>
+				<reportElement style="Column header" x="400" y="0" width="80" height="20" uuid="0df98b78-5178-4f6c-8215-62218e5c11d4"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -161,7 +161,7 @@ ORDER BY bd.accessionNo;]]>
 				<text><![CDATA[Publication Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="470" y="0" width="40" height="20" uuid="4e08a704-2fe5-4e62-9606-fc7b3c040347"/>
+				<reportElement style="Column header" x="480" y="0" width="40" height="20" uuid="4e08a704-2fe5-4e62-9606-fc7b3c040347"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -171,7 +171,7 @@ ORDER BY bd.accessionNo;]]>
 				<text><![CDATA[P:Year]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="510" y="0" width="30" height="20" uuid="d0629c5d-1405-4f5f-8d5d-5cb4a5932472"/>
+				<reportElement style="Column header" x="520" y="0" width="30" height="20" uuid="d0629c5d-1405-4f5f-8d5d-5cb4a5932472"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -181,7 +181,7 @@ ORDER BY bd.accessionNo;]]>
 				<text><![CDATA[P-No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="540" y="0" width="40" height="20" uuid="e2336d0c-65b8-47ae-816f-f64cb85ff6e4"/>
+				<reportElement style="Column header" x="550" y="0" width="40" height="20" uuid="e2336d0c-65b8-47ae-816f-f64cb85ff6e4"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -191,14 +191,14 @@ ORDER BY bd.accessionNo;]]>
 				<text><![CDATA[B:Rate]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="580" y="0" width="90" height="20" uuid="0f9472e1-3e7d-4fd7-bf43-402cfe19f75e"/>
+				<reportElement style="Column header" x="590" y="0" width="80" height="20" uuid="0f9472e1-3e7d-4fd7-bf43-402cfe19f75e"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Ledger Name]]></text>
+				<text><![CDATA[Suplier]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" x="670" y="0" width="40" height="20" uuid="257715b8-ec3d-4b5b-b7a0-68e923b89cd3"/>
@@ -255,7 +255,7 @@ ORDER BY bd.accessionNo;]]>
 				<textFieldExpression><![CDATA[$F{accessionNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="90" y="0" width="70" height="15" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
+				<reportElement style="Detail" x="90" y="0" width="60" height="15" uuid="b5827ff9-63c4-4828-8e09-7a36c732b481"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -265,7 +265,7 @@ ORDER BY bd.accessionNo;]]>
 				<textFieldExpression><![CDATA[$F{classificationNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="160" y="0" width="80" height="15" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
+				<reportElement style="Detail" x="150" y="0" width="80" height="15" uuid="9a0653f5-6d60-4e97-846b-7493d0b8d374"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -275,7 +275,7 @@ ORDER BY bd.accessionNo;]]>
 				<textFieldExpression><![CDATA[$F{authorName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="240" y="0" width="110" height="15" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
+				<reportElement style="Detail" x="230" y="0" width="130" height="15" uuid="c882fa69-2cd1-4ef0-97e5-fb5e9b1b5891"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -285,7 +285,7 @@ ORDER BY bd.accessionNo;]]>
 				<textFieldExpression><![CDATA[$F{bookName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="350" y="0" width="40" height="15" uuid="d80d4a95-cc0e-4f2c-88c6-b5d17753f3e2"/>
+				<reportElement style="Detail" x="360" y="0" width="40" height="15" uuid="d80d4a95-cc0e-4f2c-88c6-b5d17753f3e2"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -295,7 +295,7 @@ ORDER BY bd.accessionNo;]]>
 				<textFieldExpression><![CDATA[$F{edition}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="390" y="0" width="80" height="15" uuid="0df98b78-5178-4f6c-8215-62218e5c11d4"/>
+				<reportElement style="Detail" x="400" y="0" width="80" height="15" uuid="0df98b78-5178-4f6c-8215-62218e5c11d4"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -305,7 +305,7 @@ ORDER BY bd.accessionNo;]]>
 				<textFieldExpression><![CDATA[$F{publicationName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="470" y="0" width="40" height="15" uuid="4e08a704-2fe5-4e62-9606-fc7b3c040347"/>
+				<reportElement style="Detail" x="480" y="0" width="40" height="15" uuid="4e08a704-2fe5-4e62-9606-fc7b3c040347"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -315,7 +315,7 @@ ORDER BY bd.accessionNo;]]>
 				<textFieldExpression><![CDATA[$F{publicationYear}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="510" y="0" width="30" height="15" uuid="d0629c5d-1405-4f5f-8d5d-5cb4a5932472"/>
+				<reportElement style="Detail" x="520" y="0" width="30" height="15" uuid="d0629c5d-1405-4f5f-8d5d-5cb4a5932472"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -325,7 +325,7 @@ ORDER BY bd.accessionNo;]]>
 				<textFieldExpression><![CDATA[$F{numberOfPages}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="540" y="0" width="40" height="15" uuid="e2336d0c-65b8-47ae-816f-f64cb85ff6e4"/>
+				<reportElement style="Detail" x="550" y="0" width="40" height="15" uuid="e2336d0c-65b8-47ae-816f-f64cb85ff6e4"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>
@@ -335,7 +335,7 @@ ORDER BY bd.accessionNo;]]>
 				<textFieldExpression><![CDATA[$F{book_rate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="580" y="0" width="90" height="15" uuid="0f9472e1-3e7d-4fd7-bf43-402cfe19f75e"/>
+				<reportElement style="Detail" x="590" y="0" width="80" height="15" uuid="0f9472e1-3e7d-4fd7-bf43-402cfe19f75e"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#000000"/>
 				</box>

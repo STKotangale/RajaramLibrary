@@ -40,12 +40,12 @@ public class BookPublication implements Serializable {
     @Column(name="publicationName")
     private String publicationName;
     
-    @NotBlank
+    
     @Size(max = 100)
     @Column(name="publicationContactPerson")
     private String publicationContactPerson;
     
-    @NotBlank
+    
     @Size(max = 200)
     @Column(name="publicationAddress")
     private String publicationAddress;
@@ -56,7 +56,6 @@ public class BookPublication implements Serializable {
     @Column(name="publicationContactNo2")
     private String publicationContactNo2;
     
-    @NotBlank
     @Size(max = 100)
     @Column(name="publicationEmailId")
     private String publicationEmailId;
