@@ -194,10 +194,13 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 	@Query(value = "SELECT invoiceNo FROM invt_stock WHERE stock_type = 'A6' ORDER BY invoiceNo DESC LIMIT 1", nativeQuery = true)
 	String findLatestBookScrapNo();
 
-	@Query(value = "SELECT ibd.bookDetailId, ibd.accessionNo, ib.bookId, ib.bookName\r\n"
-			+ "FROM invt_book_details ibd\r\n" + "JOIN invt_book ib ON ib.bookId = ibd.bookIdF \r\n"
-			+ "WHERE ibd.bookIssue = 'Y'\r\n" + "  AND ibd.bookLost = 'N'\r\n" + "  AND ibd.bookScrap = 'N'\r\n"
-			+ "  AND ibd.book_return = 'N';\r\n" + "", nativeQuery = true)
+	@Query(value = "SELECT \r\n" + "    ibd.bookDetailId, \r\n" + "    ibd.accessionNo, \r\n" + "    ib.bookId, \r\n"
+			+ "    ib.bookName, \r\n" + "    is2.book_rate \r\n" + "FROM \r\n" + "    invt_book_details ibd\r\n"
+			+ "JOIN \r\n" + "    invt_book ib ON ib.bookId = ibd.bookIdF \r\n" + "JOIN \r\n"
+			+ "    invt_stock_copy_no iscn ON iscn.bookDetailIdF = ibd.bookDetailId \r\n" + "JOIN \r\n"
+			+ "    invt_stockdetail is2 ON is2.stockDetailId = iscn.stockDetailIdF \r\n" + "WHERE \r\n"
+			+ "    ibd.bookIssue = 'Y'\r\n" + "    AND ibd.bookLost = 'N'\r\n" + "    AND ibd.bookScrap = 'N'\r\n"
+			+ "    AND ibd.book_return = 'N';\r\n" + "", nativeQuery = true)
 	List<AcessionForLostScarap> GetAccesionNoForTransactions();
 
 }

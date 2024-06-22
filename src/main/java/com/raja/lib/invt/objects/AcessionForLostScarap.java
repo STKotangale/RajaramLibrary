@@ -6,5 +6,6 @@ public interface AcessionForLostScarap {
 	String getaccessionNo();
 	int getbookId();
 	String getbookName();
+	String getbook_rate();
 
 }
