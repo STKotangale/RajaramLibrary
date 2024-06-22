@@ -450,6 +450,7 @@ public class StockService {
 			StockDetail stockDetail = new StockDetail();
 			stockDetail.setStockIdF(savedStock);
 			stockDetail.setStock_type("A3");
+			stockDetail.setBookDetailIdF(bookDetailsDTO.getBookDetailIds());
 			stockDetail.setBook_qty(1);
 			stockDetail.setRef_issue_date(bookDetailsDTO.getIssuedate());
 			stockDetail.setRef_issue_stockDetailId(bookDetailsDTO.getStockDetailId());
@@ -536,6 +537,7 @@ public class StockService {
 			returnStockDetail.setBook_qty(1);
 			returnStockDetail.setBook_rate(0);
 			returnStockDetail.setStock_type("A4");
+			returnStockDetail.setBookDetailIdF(bookDetailDTO.getBookdetailId());
 			returnStockDetail.setBook_amount(bookDetailDTO.getAmount());
 			bookDetails.setBook_return("Y");
 			stockDetails.add(returnStockDetail);
@@ -593,6 +595,7 @@ public class StockService {
 			returnStockDetail.setBook_qty(1);
 			returnStockDetail.setBook_rate(0);
 			returnStockDetail.setStock_type("A5");
+			returnStockDetail.setBookDetailIdF(bookDetailDTO.getBookdetailId());
 			returnStockDetail.setBook_amount(bookDetailDTO.getAmount());
 			bookDetails.setBookLost("Y");
 			stockDetails.add(returnStockDetail);
@@ -647,6 +650,7 @@ public class StockService {
 			returnStockDetail.setBook_idF(stockDetail.getBook_idF());
 			returnStockDetail.setStock_type("A6");
 			returnStockDetail.setBook_qty(1); // Set bookQty
+			returnStockDetail.setBookDetailIdF(bookDetailDTO.getBookdetailId());
 			returnStockDetail.setBook_rate(bookDetailDTO.getAmount());
 			bookDetails.setBookScrap("Y");
 			stockDetails.add(returnStockDetail);
