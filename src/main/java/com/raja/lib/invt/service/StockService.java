@@ -25,6 +25,7 @@ import com.raja.lib.invt.model.BookDetails;
 import com.raja.lib.invt.model.Stock;
 import com.raja.lib.invt.model.StockCopyNo;
 import com.raja.lib.invt.model.StockDetail;
+import com.raja.lib.invt.objects.AcessionForLostScarap;
 import com.raja.lib.invt.objects.BookIssue;
 import com.raja.lib.invt.objects.GetAllIssueBookDetailsByUsername;
 import com.raja.lib.invt.objects.StockModel;
@@ -108,7 +109,7 @@ public class StockService {
 	        return "1";
 	    }
 	    
-	    
+//	    ----------------------------------------- stock api-------------------------------
 	    
 	@Transactional
 	public ApiResponseDTO<Void> createStock(StockRequestDTO stockRequestDTO) {
@@ -302,6 +303,7 @@ public class StockService {
 					.orElseThrow(() -> new RuntimeException("Book not found"));
 			stockDetail.setBook_idF(book);
 			stockDetail.setStock_type("A2");
+	        stockDetail.setBookDetailIdF(bookDetailDto.getBookdetailId());
 			stockDetail.setBook_qty(1);
 			stockDetailRepository.save(stockDetail);
 			StockCopyNo stockCopyNo = new StockCopyNo();
@@ -669,4 +671,10 @@ public class StockService {
 	public List<StockModel> getStockDetials() {
 		return stockRepository.getAllStock();
 	}
+	
+	public List<AcessionForLostScarap> AcessionForLostScarap() {
+		return stockRepository.GetAccesionNoForTransactions();
+	}
 }
+
+

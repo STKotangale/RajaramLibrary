@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.raja.lib.invt.model.Stock;
+import com.raja.lib.invt.objects.AcessionForLostScarap;
 import com.raja.lib.invt.objects.BookIssue;
 import com.raja.lib.invt.objects.GetAllIssueBookDetailsByUsername;
 import com.raja.lib.invt.objects.GetIssueDetilsByUser;
@@ -134,12 +135,9 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 	List<StockModel> getAllStock();
 
 	@Query(value = "SELECT is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username, agm.firstName, agm.middleName, agm.lastName\r\n"
-			+ "FROM invt_stock is2\r\n"
-			+ "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF\r\n"
-			+ "JOIN auth_users au ON au.memberIdF = agm.memberId\r\n"
-			+ "WHERE is2.stock_type = 'A2'\r\n"
-			+ "ORDER BY is2.invoiceDate;\r\n"
-			+ "", nativeQuery = true)
+			+ "FROM invt_stock is2\r\n" + "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF\r\n"
+			+ "JOIN auth_users au ON au.memberIdF = agm.memberId\r\n" + "WHERE is2.stock_type = 'A2'\r\n"
+			+ "ORDER BY is2.invoiceDate;\r\n" + "", nativeQuery = true)
 	List<BookIssue> getAllIssue();
 
 	@Query(value = "SELECT " + "is2.stock_id AS stockId, " + "is2.invoiceNo AS action, " + "is2.invoiceDate AS date, "
@@ -177,24 +175,29 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "    is2.stock_type = 'A3' AND is3.stock_type = 'A3'\r\n" + "GROUP BY\r\n"
 			+ "    is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username;\r\n" + "", nativeQuery = true)
 	List<Map<String, Object>> getStockDetailsWithBookDetails();
-	
+
 	@Query(value = "SELECT invoiceNo FROM invt_stock WHERE stock_type = 'A1' ORDER BY invoiceNo DESC LIMIT 1", nativeQuery = true)
-    String findLatestPurchaseNo();
+	String findLatestPurchaseNo();
 
-    @Query(value = "SELECT invoiceNo FROM invt_stock WHERE stock_type = 'A2' ORDER BY invoiceNo DESC LIMIT 1", nativeQuery = true)
-    String findLatestIssueNo();
+	@Query(value = "SELECT invoiceNo FROM invt_stock WHERE stock_type = 'A2' ORDER BY invoiceNo DESC LIMIT 1", nativeQuery = true)
+	String findLatestIssueNo();
 
-    @Query(value = "SELECT invoiceNo FROM invt_stock WHERE stock_type = 'A3' ORDER BY invoiceNo DESC LIMIT 1", nativeQuery = true)
-    String findLatestIssueReturnNo();
+	@Query(value = "SELECT invoiceNo FROM invt_stock WHERE stock_type = 'A3' ORDER BY invoiceNo DESC LIMIT 1", nativeQuery = true)
+	String findLatestIssueReturnNo();
 
-    @Query(value = "SELECT invoiceNo FROM invt_stock WHERE stock_type = 'A4' ORDER BY invoiceNo DESC LIMIT 1", nativeQuery = true)
-    String findLatestPurchaseReturnNo();
+	@Query(value = "SELECT invoiceNo FROM invt_stock WHERE stock_type = 'A4' ORDER BY invoiceNo DESC LIMIT 1", nativeQuery = true)
+	String findLatestPurchaseReturnNo();
 
-    @Query(value = "SELECT invoiceNo FROM invt_stock WHERE stock_type = 'A5' ORDER BY invoiceNo DESC LIMIT 1", nativeQuery = true)
-    String findLatestBookLostNo();
+	@Query(value = "SELECT invoiceNo FROM invt_stock WHERE stock_type = 'A5' ORDER BY invoiceNo DESC LIMIT 1", nativeQuery = true)
+	String findLatestBookLostNo();
 
-    @Query(value = "SELECT invoiceNo FROM invt_stock WHERE stock_type = 'A6' ORDER BY invoiceNo DESC LIMIT 1", nativeQuery = true)
-    String findLatestBookScrapNo();
+	@Query(value = "SELECT invoiceNo FROM invt_stock WHERE stock_type = 'A6' ORDER BY invoiceNo DESC LIMIT 1", nativeQuery = true)
+	String findLatestBookScrapNo();
 
-	
+	@Query(value = "SELECT ibd.bookDetailId, ibd.accessionNo, ib.bookId, ib.bookName\r\n"
+			+ "FROM invt_book_details ibd\r\n" + "JOIN invt_book ib ON ib.bookId = ibd.bookIdF \r\n"
+			+ "WHERE ibd.bookIssue = 'Y'\r\n" + "  AND ibd.bookLost = 'N'\r\n" + "  AND ibd.bookScrap = 'N'\r\n"
+			+ "  AND ibd.book_return = 'N';\r\n" + "", nativeQuery = true)
+	List<AcessionForLostScarap> GetAccesionNoForTransactions();
+
 }

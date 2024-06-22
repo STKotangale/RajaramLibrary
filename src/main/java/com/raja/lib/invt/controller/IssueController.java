@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.model.Stock;
+import com.raja.lib.invt.objects.AcessionForLostScarap;
 import com.raja.lib.invt.objects.BookIssue;
 import com.raja.lib.invt.objects.GetAllIssueBookDetailsByUsername;
-import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.request.BookIssueRequestDto;
 import com.raja.lib.invt.request.BookIssueReturnRequestDTO;
 import com.raja.lib.invt.request.BookLostRequestDTO;
@@ -167,4 +167,8 @@ public class IssueController {
 		return stockService.getScrapDetials();
 	}
 
+	@GetMapping("/acession-details")
+	public List<AcessionForLostScarap> getAcessionNO() {
+		return stockService.AcessionForLostScarap();
+	}
 }
