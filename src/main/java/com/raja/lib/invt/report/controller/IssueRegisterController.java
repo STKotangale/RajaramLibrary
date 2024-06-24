@@ -30,8 +30,8 @@ public class IssueRegisterController {
         try {
             String startDate = dateRange.get("startDate");
             String endDate = dateRange.get("endDate");
-//            System.out.println("startDate "+startDate);
-//            System.out.println("endDate "+endDate);
+            System.out.println("startDate "+startDate);
+            System.out.println("endDate "+endDate);
                
             // Generate the report
             ByteArrayOutputStream outputStream = issueReportService.generateReport(startDate, endDate);
