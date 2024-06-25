@@ -1,5 +1,6 @@
 package com.raja.lib.auth.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +16,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -40,8 +40,11 @@ import com.raja.lib.auth.request.SignupRequest;
 import com.raja.lib.auth.response.JwtResponse;
 import com.raja.lib.auth.response.MessageResponse;
 import com.raja.lib.auth.security.JwtUtils;
+import com.raja.lib.auth.service.SessionService;
 import com.raja.lib.auth.service.UserDetailsImpl;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -64,25 +67,39 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
+    @Autowired
+    SessionService sessionService;
+    
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
+
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+            new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();    
+        List<String> roles = userDetails.getAuthorities().stream()
+            .map(item -> item.getAuthority())
+            .collect(Collectors.toList());
 
-        User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow(
-                () -> new UsernameNotFoundException("User Not Found with username: " + loginRequest.getUsername()));
+        HttpSession session = request.getSession(true);
+        session.setAttribute("username", userDetails.getUsername());
+        session.setAttribute("roles", roles);
 
-        Integer memberId = user.getGeneralMember() != null ? user.getGeneralMember().getMemberId() : null;
+        java.util.Date issuedAt = jwtUtils.getIssuedAtFromJwtToken(jwt);
+        SimpleDateFormat yearFormatter = new SimpleDateFormat("yyyy");
+        String loginYear = yearFormatter.format(issuedAt);
 
-        return ResponseEntity.ok(
-                new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles, memberId));
+        sessionService.printCurrentYear(loginYear);
+
+        return ResponseEntity.ok(new JwtResponse(jwt, 
+                             userDetails.getId(), 
+                             userDetails.getUsername(), 
+                             userDetails.getEmail(), 
+                             roles,
+                             userDetails.getMemberId())); 
     }
 
     @PostMapping("/signup")

@@ -7,4 +7,5 @@ public class InvtConfigResponse {
 	private int srno;
 	private Integer bookDays;
 	private Double finePerDays;
+	private Double monthlyFees;
 }

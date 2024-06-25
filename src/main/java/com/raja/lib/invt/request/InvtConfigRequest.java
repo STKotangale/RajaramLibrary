@@ -7,5 +7,6 @@ public class InvtConfigRequest {
 
 	private Integer bookDays;
 	private Double finePerDays;
+	private Double monthlyFees;
 
 }
