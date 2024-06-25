@@ -27,7 +27,7 @@ public class TestController {
 
     @GetMapping("/session")
     public ResponseEntity<?> getSessionInfo(HttpServletRequest request) {
-        HttpSession session = request.getSession(false); // false means do not create if not exists
+        HttpSession session = request.getSession(false); 
         if (session != null) {
             String username = (String) session.getAttribute("username");
             @SuppressWarnings("unchecked")

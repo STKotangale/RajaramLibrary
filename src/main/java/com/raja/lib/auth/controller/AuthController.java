@@ -1,5 +1,6 @@
 package com.raja.lib.auth.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -86,6 +87,12 @@ public class AuthController {
         HttpSession session = request.getSession(true);
         session.setAttribute("username", userDetails.getUsername());
         session.setAttribute("roles", roles);
+
+        java.util.Date issuedAt = jwtUtils.getIssuedAtFromJwtToken(jwt);
+        SimpleDateFormat yearFormatter = new SimpleDateFormat("yyyy");
+        String loginYear = yearFormatter.format(issuedAt);
+
+        sessionService.printCurrentYear(loginYear);
 
         return ResponseEntity.ok(new JwtResponse(jwt, 
                              userDetails.getId(), 

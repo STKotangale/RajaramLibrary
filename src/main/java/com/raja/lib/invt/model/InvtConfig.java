@@ -25,4 +25,6 @@ public class InvtConfig implements Serializable {
 	@Column(name = "finePerDays")
 	private Double finePerDays;
 
-}
+	@Column(name="monthlyFees")
+	private Double monthlyFees;
+} 

@@ -26,6 +26,7 @@ public class InvtConfigService {
 				.orElseThrow(() -> new RuntimeException("Config not found"));
 		invtConfig.setBookDays(request.getBookDays());
 		invtConfig.setFinePerDays(request.getFinePerDays());
+		invtConfig.setMonthlyFees(request.getMonthlyFees());
 		invtConfigRepository.save(invtConfig);
 		return convertToResponse(invtConfig);
 	}
@@ -35,6 +36,7 @@ public class InvtConfigService {
 		response.setSrno(invtConfig.getSrno());
 		response.setBookDays(invtConfig.getBookDays());
 		response.setFinePerDays(invtConfig.getFinePerDays());
+		response.setMonthlyFees(invtConfig.getMonthlyFees());
 		return response;
 	}
 }
