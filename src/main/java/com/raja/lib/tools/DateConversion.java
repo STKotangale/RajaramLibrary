@@ -1251,8 +1251,10 @@ public class DateConversion  implements Serializable
 	
 	public static void main(String argu[])
 	{
- 		System.out.println("Value "+ getCurrentHOUR() );
- 		
+		String todaysDate = DateConversion.getStringCurrentDateDDMMYYYY();
+		int year = Integer.parseInt(todaysDate.substring(6, 10)); 
+ 		System.out.println("todaysDate "+ todaysDate );
+ 		System.out.println("year "+ year );
 	}
     
 }
