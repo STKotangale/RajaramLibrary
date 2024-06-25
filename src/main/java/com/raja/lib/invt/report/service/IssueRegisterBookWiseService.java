@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.io.ByteArrayOutputStream;
-import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,13 +15,13 @@ public class IssueRegisterBookWiseService {
     @Autowired
     private DataSource dataSource;
 
-    public ByteArrayOutputStream generateReport(Date startDate, Date endDate, String bookName) throws Exception {
+    public ByteArrayOutputStream generateReport(String startDate, String endDate, String bookId) throws Exception {
         JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Issue/IssueRegisterBookWise.jrxml"));
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("startDate", startDate);
         parameters.put("endDate", endDate);
-        parameters.put("bookName", bookName);
+        parameters.put("bookId", bookId);
 
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource.getConnection());
 

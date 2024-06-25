@@ -2,8 +2,6 @@ package com.raja.lib.invt.report.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,25 +25,16 @@ public class IssueRegisterController {
     @Autowired
     private IssueRegisterService issueReportService;
 
-    @PostMapping("/issue")
+    @PostMapping("/issueRegisterDateWise")
     public ResponseEntity<byte[]> getIssueReport(@RequestBody Map<String, String> dateRange) {
         try {
-            String startDateStr = dateRange.get("startDate");
-            String endDateStr = dateRange.get("endDate");
-
-            // Define the date format
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-
-            // Parse the date strings to java.util.Date
-            Date startDate = formatter.parse(startDateStr);
-            Date endDate = formatter.parse(endDateStr);
-
-            // Convert java.util.Date to java.sql.Date
-            java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
-            java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
-
+            String startDate = dateRange.get("startDate");
+            String endDate = dateRange.get("endDate");
+            System.out.println("startDate "+startDate);
+            System.out.println("endDate "+endDate);
+               
             // Generate the report
-            ByteArrayOutputStream outputStream = issueReportService.generateReport(sqlStartDate, sqlEndDate);
+            ByteArrayOutputStream outputStream = issueReportService.generateReport(startDate, endDate);
 
             // Set the response headers
             HttpHeaders headers = new HttpHeaders();

@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: RajaLib
+  datasource:
+    url: jdbc:mysql://103.159.239.26:3306/rajalib?serverTimezone=UTC
+    username: root
+    password: Ww!_h0tLpsm5nqI4
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+    hibernate:
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl 	
+      ddl-auto: none
+    show-sql: true
+
+server:
+  port: 8090
+
+logging:
+  level:
+    org:
+      hibernate:
+        bytecode: ERROR

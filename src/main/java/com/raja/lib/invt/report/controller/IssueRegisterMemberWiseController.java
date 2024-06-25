@@ -2,8 +2,6 @@ package com.raja.lib.invt.report.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,23 +28,15 @@ public class IssueRegisterMemberWiseController {
     @PostMapping("/issue-member-wise")
     public ResponseEntity<byte[]> getIssueReportMemberWise(@RequestBody Map<String, String> dateRange) {
         try {
-            String startDateStr = dateRange.get("startDate");
-            String endDateStr = dateRange.get("endDate");
-            String fullName = dateRange.get("fullName");
+            String startDate = dateRange.get("startDate");
+            String endDate = dateRange.get("endDate");
+            String memberId = dateRange.get("memberId");
 
-            // Define the date format
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-
-            // Parse the date strings to java.util.Date
-            Date startDate = formatter.parse(startDateStr);
-            Date endDate = formatter.parse(endDateStr);
-
-            // Convert java.util.Date to java.sql.Date
-            java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
-            java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
-
+//            System.out.println("startDate "+startDate);
+//            System.out.println("endDate "+endDate);
+//            System.out.println("memberId "+memberId);
             // Generate the report
-            ByteArrayOutputStream outputStream = issueRegisterMemberWiseService.generateReport(sqlStartDate, sqlEndDate, fullName);
+            ByteArrayOutputStream outputStream = issueRegisterMemberWiseService.generateReport(startDate, endDate, memberId);
 
             // Set the response headers
             HttpHeaders headers = new HttpHeaders();

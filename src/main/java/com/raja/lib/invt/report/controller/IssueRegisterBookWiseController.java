@@ -2,8 +2,6 @@ package com.raja.lib.invt.report.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,23 +28,14 @@ public class IssueRegisterBookWiseController {
     @PostMapping("/issue-book-wise")
     public ResponseEntity<byte[]> getIssueReportBookWise(@RequestBody Map<String, String> dateRange) {
         try {
-            String startDateStr = dateRange.get("startDate");
-            String endDateStr = dateRange.get("endDate");
-            String bookName = dateRange.get("bookName");
-
-            // Define the date format
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-
-            // Parse the date strings to java.util.Date
-            Date startDate = formatter.parse(startDateStr);
-            Date endDate = formatter.parse(endDateStr);
-
-            // Convert java.util.Date to java.sql.Date
-            java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
-            java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
-
+            String startDate = dateRange.get("startDate");
+            String endDate = dateRange.get("endDate");
+            String bookId = dateRange.get("bookId");
+            System.out.println("S date "+startDate);
+            System.out.println("e date "+endDate);
+            System.out.println("bookId "+bookId);
             // Generate the report
-            ByteArrayOutputStream outputStream = issueRegisterBookWiseService.generateReport(sqlStartDate, sqlEndDate, bookName);
+            ByteArrayOutputStream outputStream = issueRegisterBookWiseService.generateReport(startDate, endDate, bookId);
 
             // Set the response headers
             HttpHeaders headers = new HttpHeaders();
