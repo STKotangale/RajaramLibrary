@@ -1,5 +1,6 @@
 package com.raja.lib.invt.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -204,67 +205,74 @@ public class StockService {
 	
 
 	
-	 public ApiResponseDTO<List<StockInvoiceResponseDTO>> getStockDetails(String startDate, String endDate) {
-	        List<Object[]> results = fetchStockDetails(startDate, endDate);
-	        Map<Integer, StockInvoiceResponseDTO> stockMap = new HashMap<>();
+	@Transactional
+    public ApiResponseDTO<List<StockInvoiceResponseDTO>> getStockDetails(String startDate, String endDate) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate start = LocalDate.parse(startDate, inputFormatter);
+        LocalDate end = LocalDate.parse(endDate, inputFormatter);
 
-	        for (Object[] row : results) {
-	            int stockId = (Integer) row[0];
-	            StockInvoiceResponseDTO stockResponseDTO = stockMap.get(stockId);
+        List<Object[]> results = fetchStockDetails(start.format(outputFormatter), end.format(outputFormatter));
+        Map<Integer, StockInvoiceResponseDTO> stockMap = new HashMap<>();
 
-	            if (stockResponseDTO == null) {
-	                stockResponseDTO = new StockInvoiceResponseDTO();
-	                stockResponseDTO.setStockId(stockId);
-	                stockResponseDTO.setInvoiceNo((Integer) row[1]);
-	                stockResponseDTO.setInvoiceDate((String) row[2]);
-	                stockResponseDTO.setBillTotal((Double) row[3]);
-	                stockResponseDTO.setDiscountPercent((Double) row[4]);
-	                stockResponseDTO.setDiscountAmount((Double) row[5]);
-	                stockResponseDTO.setTotalAfterDiscount((Double) row[6]);
-	                stockResponseDTO.setGstPercent((Double) row[7]);
-	                stockResponseDTO.setGstAmount((Double) row[8]);
-	                stockResponseDTO.setGrandTotal((Double) row[9]);
-	                stockResponseDTO.setLedgerName((String) row[10]);
-	                stockResponseDTO.setStockDetails(new ArrayList<>());
-	                stockMap.put(stockId, stockResponseDTO);
-	            }
+        for (Object[] row : results) {
+            int stockId = (Integer) row[0];
+            StockInvoiceResponseDTO stockResponseDTO = stockMap.get(stockId);
 
-	            StockDetailDTOs stockDetailDTO = new StockDetailDTOs();
-	            stockDetailDTO.setStockDetailId((Integer) row[11]);
-	            stockDetailDTO.setBookQty((Integer) row[12]);
-	            stockDetailDTO.setBookRate((Integer) row[13]);
-	            stockDetailDTO.setBook_amount((Integer) row[14]);
-	            stockDetailDTO.setBookName((String) row[15]);
+            if (stockResponseDTO == null) {
+                stockResponseDTO = new StockInvoiceResponseDTO();
+                stockResponseDTO.setStockId(stockId);
+                stockResponseDTO.setInvoiceNo((Integer) row[1]);
+                stockResponseDTO.setInvoiceDate((String) row[2]);
+                stockResponseDTO.setBillTotal((Double) row[3]);
+                stockResponseDTO.setDiscountPercent((Double) row[4]);
+                stockResponseDTO.setDiscountAmount((Double) row[5]);
+                stockResponseDTO.setTotalAfterDiscount((Double) row[6]);
+                stockResponseDTO.setGstPercent((Double) row[7]);
+                stockResponseDTO.setGstAmount((Double) row[8]);
+                stockResponseDTO.setGrandTotal((Double) row[9]);
+                stockResponseDTO.setLedgerName((String) row[10]);
+                stockResponseDTO.setStockDetails(new ArrayList<>());
+                stockMap.put(stockId, stockResponseDTO);
+            }
 
-	            stockResponseDTO.getStockDetails().add(stockDetailDTO);
-	        }
+            StockDetailDTOs stockDetailDTO = new StockDetailDTOs();
+            stockDetailDTO.setStockDetailId((Integer) row[11]);
+            stockDetailDTO.setBookQty((Integer) row[12]);
+            stockDetailDTO.setBookRate((Integer) row[13]);
+            stockDetailDTO.setBook_amount((Integer) row[14]);
+            stockDetailDTO.setBookName((String) row[15]);
 
-	        List<StockInvoiceResponseDTO> stockResponseDTOList = new ArrayList<>(stockMap.values());
-	        return new ApiResponseDTO<>(true, "Stock details retrieved successfully", stockResponseDTOList, HttpStatus.OK.value());
-	    }
+            stockResponseDTO.getStockDetails().add(stockDetailDTO);
+        }
 
-	    @SuppressWarnings("unchecked")
-	    private List<Object[]> fetchStockDetails(String startDate, String endDate) {
-	        String queryStr = "SELECT " +
-	                "is2.stock_id, is2.invoiceNo, is2.invoiceDate, is2.billTotal, " +
-	                "is2.discountPercent, is2.discountAmount, is2.totalAfterDiscount, " +
-	                "is2.gstPercent, is2.gstAmount, is2.grandTotal, al.ledgerName, " +
-	                "is3.stockDetailId, is3.book_qty, is3.book_rate, is3.book_amount, ib.bookName " +
-	                "FROM invt_stock is2 " +
-	                "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF " +
-	                "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id " +
-	                "JOIN invt_book ib ON ib.bookId = is3.book_idF " +
-	                "WHERE is2.stock_type = 'A1' " +
-	                "AND DATE(CONCAT(SUBSTRING(is2.invoiceDate, 7, 4), '-', SUBSTRING(is2.invoiceDate, 4, 2), '-', SUBSTRING(is2.invoiceDate, 1, 2))) " +
-	                "BETWEEN :startDate AND :endDate " +
-	                "ORDER BY DATE(CONCAT(SUBSTRING(is2.invoiceDate, 7, 4), '-', SUBSTRING(is2.invoiceDate, 4, 2), '-', SUBSTRING(is2.invoiceDate, 1, 2)))";
+        List<StockInvoiceResponseDTO> stockResponseDTOList = new ArrayList<>(stockMap.values());
+        return new ApiResponseDTO<>(true, "Stock details retrieved successfully", stockResponseDTOList, HttpStatus.OK.value());
+    }
 
-	        Query query = entityManager.createNativeQuery(queryStr);
-	        query.setParameter("startDate", startDate);
-	        query.setParameter("endDate", endDate);
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public List<Object[]> fetchStockDetails(String startDate, String endDate) {
+        String queryStr = "SELECT " +
+                "is2.stock_id, is2.invoiceNo, is2.invoiceDate, is2.billTotal, " +
+                "is2.discountPercent, is2.discountAmount, is2.totalAfterDiscount, " +
+                "is2.gstPercent, is2.gstAmount, is2.grandTotal, al.ledgerName, " +
+                "is3.stockDetailId, is3.book_qty, is3.book_rate, is3.book_amount, ib.bookName " +
+                "FROM invt_stock is2 " +
+                "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF " +
+                "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id " +
+                "JOIN invt_book ib ON ib.bookId = is3.book_idF " +
+                "WHERE is2.stock_type = 'A1' " +
+                "AND DATE(CONCAT(SUBSTRING(is2.invoiceDate, 7, 4), '-', SUBSTRING(is2.invoiceDate, 4, 2), '-', SUBSTRING(is2.invoiceDate, 1, 2))) " +
+                "BETWEEN :startDate AND :endDate " +
+                "ORDER BY DATE(CONCAT(SUBSTRING(is2.invoiceDate, 7, 4), '-', SUBSTRING(is2.invoiceDate, 4, 2), '-', SUBSTRING(is2.invoiceDate, 1, 2)))";
 
-	        return query.getResultList();
-	    }
+        Query query = entityManager.createNativeQuery(queryStr);
+        query.setParameter("startDate", startDate);
+        query.setParameter("endDate", endDate);
+
+        return query.getResultList();
+    }
 	    
 
 	
