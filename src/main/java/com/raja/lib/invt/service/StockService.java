@@ -11,7 +11,11 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +25,7 @@ import com.raja.lib.acc.model.Ledger;
 import com.raja.lib.acc.repository.LedgerRepository;
 import com.raja.lib.auth.model.GeneralMember;
 import com.raja.lib.auth.repository.GeneralMemberRepository;
+import com.raja.lib.auth.service.SessionService;
 import com.raja.lib.invt.model.Book;
 import com.raja.lib.invt.model.BookDetails;
 import com.raja.lib.invt.model.Stock;
@@ -59,7 +64,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import lombok.AllArgsConstructor;
-
 @Service
 @AllArgsConstructor
 public class StockService {
@@ -72,7 +76,11 @@ public class StockService {
 	private final GeneralMemberRepository generalMemberRepository;
 	private final StockCopyNoRepository stockCopyNoRepository;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(StockService.class);
+
 	
+	@Autowired
+    private SessionService sessionService;
 	
 	@PersistenceContext
     private EntityManager entityManager;
@@ -207,6 +215,16 @@ public class StockService {
 	
 	@Transactional
     public ApiResponseDTO<List<StockInvoiceResponseDTO>> getStockDetails(String startDate, String endDate) {
+        LOGGER.info("Fetching stock details from {} to {}", startDate, endDate);
+
+        try {
+            // Check the session year dynamically
+            sessionService.checkCurrentYear();
+        } catch (Exception e) {
+            LOGGER.error("Session check failed: {}", e.getMessage());
+            return new ApiResponseDTO<>(false, e.getMessage(), null, 500); // Return error response
+        }
+
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate start = LocalDate.parse(startDate, inputFormatter);
@@ -410,8 +428,18 @@ public class StockService {
 //		return jsonResponse.toString();
 //	}
 
-	public List<BookIssue> getAllIssue() {
-		return stockRepository.getAllIssue();
+	public ResponseEntity<ApiResponseDTO<List<BookIssue>>> getAllIssue(String startDate, String endDate) {
+	    try {
+	        sessionService.checkCurrentYear();
+	    } catch (Exception e) {
+	        System.err.println("Session check failed: " + e.getMessage());
+	        ApiResponseDTO<List<BookIssue>> response = new ApiResponseDTO<>(false, "No sessions found for the current year", new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	    }
+
+	    List<BookIssue> issues = stockRepository.getAllIssue(startDate, endDate);
+	    ApiResponseDTO<List<BookIssue>> response = new ApiResponseDTO<>(true, "Data retrieved successfully", issues, HttpStatus.OK.value());
+	    return ResponseEntity.ok(response);
 	}
 
 	public List<IssueDetailsDTO> getInvoiceDetailsByStockId(Integer stockId) {

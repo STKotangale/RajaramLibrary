@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.model.Stock;
@@ -63,11 +64,12 @@ public class IssueController {
 					.body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
 		}
 	}
-
+	
 	@GetMapping(value = "/all")
-	List<BookIssue> getAllIssue() {
-		return stockService.getAllIssue();
+	public ResponseEntity<ApiResponseDTO<List<BookIssue>>> getAllIssue(@RequestParam String startDate, @RequestParam String endDate) {
+	    return stockService.getAllIssue(startDate, endDate);
 	}
+
 
 	@GetMapping("/book-issue/{stockId}")
 	public ResponseEntity<List<IssueDetailsDTO>> getInvoiceDetailsByStockId(@PathVariable Integer stockId) {

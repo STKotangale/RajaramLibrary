@@ -134,11 +134,15 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "WHERE is2.stock_type = 'A1';\r\n" + "", nativeQuery = true)
 	List<StockModel> getAllStock();
 
-	@Query(value = "SELECT is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username, agm.firstName, agm.middleName, agm.lastName\r\n"
-			+ "FROM invt_stock is2\r\n" + "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF\r\n"
-			+ "JOIN auth_users au ON au.memberIdF = agm.memberId\r\n" + "WHERE is2.stock_type = 'A2'\r\n"
-			+ "ORDER BY is2.invoiceDate;\r\n" + "", nativeQuery = true)
-	List<BookIssue> getAllIssue();
+	@Query(value = "SELECT is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username, agm.firstName, agm.middleName, agm.lastName " +
+            "FROM invt_stock is2 " +
+            "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF " +
+            "JOIN auth_users au ON au.memberIdF = agm.memberId " +
+            "WHERE is2.stock_type = 'A2' " +
+            "AND STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y') BETWEEN STR_TO_DATE(:startDate, '%d-%m-%Y') AND STR_TO_DATE(:endDate, '%d-%m-%Y') " +
+            "ORDER BY STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y')", nativeQuery = true)
+List<BookIssue> getAllIssue(@Param("startDate") String startDate, @Param("endDate") String endDate);
+
 
 	@Query(value = "SELECT " + "is2.stock_id AS stockId, " + "is2.invoiceNo AS action, " + "is2.invoiceDate AS date, "
 			+ "au.username AS user, " + "agm.firstname AS firstName, " + "agm.middlename AS middleName, "
