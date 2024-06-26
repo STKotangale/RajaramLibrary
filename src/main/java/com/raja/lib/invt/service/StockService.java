@@ -166,7 +166,6 @@ public class StockService {
 	private List<BookDetails> generateBookDetails(StockDetail stockDetail, int quantity) {
 		List<BookDetails> bookDetailsList = new ArrayList<>();
 
-		// Find the largest purchaseCopyNo for the given book
 		Integer maxCopyNo = bookDetailsRepository.findMaxCopyNoByBookId(stockDetail.getBook_idF().getBookId());
 		int purchaseCopyNo = (maxCopyNo == null ? 0 : maxCopyNo) + 1;
 

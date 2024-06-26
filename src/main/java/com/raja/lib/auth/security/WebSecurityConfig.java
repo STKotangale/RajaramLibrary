@@ -66,6 +66,7 @@ public class WebSecurityConfig {
                   .requestMatchers("/api/bookdetails/**").permitAll()
                   .requestMatchers("/api/stock/**").permitAll()
                   .requestMatchers("/api/issue/**").permitAll()
+                  .requestMatchers("/api/book/**").permitAll()
                   .requestMatchers("/api/fees/**").permitAll()
                   .requestMatchers("/api/excel/**").permitAll()
                   .requestMatchers("/api/config/**").permitAll()
