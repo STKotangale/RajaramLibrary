@@ -49,9 +49,14 @@ import com.raja.lib.invt.resposne.BookResponseDTO;
 import com.raja.lib.invt.resposne.IssueDetailsDTO;
 import com.raja.lib.invt.resposne.PurchaseReturnBookDetailDTO;
 import com.raja.lib.invt.resposne.PurchaseReturnDTO;
+import com.raja.lib.invt.resposne.StockDetailDTOs;
 import com.raja.lib.invt.resposne.StockDetailResponseDTO;
+import com.raja.lib.invt.resposne.StockInvoiceResponseDTO;
 import com.raja.lib.invt.resposne.StockResponseDTO;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -66,6 +71,10 @@ public class StockService {
 	private final GeneralMemberRepository generalMemberRepository;
 	private final StockCopyNoRepository stockCopyNoRepository;
 
+	
+	
+	@PersistenceContext
+    private EntityManager entityManager;
 //------------------------------------------ Inovoice no--------------------------------------------------
 
 	    public String getNextPurchaseNo() {
@@ -191,17 +200,78 @@ public class StockService {
 		return new ApiResponseDTO<>(true, "Stock found", stockResponseDTO, HttpStatus.OK.value());
 	}
 
-	public ApiResponseDTO<List<StockResponseDTO>> getAllStocks() {
-		List<Stock> stocks = stockRepository.findAll();
+//	------------------------------------------------------------------------------
+	
 
-		List<StockResponseDTO> stockResponseDTOs = new ArrayList<>();
-		for (Stock stock : stocks) {
-			StockResponseDTO stockResponseDTO = mapToStockResponseDTO(stock);
-			stockResponseDTOs.add(stockResponseDTO);
-		}
+	
+	 public ApiResponseDTO<List<StockInvoiceResponseDTO>> getStockDetails(String startDate, String endDate) {
+	        List<Object[]> results = fetchStockDetails(startDate, endDate);
+	        Map<Integer, StockInvoiceResponseDTO> stockMap = new HashMap<>();
 
-		return new ApiResponseDTO<>(true, "All stocks found", stockResponseDTOs, HttpStatus.OK.value());
-	}
+	        for (Object[] row : results) {
+	            int stockId = (Integer) row[0];
+	            StockInvoiceResponseDTO stockResponseDTO = stockMap.get(stockId);
+
+	            if (stockResponseDTO == null) {
+	                stockResponseDTO = new StockInvoiceResponseDTO();
+	                stockResponseDTO.setStockId(stockId);
+	                stockResponseDTO.setInvoiceNo((Integer) row[1]);
+	                stockResponseDTO.setInvoiceDate((String) row[2]);
+	                stockResponseDTO.setBillTotal((Double) row[3]);
+	                stockResponseDTO.setDiscountPercent((Double) row[4]);
+	                stockResponseDTO.setDiscountAmount((Double) row[5]);
+	                stockResponseDTO.setTotalAfterDiscount((Double) row[6]);
+	                stockResponseDTO.setGstPercent((Double) row[7]);
+	                stockResponseDTO.setGstAmount((Double) row[8]);
+	                stockResponseDTO.setGrandTotal((Double) row[9]);
+	                stockResponseDTO.setLedgerName((String) row[10]);
+	                stockResponseDTO.setStockDetails(new ArrayList<>());
+	                stockMap.put(stockId, stockResponseDTO);
+	            }
+
+	            StockDetailDTOs stockDetailDTO = new StockDetailDTOs();
+	            stockDetailDTO.setStockDetailId((Integer) row[11]);
+	            stockDetailDTO.setBookQty((Integer) row[12]);
+	            stockDetailDTO.setBookRate((Integer) row[13]);
+	            stockDetailDTO.setBook_amount((Integer) row[14]);
+	            stockDetailDTO.setBookName((String) row[15]);
+
+	            stockResponseDTO.getStockDetails().add(stockDetailDTO);
+	        }
+
+	        List<StockInvoiceResponseDTO> stockResponseDTOList = new ArrayList<>(stockMap.values());
+	        return new ApiResponseDTO<>(true, "Stock details retrieved successfully", stockResponseDTOList, HttpStatus.OK.value());
+	    }
+
+	    @SuppressWarnings("unchecked")
+	    private List<Object[]> fetchStockDetails(String startDate, String endDate) {
+	        String queryStr = "SELECT " +
+	                "is2.stock_id, is2.invoiceNo, is2.invoiceDate, is2.billTotal, " +
+	                "is2.discountPercent, is2.discountAmount, is2.totalAfterDiscount, " +
+	                "is2.gstPercent, is2.gstAmount, is2.grandTotal, al.ledgerName, " +
+	                "is3.stockDetailId, is3.book_qty, is3.book_rate, is3.book_amount, ib.bookName " +
+	                "FROM invt_stock is2 " +
+	                "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF " +
+	                "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id " +
+	                "JOIN invt_book ib ON ib.bookId = is3.book_idF " +
+	                "WHERE is2.stock_type = 'A1' " +
+	                "AND DATE(CONCAT(SUBSTRING(is2.invoiceDate, 7, 4), '-', SUBSTRING(is2.invoiceDate, 4, 2), '-', SUBSTRING(is2.invoiceDate, 1, 2))) " +
+	                "BETWEEN :startDate AND :endDate " +
+	                "ORDER BY DATE(CONCAT(SUBSTRING(is2.invoiceDate, 7, 4), '-', SUBSTRING(is2.invoiceDate, 4, 2), '-', SUBSTRING(is2.invoiceDate, 1, 2)))";
+
+	        Query query = entityManager.createNativeQuery(queryStr);
+	        query.setParameter("startDate", startDate);
+	        query.setParameter("endDate", endDate);
+
+	        return query.getResultList();
+	    }
+	    
+
+	
+	
+	
+	
+//	.------------------------------------------------------------------
 
 	public ApiResponseDTO<Void> deleteStockById(int id) {
 		Stock stock = stockRepository.findById(id).orElseThrow(() -> new RuntimeException("Stock not found"));
