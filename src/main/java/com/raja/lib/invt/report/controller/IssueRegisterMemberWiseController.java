@@ -32,9 +32,9 @@ public class IssueRegisterMemberWiseController {
             String endDate = dateRange.get("endDate");
             String memberId = dateRange.get("memberId");
 
-            System.out.println("startDate "+startDate);
-            System.out.println("endDate "+endDate);
-            System.out.println("memberId "+memberId);
+//            System.out.println("startDate "+startDate);
+//            System.out.println("endDate "+endDate);
+//            System.out.println("memberId "+memberId);
             // Generate the report
             ByteArrayOutputStream outputStream = issueRegisterMemberWiseService.generateReport(startDate, endDate, memberId);
 
