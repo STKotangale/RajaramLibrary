@@ -35,7 +35,7 @@ public class BookController {
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
     
-    @GetMapping("/book") 
+    @GetMapping("/all") 
     public ResponseEntity<ApiResponseDTO<List<Book>>> getAllBooks() {
         ApiResponseDTO<List<Book>> response = bookService.getAllBooks();
         return ResponseEntity.status(response.getStatusCode()).body(response);
