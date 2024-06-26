@@ -22,7 +22,7 @@ import com.raja.lib.invt.service.BookLanguageService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/language")
 public class BookLanguageController {
 
     @Autowired

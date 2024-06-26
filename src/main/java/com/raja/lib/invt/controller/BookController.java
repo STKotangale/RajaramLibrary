@@ -22,7 +22,7 @@ import com.raja.lib.invt.service.BookService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/book")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class BookController {
 

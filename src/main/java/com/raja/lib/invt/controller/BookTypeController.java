@@ -22,7 +22,7 @@ import com.raja.lib.invt.service.BookTypeService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/booktype")
 public class BookTypeController {
 
     @Autowired
