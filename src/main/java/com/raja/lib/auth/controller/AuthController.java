@@ -92,7 +92,6 @@ public class AuthController {
         SimpleDateFormat yearFormatter = new SimpleDateFormat("yyyy");
         String loginYear = yearFormatter.format(issuedAt);
 
-        sessionService.printCurrentYear(loginYear);
 
         return ResponseEntity.ok(new JwtResponse(jwt, 
                              userDetails.getId(), 

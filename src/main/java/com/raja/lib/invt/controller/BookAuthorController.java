@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.raja.lib.acc.response.ApiResponseDTO;
 import com.raja.lib.invt.model.BookAuthor;
 import com.raja.lib.invt.request.BookAuthorRequestDTO;
-import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.service.BookAuthorService;
 
 @RestController
@@ -30,29 +30,31 @@ public class BookAuthorController {
 
     @GetMapping
     public ResponseEntity<ApiResponseDTO<List<BookAuthor>>> getAllBookAuthors() {
-        return ResponseEntity.ok(bookAuthorService.getAllBookAuthors());
+        ApiResponseDTO<List<BookAuthor>> response = bookAuthorService.getAllBookAuthors();
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
 
     @GetMapping("/{authorId}")
     public ResponseEntity<ApiResponseDTO<BookAuthor>> getBookAuthorById(@PathVariable int authorId) {
-        return ResponseEntity.ok(bookAuthorService.getBookAuthorById(authorId));
+        ApiResponseDTO<BookAuthor> response = bookAuthorService.getBookAuthorById(authorId);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponseDTO<BookAuthor>> createBookAuthor(@RequestBody BookAuthorRequestDTO requestDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookAuthorService.createBookAuthor(requestDTO));
+        ApiResponseDTO<BookAuthor> response = bookAuthorService.createBookAuthor(requestDTO);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
 
     @PutMapping("/{authorId}")
     public ResponseEntity<ApiResponseDTO<BookAuthor>> updateBookAuthor(@PathVariable int authorId, @RequestBody BookAuthorRequestDTO requestDTO) {
-        return ResponseEntity.ok(bookAuthorService.updateBookAuthor(authorId, requestDTO));
+        ApiResponseDTO<BookAuthor> response = bookAuthorService.updateBookAuthor(authorId, requestDTO);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
 
     @DeleteMapping("/{authorId}")
     public ResponseEntity<ApiResponseDTO<Void>> deleteBookAuthor(@PathVariable int authorId) {
-        return ResponseEntity.ok(bookAuthorService.deleteBookAuthor(authorId));
+        ApiResponseDTO<Void> response = bookAuthorService.deleteBookAuthor(authorId);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
-    
-    
-   
 }
