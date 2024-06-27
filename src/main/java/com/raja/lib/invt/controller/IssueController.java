@@ -126,12 +126,12 @@ public class IssueController {
 		}
 	}
 
-	@GetMapping("/purchase-return-all")
-    public List<PurchaseReturnDTO> getStockDetails(
-            @RequestParam("startDate") String startDate,
-            @RequestParam("endDate") String endDate) {
-        return stockService.getStockDetailsByType(startDate, endDate);
-    }
+	  @GetMapping("/purchase-return-all")
+	    public List<Map<String, Object>> getStockDetails(
+	            @RequestParam("startDate") String startDate,
+	            @RequestParam("endDate") String endDate) {
+	        return stockService.getStockDetailsByType(startDate, endDate);
+	    }
 
 	// ------------------------------------------------- Book
 	// Lost---------------------------------------------------

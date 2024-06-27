@@ -213,85 +213,87 @@ public class StockService {
 	
 
 	
-	@Transactional
-    public ApiResponseDTO<List<StockInvoiceResponseDTO>> getStockDetails(String startDate, String endDate) {
-        LOGGER.info("Fetching stock details from {} to {}", startDate, endDate);
+	 @Transactional
+	    public ApiResponseDTO<List<StockInvoiceResponseDTO>> getStockDetails(String startDate, String endDate) {
+	        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	        LocalDate start = LocalDate.parse(startDate, inputFormatter);
+	        LocalDate end = LocalDate.parse(endDate, inputFormatter);
 
-        try {
-            // Check the session year dynamically
-            sessionService.checkCurrentYear();
-        } catch (Exception e) {
-            LOGGER.error("Session check failed: {}", e.getMessage());
-            return new ApiResponseDTO<>(false, e.getMessage(), null, 500); // Return error response
-        }
+	        int startYear = start.getYear();
+	        int endYear = end.getYear();
 
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate start = LocalDate.parse(startDate, inputFormatter);
-        LocalDate end = LocalDate.parse(endDate, inputFormatter);
+	        try {
+	            if (!sessionService.checkCurrentYear(startYear) || !sessionService.checkCurrentYear(endYear)) {
+	                return new ApiResponseDTO<>(false, "Session not found for provided year range", null, HttpStatus.BAD_REQUEST.value());
+	            }
+	        } catch (Exception e) {
+	            return new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+	        }
 
-        List<Object[]> results = fetchStockDetails(start.format(outputFormatter), end.format(outputFormatter));
-        Map<Integer, StockInvoiceResponseDTO> stockMap = new HashMap<>();
+	        LOGGER.info("Fetching stock details from {} to {}", startDate, endDate);
 
-        for (Object[] row : results) {
-            int stockId = (Integer) row[0];
-            StockInvoiceResponseDTO stockResponseDTO = stockMap.get(stockId);
+	        List<Object[]> results = fetchStockDetails(start.format(outputFormatter), end.format(outputFormatter));
+	        Map<Integer, StockInvoiceResponseDTO> stockMap = new HashMap<>();
 
-            if (stockResponseDTO == null) {
-                stockResponseDTO = new StockInvoiceResponseDTO();
-                stockResponseDTO.setStockId(stockId);
-                stockResponseDTO.setInvoiceNo((Integer) row[1]);
-                stockResponseDTO.setInvoiceDate((String) row[2]);
-                stockResponseDTO.setBillTotal((Double) row[3]);
-                stockResponseDTO.setDiscountPercent((Double) row[4]);
-                stockResponseDTO.setDiscountAmount((Double) row[5]);
-                stockResponseDTO.setTotalAfterDiscount((Double) row[6]);
-                stockResponseDTO.setGstPercent((Double) row[7]);
-                stockResponseDTO.setGstAmount((Double) row[8]);
-                stockResponseDTO.setGrandTotal((Double) row[9]);
-                stockResponseDTO.setLedgerName((String) row[10]);
-                stockResponseDTO.setStockDetails(new ArrayList<>());
-                stockMap.put(stockId, stockResponseDTO);
-            }
+	        for (Object[] row : results) {
+	            int stockId = (Integer) row[0];
+	            StockInvoiceResponseDTO stockResponseDTO = stockMap.get(stockId);
 
-            StockDetailDTOs stockDetailDTO = new StockDetailDTOs();
-            stockDetailDTO.setStockDetailId((Integer) row[11]);
-            stockDetailDTO.setBookQty((Integer) row[12]);
-            stockDetailDTO.setBookRate((Integer) row[13]);
-            stockDetailDTO.setBook_amount((Integer) row[14]);
-            stockDetailDTO.setBookName((String) row[15]);
+	            if (stockResponseDTO == null) {
+	                stockResponseDTO = new StockInvoiceResponseDTO();
+	                stockResponseDTO.setStockId(stockId);
+	                stockResponseDTO.setInvoiceNo((Integer) row[1]);
+	                stockResponseDTO.setInvoiceDate((String) row[2]);
+	                stockResponseDTO.setBillTotal((Double) row[3]);
+	                stockResponseDTO.setDiscountPercent((Double) row[4]);
+	                stockResponseDTO.setDiscountAmount((Double) row[5]);
+	                stockResponseDTO.setTotalAfterDiscount((Double) row[6]);
+	                stockResponseDTO.setGstPercent((Double) row[7]);
+	                stockResponseDTO.setGstAmount((Double) row[8]);
+	                stockResponseDTO.setGrandTotal((Double) row[9]);
+	                stockResponseDTO.setLedgerName((String) row[10]);
+	                stockResponseDTO.setStockDetails(new ArrayList<>());
+	                stockMap.put(stockId, stockResponseDTO);
+	            }
 
-            stockResponseDTO.getStockDetails().add(stockDetailDTO);
-        }
+	            StockDetailDTOs stockDetailDTO = new StockDetailDTOs();
+	            stockDetailDTO.setStockDetailId((Integer) row[11]);
+	            stockDetailDTO.setBookQty((Integer) row[12]);
+	            stockDetailDTO.setBookRate((Integer) row[13]);
+	            stockDetailDTO.setBook_amount((Integer) row[14]);
+	            stockDetailDTO.setBookName((String) row[15]);
 
-        List<StockInvoiceResponseDTO> stockResponseDTOList = new ArrayList<>(stockMap.values());
-        return new ApiResponseDTO<>(true, "Stock details retrieved successfully", stockResponseDTOList, HttpStatus.OK.value());
-    }
+	            stockResponseDTO.getStockDetails().add(stockDetailDTO);
+	        }
 
-    @SuppressWarnings("unchecked")
-    @Transactional
-    public List<Object[]> fetchStockDetails(String startDate, String endDate) {
-        String queryStr = "SELECT " +
-                "is2.stock_id, is2.invoiceNo, is2.invoiceDate, is2.billTotal, " +
-                "is2.discountPercent, is2.discountAmount, is2.totalAfterDiscount, " +
-                "is2.gstPercent, is2.gstAmount, is2.grandTotal, al.ledgerName, " +
-                "is3.stockDetailId, is3.book_qty, is3.book_rate, is3.book_amount, ib.bookName " +
-                "FROM invt_stock is2 " +
-                "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF " +
-                "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id " +
-                "JOIN invt_book ib ON ib.bookId = is3.book_idF " +
-                "WHERE is2.stock_type = 'A1' " +
-                "AND DATE(CONCAT(SUBSTRING(is2.invoiceDate, 7, 4), '-', SUBSTRING(is2.invoiceDate, 4, 2), '-', SUBSTRING(is2.invoiceDate, 1, 2))) " +
-                "BETWEEN :startDate AND :endDate " +
-                "ORDER BY DATE(CONCAT(SUBSTRING(is2.invoiceDate, 7, 4), '-', SUBSTRING(is2.invoiceDate, 4, 2), '-', SUBSTRING(is2.invoiceDate, 1, 2)))";
+	        List<StockInvoiceResponseDTO> stockResponseDTOList = new ArrayList<>(stockMap.values());
+	        return new ApiResponseDTO<>(true, "Stock details retrieved successfully", stockResponseDTOList, HttpStatus.OK.value());
+	    }
 
-        Query query = entityManager.createNativeQuery(queryStr);
-        query.setParameter("startDate", startDate);
-        query.setParameter("endDate", endDate);
+	    @SuppressWarnings("unchecked")
+	    @Transactional
+	    public List<Object[]> fetchStockDetails(String startDate, String endDate) {
+	        String queryStr = "SELECT " +
+	                "is2.stock_id, is2.invoiceNo, is2.invoiceDate, is2.billTotal, " +
+	                "is2.discountPercent, is2.discountAmount, is2.totalAfterDiscount, " +
+	                "is2.gstPercent, is2.gstAmount, is2.grandTotal, al.ledgerName, " +
+	                "is3.stockDetailId, is3.book_qty, is3.book_rate, is3.book_amount, ib.bookName " +
+	                "FROM invt_stock is2 " +
+	                "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF " +
+	                "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id " +
+	                "JOIN invt_book ib ON ib.bookId = is3.book_idF " +
+	                "WHERE is2.stock_type = 'A1' " +
+	                "AND DATE(CONCAT(SUBSTRING(is2.invoiceDate, 7, 4), '-', SUBSTRING(is2.invoiceDate, 4, 2), '-', SUBSTRING(is2.invoiceDate, 1, 2))) " +
+	                "BETWEEN :startDate AND :endDate " +
+	                "ORDER BY DATE(CONCAT(SUBSTRING(is2.invoiceDate, 7, 4), '-', SUBSTRING(is2.invoiceDate, 4, 2), '-', SUBSTRING(is2.invoiceDate, 1, 2)))";
 
-        return query.getResultList();
-    }
-	    
+	        Query query = entityManager.createNativeQuery(queryStr);
+	        query.setParameter("startDate", startDate);
+	        query.setParameter("endDate", endDate);
+
+	        return query.getResultList();
+	    }
 
 	
 	
@@ -415,22 +417,11 @@ public class StockService {
 		return new ApiResponseDTO<>(true, "Book issued successfully", savedStock, HttpStatus.CREATED.value());
 	}
 
-//	public String getStockDetailsAsJson() {
-//		List<String> jsonResults = stockRepository.getStockDetailsAsJson();
-//		StringBuilder jsonResponse = new StringBuilder("[");
-//		for (String jsonResult : jsonResults) {
-//			jsonResponse.append(jsonResult).append(",");
-//		}
-//		if (jsonResponse.length() > 1) {
-//			jsonResponse.deleteCharAt(jsonResponse.length() - 1);
-//		}
-//		jsonResponse.append("]");
-//		return jsonResponse.toString();
-//	}
+
 
 	public ResponseEntity<ApiResponseDTO<List<BookIssue>>> getAllIssue(String startDate, String endDate) {
 	    try {
-	        sessionService.checkCurrentYear();
+//	        sessionService.checkCurrentYear();
 	    } catch (Exception e) {
 	        System.err.println("Session check failed: " + e.getMessage());
 	        ApiResponseDTO<List<BookIssue>> response = new ApiResponseDTO<>(false, "No sessions found for the current year", new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -587,7 +578,7 @@ public class StockService {
 
 	public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> findAllIssueReturn(String startDate, String endDate) {
         try {
-            sessionService.checkCurrentYear();
+//            sessionService.checkCurrentYear();
         } catch (Exception e) {
             System.err.println("Session check failed: " + e.getMessage());
             ApiResponseDTO<List<Map<String, Object>>> response = new ApiResponseDTO<>(false, "No sessions found for the current year", new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -670,10 +661,26 @@ public class StockService {
 		return new ApiResponseDTO<>(true, "Purchase return created successfully", null, HttpStatus.CREATED.value());
 	}
 
-	 public List<PurchaseReturnDTO> getStockDetailsByType(String startDate, String endDate) {
-	        return stockRepository.findStockDetailsByType(startDate, endDate);
-	    }
+	public List<Map<String, Object>> getStockDetailsByType(String startDate, String endDate) {
+        List<Map<String, Object>> results = stockRepository.findStockDetailsByType(startDate, endDate);
+        List<Map<String, Object>> formattedResults = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
 
+        for (Map<String, Object> result : results) {
+            try {
+                Map<String, Object> newResult = new HashMap<>(result);
+                String booksJson = (String) result.get("books");
+                List<Map<String, Object>> books = objectMapper.readValue("[" + booksJson + "]", new TypeReference<List<Map<String, Object>>>() {});
+                newResult.put("books", books);
+                formattedResults.add(newResult);
+            } catch (Exception e) {
+                // Handle parsing exception
+                e.printStackTrace();
+            }
+        }
+
+        return formattedResults;
+    }
 	// ------------------------------------------ Book Lost
 	// ---------------------------------------------
 

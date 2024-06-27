@@ -17,14 +17,12 @@ public class SessionService {
     @Autowired
     private SessionRepository sessionRepository;
 
-    public void checkCurrentYear() throws Exception {
-        String currentYear = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy"));
+    public boolean checkCurrentYear(int year) {
+        String currentYear = String.valueOf(year);
         int sessionId = Integer.parseInt(currentYear);
 
         Optional<Session> session = sessionRepository.findBySessionId(sessionId);
-        if (session.isEmpty()) {
-            throw new Exception("No sessions found for Year: " + sessionId);
-        }
+        return session.isPresent();
     }
     
     public SessionInfoDTO getSessionInfoForCurrentYear() throws Exception {

@@ -2,10 +2,12 @@ package com.raja.lib.auth.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.auth.service.SessionService;
@@ -26,6 +28,17 @@ public class SessionController {
             return ResponseEntity.ok(sessionInfo);
         } catch (Exception e) {
             return ResponseEntity.status(404).body(null);
+        }
+    }
+    
+    
+    @GetMapping("/check-session")
+    public ResponseEntity<String> checkSessionForYear(@RequestParam int year) {
+        boolean sessionExists = sessionService.checkCurrentYear(year);
+        if (sessionExists) {
+            return ResponseEntity.ok("Session found for Year: " + year);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No session found for Year: " + year);
         }
     }
 }
