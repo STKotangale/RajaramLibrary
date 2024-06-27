@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class ReportService {
+public class AcessionReportService {
 
     @Autowired
     private DataSource dataSource;
