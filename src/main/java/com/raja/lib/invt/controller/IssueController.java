@@ -149,10 +149,9 @@ public class IssueController {
 	}
 
 	@GetMapping("/book-lost-all")
-	public List<PurchaseReturnDTO> getLostDetials() {
-		return stockService.getLostDetials();
-	}
-
+    public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> getLostDetails(@RequestParam String startDate, @RequestParam String endDate) {
+        return stockService.getLostDetails(startDate, endDate);
+    }
 	// ------------------------------------------------- Book
 	// scrap---------------------------------------------------
 

@@ -109,18 +109,30 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 	List<Map<String, Object>> findStockDetailsByType(@Param("startDate") String startDate,
 			@Param("endDate") String endDate);
 
-	@Query(value = "SELECT \r\n" + "    ibd.purchaseCopyNo, \r\n" + "    ibd.accessionNo, \r\n"
-			+ "    ibd.bookDetailId, \r\n" + "    is3.*, \r\n" + "    ib.bookName, \r\n" + "    is2.*, \r\n"
-			+ "    au.username \r\n" + "FROM \r\n" + "    invt_stock is2\r\n" + "LEFT JOIN \r\n"
-			+ "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id AND is3.stock_type = 'A5'\r\n"
-			+ "LEFT JOIN \r\n" + "    invt_book ib ON ib.bookId = is3.book_idF\r\n" + "LEFT JOIN \r\n"
-			+ "    acc_ledger al ON al.ledgerID = is2.ledgerIDF\r\n" + "LEFT JOIN \r\n"
-			+ "    invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId\r\n" + "LEFT JOIN \r\n"
-			+ "    invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF\r\n" + "LEFT JOIN \r\n"
-			+ "    auth_general_members agm ON agm.memberId = is2.memberIdF\r\n" + "LEFT JOIN \r\n"
-			+ "    auth_users au ON au.memberIdF = agm.memberId\r\n" + "WHERE \r\n" + "    is2.stock_type = 'A5';\r\n"
-			+ "", nativeQuery = true)
-	List<PurchaseReturnDTO> findBookLost();
+	@Query(value = "SELECT \r\n" + "    is2.stock_id AS stockId, \r\n" + "    is2.invoiceNo AS invoiceNo, \r\n"
+			+ "    is2.invoiceDate AS invoiceDate, \r\n" + "    is2.billTotal AS billTotal, \r\n"
+			+ "    is2.grandTotal AS grandTotal, \r\n" + "    is2.discountPercent AS discountPercent, \r\n"
+			+ "    is2.discountAmount AS discountAmount, \r\n" + "    is2.gstPercent AS gstPercent, \r\n"
+			+ "    is2.gstAmount AS gstAmount, \r\n" + "    is2.totalAfterDiscount AS totalAfterDiscount, \r\n"
+			+ "    agm.memberId AS memberId, \r\n" + "    au.username AS username, \r\n"
+			+ "    agm.firstName AS firstName, \r\n" + "    agm.middleName AS middleName, \r\n"
+			+ "    agm.lastName AS lastName, \r\n" + "    JSON_ARRAYAGG( \r\n" + "        JSON_OBJECT( \r\n"
+			+ "            'purchaseCopyNo', ibd.purchaseCopyNo, \r\n"
+			+ "            'accessionNo', ibd.accessionNo, \r\n" + "            'bookDetailId', ibd.bookDetailId, \r\n"
+			+ "            'bookName', ib.bookName, \r\n" + "            'book_amount', is3.book_amount \r\n"
+			+ "        ) \r\n" + "    ) AS bookDetails \r\n" + "FROM \r\n" + "    invt_stock is2 \r\n"
+			+ "LEFT JOIN \r\n"
+			+ "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id AND is3.stock_type = 'A5' \r\n"
+			+ "LEFT JOIN \r\n" + "    invt_book ib ON ib.bookId = is3.book_idF \r\n" + "LEFT JOIN \r\n"
+			+ "    acc_ledger al ON al.ledgerID = is2.ledgerIDF \r\n" + "LEFT JOIN \r\n"
+			+ "    invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId \r\n" + "LEFT JOIN \r\n"
+			+ "    invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF \r\n" + "LEFT JOIN \r\n"
+			+ "    auth_general_members agm ON agm.memberId = is2.memberIdF \r\n" + "LEFT JOIN \r\n"
+			+ "    auth_users au ON au.memberIdF = agm.memberId \r\n" + "WHERE \r\n" + "    is2.stock_type = 'A5' \r\n"
+			+ "    AND STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y') BETWEEN STR_TO_DATE(:startDate, '%d-%m-%Y') AND STR_TO_DATE(:endDate, '%d-%m-%Y') \r\n"
+			+ "GROUP BY \r\n" + "    is2.stock_id \r\n" + "ORDER BY \r\n"
+			+ "    STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y');", nativeQuery = true)
+	List<Map<String, Object>> findBookLost(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
 	@Query(value = "SELECT al.ledgerName, ibd.purchaseCopyNo, ibd.bookDetailId,ibd.accessionNo , is3.*, ib.bookName, is2.*\r\n"
 			+ "FROM invt_stock is2\r\n" + "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id\r\n"

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.raja.lib.acc.model.Ledger;
@@ -84,6 +86,9 @@ public class StockService {
 	
 	@PersistenceContext
     private EntityManager entityManager;
+	
+	 @Autowired
+	    private ObjectMapper objectMapper;
 //------------------------------------------ Inovoice no--------------------------------------------------
 
 	    public String getNextPurchaseNo() {
@@ -773,10 +778,42 @@ public class StockService {
 		return new ApiResponseDTO<>(true, "Book lost recorded successfully", null, HttpStatus.CREATED.value());
 	}
 
-	public List<PurchaseReturnDTO> getLostDetials() {
-		return stockRepository.findBookLost();
-	}
+	public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> getLostDetails(String startDate, String endDate) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate start = LocalDate.parse(startDate, inputFormatter);
+        LocalDate end = LocalDate.parse(endDate, inputFormatter);
 
+        int startYear = start.getYear();
+        int endYear = end.getYear();
+
+        try {
+            if (!sessionService.checkCurrentYear(startYear) || !sessionService.checkCurrentYear(endYear)) {
+                ApiResponseDTO<List<Map<String, Object>>> response = new ApiResponseDTO<>(false, "No sessions found for the provided year range", null, HttpStatus.BAD_REQUEST.value());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (Exception e) {
+            System.err.println("Session check failed: " + e.getMessage());
+            ApiResponseDTO<List<Map<String, Object>>> response = new ApiResponseDTO<>(false, "No sessions found for the current year", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
+        List<Map<String, Object>> results = stockRepository.findBookLost(startDate, endDate);
+
+        List<Map<String, Object>> formattedResults = results.stream().map(result -> {
+            Map<String, Object> modifiableResult = new HashMap<>(result);
+            try {
+                String bookDetailsStr = (String) result.get("bookDetails");
+                List<Map<String, Object>> bookDetails = objectMapper.readValue(bookDetailsStr, List.class);
+                modifiableResult.put("bookDetails", bookDetails);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace(); // Handle this appropriately in your application
+            }
+            return modifiableResult;
+        }).collect(Collectors.toList());
+
+        ApiResponseDTO<List<Map<String, Object>>> response = new ApiResponseDTO<>(true, "Data retrieved successfully", formattedResults, HttpStatus.OK.value());
+        return ResponseEntity.ok(response);
+    }
 	// ------------------------------------------ Book scrap
 	// --------------------------------------------
 
