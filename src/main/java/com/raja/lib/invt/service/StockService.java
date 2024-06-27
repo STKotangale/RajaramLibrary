@@ -670,9 +670,9 @@ public class StockService {
 		return new ApiResponseDTO<>(true, "Purchase return created successfully", null, HttpStatus.CREATED.value());
 	}
 
-	public List<PurchaseReturnDTO> getStockDetailsByType() {
-		return stockRepository.findStockDetailsByType();
-	}
+	 public List<PurchaseReturnDTO> getStockDetailsByType(String startDate, String endDate) {
+	        return stockRepository.findStockDetailsByType(startDate, endDate);
+	    }
 
 	// ------------------------------------------ Book Lost
 	// ---------------------------------------------
