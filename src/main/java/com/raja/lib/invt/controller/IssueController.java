@@ -126,12 +126,12 @@ public class IssueController {
 		}
 	}
 
-	@GetMapping("/purchase-return-all")
-    public List<PurchaseReturnDTO> getStockDetails(
-            @RequestParam("startDate") String startDate,
-            @RequestParam("endDate") String endDate) {
-        return stockService.getStockDetailsByType(startDate, endDate);
-    }
+	  @GetMapping("/purchase-return-all")
+	    public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> getStockDetails(
+	            @RequestParam("startDate") String startDate,
+	            @RequestParam("endDate") String endDate) {
+	        return stockService.getStockDetailsByType(startDate, endDate);
+	    }
 
 	// ------------------------------------------------- Book
 	// Lost---------------------------------------------------
@@ -149,10 +149,9 @@ public class IssueController {
 	}
 
 	@GetMapping("/book-lost-all")
-	public List<PurchaseReturnDTO> getLostDetials() {
-		return stockService.getLostDetials();
-	}
-
+    public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> getLostDetails(@RequestParam String startDate, @RequestParam String endDate) {
+        return stockService.getLostDetails(startDate, endDate);
+    }
 	// ------------------------------------------------- Book
 	// scrap---------------------------------------------------
 
