@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.model.Stock;
@@ -63,11 +64,12 @@ public class IssueController {
 					.body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
 		}
 	}
-
+	
 	@GetMapping(value = "/all")
-	List<BookIssue> getAllIssue() {
-		return stockService.getAllIssue();
+	public ResponseEntity<ApiResponseDTO<List<BookIssue>>> getAllIssue(@RequestParam String startDate, @RequestParam String endDate) {
+	    return stockService.getAllIssue(startDate, endDate);
 	}
+
 
 	@GetMapping("/book-issue/{stockId}")
 	public ResponseEntity<List<IssueDetailsDTO>> getInvoiceDetailsByStockId(@PathVariable Integer stockId) {
@@ -98,12 +100,13 @@ public class IssueController {
 		return stockService.createIssueReturn(bookIssueReturnRequestDTO);
 	}
 
-	@GetMapping("/issueReturns")
-	public ResponseEntity<List<Map<String, Object>>> findAllIssueReturn() {
-	    List<Map<String, Object>> stockDetails = stockService.findAllIssueReturn();
-	    return ResponseEntity.ok(stockDetails);
-	}
-
+	 @GetMapping("/issueReturns")
+	    public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> findAllIssueReturn(
+	        @RequestParam String startDate, 
+	        @RequestParam String endDate
+	    ) {
+	        return stockService.findAllIssueReturn(startDate, endDate);
+	    }
 //  ------------------------------------------------- Purchase Return---------------------------------------------------
 
 	@GetMapping("/details/{bookName}")
@@ -124,9 +127,11 @@ public class IssueController {
 	}
 
 	@GetMapping("/purchase-return-all")
-	public List<PurchaseReturnDTO> getStockDetails() {
-		return stockService.getStockDetailsByType();
-	}
+    public List<PurchaseReturnDTO> getStockDetails(
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) {
+        return stockService.getStockDetailsByType(startDate, endDate);
+    }
 
 	// ------------------------------------------------- Book
 	// Lost---------------------------------------------------

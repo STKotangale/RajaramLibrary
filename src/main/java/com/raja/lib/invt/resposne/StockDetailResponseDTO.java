@@ -13,7 +13,7 @@ public class StockDetailResponseDTO implements Serializable {
     private StockResponseDTO stockIdF;
     private int srno;
     private BookResponseDTO bookIdF;
-    private String bookName; // New field for bookName
+    private String bookName; 
     private int bookQty;
     private int bookRate;
     private int bookAmount;

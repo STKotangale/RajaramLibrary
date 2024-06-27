@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.raja.lib.invt.objects.StockModel;
 import com.raja.lib.invt.request.StockRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
+import com.raja.lib.invt.resposne.StockInvoiceResponseDTO;
 import com.raja.lib.invt.resposne.StockResponseDTO;
 import com.raja.lib.invt.service.StockService;
 
@@ -91,8 +93,10 @@ public class StockController {
     }
 
     @GetMapping("")
-    public ResponseEntity<ApiResponseDTO<List<StockResponseDTO>>> getAllStocks() {
-        ApiResponseDTO<List<StockResponseDTO>> response = stockService.getAllStocks();
+    public ResponseEntity<ApiResponseDTO<List<StockInvoiceResponseDTO>>> getAllStocks(
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+        ApiResponseDTO<List<StockInvoiceResponseDTO>> response = stockService.getStockDetails(startDate, endDate);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
    
