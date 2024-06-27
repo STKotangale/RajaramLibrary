@@ -89,16 +89,26 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "WHERE al.ledgerName = :ledgerName", nativeQuery = true)
 	List<Object[]> findStockDetailsByLedgerName(@Param("ledgerName") String ledgerName);
 
-	@Query(value = "SELECT \r\n" + "    al.ledgerName, \r\n" + "    ibd.purchaseCopyNo, \r\n"
-			+ "    ibd.accessionNo,\r\n" + "    ibd.bookDetailId, \r\n" + "    is3.*, \r\n" + "    ib.bookName, \r\n"
-			+ "    is2.* \r\n" + "FROM \r\n" + "    invt_stock is2 \r\n" + "JOIN \r\n"
+	@Query(value = "SELECT \r\n" + "    is2.stock_id AS stockId, \r\n" + "    is2.invoiceNo, \r\n"
+			+ "    is2.invoiceDate, \r\n" + "    al.ledgerName, \r\n" + "    CONCAT('[', GROUP_CONCAT(\r\n"
+			+ "        CONCAT(\r\n"
+			+ "            '{\"bookName\":\"', ib.bookName, '\",\"accessionNo\":\"', ibd.accessionNo, '\",\"stockDetailId\":', is3.stockDetailId, ',\"book_amount\":', is3.book_amount, '}'\r\n"
+			+ "        )\r\n" + "        ORDER BY is3.stockDetailId SEPARATOR ','\r\n" + "    ), ']') AS books,\r\n"
+			+ "    is2.billTotal, \r\n" + "    is2.discountPercent, \r\n" + "    is2.totalAfterDiscount, \r\n"
+			+ "    is2.grandTotal  \r\n" + "FROM \r\n" + "    invt_stock is2 \r\n" + "JOIN \r\n"
 			+ "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id \r\n" + "JOIN \r\n"
 			+ "    invt_book ib ON ib.bookId = is3.book_idF \r\n" + "JOIN \r\n"
 			+ "    acc_ledger al ON al.ledgerID = is2.ledgerIDF \r\n" + "JOIN \r\n"
 			+ "    invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId \r\n" + "JOIN \r\n"
 			+ "    invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF \r\n" + "WHERE \r\n"
-			+ "    is2.stock_type = 'A4' \r\n" + "    AND is3.stock_type = 'A4'\r\n" + "", nativeQuery = true)
-	List<PurchaseReturnDTO> findStockDetailsByType();
+			+ "    is2.stock_type = 'A4' \r\n" + "    AND is3.stock_type = 'A4'\r\n"
+			+ "    AND STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y') BETWEEN STR_TO_DATE(:startDate, '%d-%m-%Y') AND STR_TO_DATE(:endDate, '%d-%m-%Y')\r\n"
+			+ "GROUP BY \r\n" + "    is2.stock_id, \r\n" + "    is2.invoiceNo, \r\n" + "    is2.invoiceDate, \r\n"
+			+ "    al.ledgerName, \r\n" + "    is2.billTotal, \r\n" + "    is2.discountPercent, \r\n"
+			+ "    is2.totalAfterDiscount, \r\n" + "    is2.grandTotal\r\n" + "ORDER BY \r\n"
+			+ "    STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y');", nativeQuery = true)
+	List<PurchaseReturnDTO> findStockDetailsByType(@Param("startDate") String startDate,
+			@Param("endDate") String endDate);
 
 	@Query(value = "SELECT \r\n" + "    ibd.purchaseCopyNo, \r\n" + "    ibd.accessionNo, \r\n"
 			+ "    ibd.bookDetailId, \r\n" + "    is3.*, \r\n" + "    ib.bookName, \r\n" + "    is2.*, \r\n"
@@ -134,11 +144,12 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "WHERE is2.stock_type = 'A1';\r\n" + "", nativeQuery = true)
 	List<StockModel> getAllStock();
 
-	@Query(value = "SELECT is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username, agm.firstName, agm.middleName, agm.lastName\r\n"
-			+ "FROM invt_stock is2\r\n" + "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF\r\n"
-			+ "JOIN auth_users au ON au.memberIdF = agm.memberId\r\n" + "WHERE is2.stock_type = 'A2'\r\n"
-			+ "ORDER BY is2.invoiceDate;\r\n" + "", nativeQuery = true)
-	List<BookIssue> getAllIssue();
+	@Query(value = "SELECT is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username, agm.firstName, agm.middleName, agm.lastName "
+			+ "FROM invt_stock is2 " + "JOIN auth_general_members agm ON agm.memberId = is2.memberIdF "
+			+ "JOIN auth_users au ON au.memberIdF = agm.memberId " + "WHERE is2.stock_type = 'A2' "
+			+ "AND STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y') BETWEEN STR_TO_DATE(:startDate, '%d-%m-%Y') AND STR_TO_DATE(:endDate, '%d-%m-%Y') "
+			+ "ORDER BY STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y')", nativeQuery = true)
+	List<BookIssue> getAllIssue(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
 	@Query(value = "SELECT " + "is2.stock_id AS stockId, " + "is2.invoiceNo AS action, " + "is2.invoiceDate AS date, "
 			+ "au.username AS user, " + "agm.firstname AS firstName, " + "agm.middlename AS middleName, "
@@ -155,26 +166,29 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "GROUP BY is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username, agm.firstname, agm.middlename, agm.lastname", nativeQuery = true)
 	List<Object[]> findIssueDetailsById(@Param("stockId") Integer stockId);
 
-	@Query(value = "SELECT\r\n" + "    is2.stock_id,\r\n" + "    is2.invoiceNo,\r\n" + "    is2.invoiceDate,\r\n"
-			+ "    au.username,\r\n" + "    CONCAT('[', GROUP_CONCAT(\r\n" + "        '{',\r\n"
-			+ "        '\"bookId\": ', ib.bookId,\r\n" + "        ', \"fineDays\": ', is3.fineDays,\r\n"
-			+ "        ', \"issuedate\": \"', is3.ref_issue_date, '\"',\r\n"
-			+ "        ', \"fineAmount\": ', is3.fineAmount,\r\n"
-			+ "        ', \"finePerDays\": ', is3.finePerDays,\r\n"
-			+ "        ', \"bookDetailIds\": ', ibd.bookDetailId,\r\n"
-			+ "        ', \"stockDetailId\": ', is3.stockDetailId,\r\n"
-			+ "        ', \"AcessionNo\": ', ibd.accessionNo,\r\n"
-			+ "        ', \"BookName\": \"', ib.bookName, '\"',\r\n" + "        '}'\r\n" + "        SEPARATOR ','\r\n"
-			+ "    ), ']') AS bookDetailsList\r\n" + "FROM\r\n" + "    invt_stock is2\r\n" + "JOIN\r\n"
-			+ "    auth_general_members agm ON agm.memberId = is2.memberIdF\r\n" + "JOIN\r\n"
-			+ "    auth_users au ON au.memberIdF = agm.memberId\r\n" + "JOIN\r\n"
-			+ "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id\r\n" + "JOIN\r\n"
-			+ "    invt_book ib ON ib.bookId = is3.book_idF\r\n" + "JOIN\r\n"
-			+ "    invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId\r\n" + "JOIN\r\n"
-			+ "    invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF\r\n" + "WHERE\r\n"
-			+ "    is2.stock_type = 'A3' AND is3.stock_type = 'A3'\r\n" + "GROUP BY\r\n"
-			+ "    is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username;\r\n" + "", nativeQuery = true)
-	List<Map<String, Object>> getStockDetailsWithBookDetails();
+	@Query(value = "SELECT " + "    is2.stock_id, " + "    is2.invoiceNo, " + "    is2.invoiceDate, "
+			+ "    au.username, " + "    CONCAT('[', GROUP_CONCAT( " + "        CONCAT( " + "            '{', "
+			+ "            '\"bookId\": ', ib.bookId, ', ', " + "            '\"fineDays\": ', is3.fineDays, ', ', "
+			+ "            '\"issuedate\": \"', is3.ref_issue_date, '\"', ', ', "
+			+ "            '\"fineAmount\": ', is3.fineAmount, ', ', "
+			+ "            '\"finePerDays\": ', is3.finePerDays, ', ', "
+			+ "            '\"bookDetailIds\": ', ibd.bookDetailId, ', ', "
+			+ "            '\"stockDetailId\": ', is3.stockDetailId, ', ', "
+			+ "            '\"AcessionNo\": ', ibd.accessionNo, ', ', "
+			+ "            '\"BookName\": \"', ib.bookName, '\"', " + "            '}' " + "        ) SEPARATOR ',' "
+			+ "    ), ']') AS bookDetailsList " + "FROM " + "    invt_stock is2 " + "JOIN "
+			+ "    auth_general_members agm ON agm.memberId = is2.memberIdF " + "JOIN "
+			+ "    auth_users au ON au.memberIdF = agm.memberId " + "JOIN "
+			+ "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id " + "JOIN "
+			+ "    invt_book ib ON ib.bookId = is3.book_idF " + "JOIN "
+			+ "    invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId " + "JOIN "
+			+ "    invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF " + "WHERE "
+			+ "    is2.stock_type = 'A3' " + "    AND is3.stock_type = 'A3' "
+			+ "    AND STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y') BETWEEN STR_TO_DATE(:startDate, '%d-%m-%Y') AND STR_TO_DATE(:endDate, '%d-%m-%Y') "
+			+ "GROUP BY " + "    is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username " + "ORDER BY "
+			+ "    STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y')", nativeQuery = true)
+	List<Map<String, Object>> getStockDetailsWithBookDetails(@Param("startDate") String startDate,
+			@Param("endDate") String endDate);
 
 	@Query(value = "SELECT invoiceNo FROM invt_stock WHERE stock_type = 'A1' ORDER BY invoiceNo DESC LIMIT 1", nativeQuery = true)
 	String findLatestPurchaseNo();
