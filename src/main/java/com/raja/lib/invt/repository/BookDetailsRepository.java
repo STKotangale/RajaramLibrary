@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.raja.lib.invt.model.BookDetails;
-import com.raja.lib.invt.model.StockDetail;
 import com.raja.lib.invt.objects.BookDetail;
 import com.raja.lib.invt.objects.BookDetailNameCopyNO;
 import com.raja.lib.invt.objects.BookDetailNameWithCopyNO;

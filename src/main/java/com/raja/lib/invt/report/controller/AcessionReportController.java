@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 <<<<<<< HEAD
+<<<<<<< HEAD
 import org.springframework.web.bind.annotation.CrossOrigin;
 <<<<<<< HEAD
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 =======
 import org.springframework.web.bind.annotation.*;
 >>>>>>> reports
+=======
+import org.springframework.web.bind.annotation.*;
+>>>>>>> sandesh-spring-new
 
 import com.raja.lib.invt.report.service.ReportService;
 
@@ -35,6 +39,7 @@ public class AcessionReportController {
     @PostMapping("/acession")
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     public ResponseEntity<byte[]> getIssueReport(@RequestBody Map<String, String> dateRange) {
 =======
     public ResponseEntity<byte[]> getAcessionReport() {
@@ -42,6 +47,9 @@ public class AcessionReportController {
 =======
     public ResponseEntity<byte[]> getAcessionReport() {
 >>>>>>> reports
+=======
+    public ResponseEntity<byte[]> getAcessionReport() {
+>>>>>>> sandesh-spring-new
         try {
             System.out.println("SK1 ");
             ByteArrayOutputStream outputStream = reportService.generateReport();

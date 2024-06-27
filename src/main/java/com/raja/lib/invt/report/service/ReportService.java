@@ -18,6 +18,7 @@ public class ReportService {
     private DataSource dataSource;
 
     public ByteArrayOutputStream generateReport() throws Exception {
+<<<<<<< HEAD
         System.out.println("SK10 ");
 
         // Compile the .jrxml file to .jasper
@@ -33,12 +34,17 @@ public class ReportService {
         // Fill the report using the data source
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, dataSource.getConnection());
         System.out.println("SK13 ");
+=======
+        JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Accession/AcessionReport.jrxml"));
+
+        Map<String, Object> parameters = new HashMap<>();
+
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource.getConnection());
+>>>>>>> sandesh-spring-new
 
         // Export the report to a ByteArrayOutputStream
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.out.println("SK14 ");
         JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
-        System.out.println("SK15 ");
 
         return outputStream;
     }
