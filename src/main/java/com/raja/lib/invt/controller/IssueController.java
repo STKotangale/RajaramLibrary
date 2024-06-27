@@ -101,12 +101,11 @@ public class IssueController {
 	}
 
 	 @GetMapping("/issueReturns")
-	    public ResponseEntity<List<Map<String, Object>>> findAllIssueReturn(
+	    public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> findAllIssueReturn(
 	        @RequestParam String startDate, 
 	        @RequestParam String endDate
 	    ) {
-	        List<Map<String, Object>> stockDetails = stockService.findAllIssueReturn(startDate, endDate);
-	        return ResponseEntity.ok(stockDetails);
+	        return stockService.findAllIssueReturn(startDate, endDate);
 	    }
 //  ------------------------------------------------- Purchase Return---------------------------------------------------
 

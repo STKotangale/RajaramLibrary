@@ -585,7 +585,15 @@ public class StockService {
 		return new ApiResponseDTO<>(true, "Issue return created successfully", null, HttpStatus.OK.value());
 	}
 
-	public List<Map<String, Object>> findAllIssueReturn(String startDate, String endDate) {
+	public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> findAllIssueReturn(String startDate, String endDate) {
+        try {
+            sessionService.checkCurrentYear();
+        } catch (Exception e) {
+            System.err.println("Session check failed: " + e.getMessage());
+            ApiResponseDTO<List<Map<String, Object>>> response = new ApiResponseDTO<>(false, "No sessions found for the current year", new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
         List<Map<String, Object>> stockDetails = stockRepository.getStockDetailsWithBookDetails(startDate, endDate);
         ObjectMapper objectMapper = new ObjectMapper();
         List<Map<String, Object>> result = new ArrayList<>();
@@ -603,7 +611,9 @@ public class StockService {
                 e.printStackTrace();
             }
         }
-        return result;
+
+        ApiResponseDTO<List<Map<String, Object>>> response = new ApiResponseDTO<>(true, "Data retrieved successfully", result, HttpStatus.OK.value());
+        return ResponseEntity.ok(response);
     }
 
 	// ------------------------------------------ Purchase Return
