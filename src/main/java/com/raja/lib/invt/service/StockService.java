@@ -19,7 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.raja.lib.acc.model.Ledger;
 import com.raja.lib.acc.repository.LedgerRepository;
@@ -585,26 +585,26 @@ public class StockService {
 		return new ApiResponseDTO<>(true, "Issue return created successfully", null, HttpStatus.OK.value());
 	}
 
-	public List<Map<String, Object>> findAllIssueReturn() {
-		List<Map<String, Object>> stockDetails = stockRepository.getStockDetailsWithBookDetails();
-		ObjectMapper objectMapper = new ObjectMapper();
-		List<Map<String, Object>> result = new ArrayList<>();
+	public List<Map<String, Object>> findAllIssueReturn(String startDate, String endDate) {
+        List<Map<String, Object>> stockDetails = stockRepository.getStockDetailsWithBookDetails(startDate, endDate);
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Map<String, Object>> result = new ArrayList<>();
 
-		for (Map<String, Object> stockDetail : stockDetails) {
-			try {
-				String bookDetailsListStr = (String) stockDetail.get("bookDetailsList");
-				JsonNode bookDetailsListJson = objectMapper.readTree(bookDetailsListStr);
+        for (Map<String, Object> stockDetail : stockDetails) {
+            try {
+                String bookDetailsListStr = (String) stockDetail.get("bookDetailsList");
+                List<Map<String, Object>> bookDetailsList = objectMapper.readValue(bookDetailsListStr, new TypeReference<List<Map<String, Object>>>() {});
 
-				Map<String, Object> newStockDetail = new HashMap<>(stockDetail);
-				newStockDetail.put("bookDetailsList", bookDetailsListJson);
+                Map<String, Object> newStockDetail = new HashMap<>(stockDetail);
+                newStockDetail.put("bookDetailsList", bookDetailsList);
 
-				result.add(newStockDetail);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return result;
-	}
+                result.add(newStockDetail);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
 
 	// ------------------------------------------ Purchase Return
 	// ---------------------------------------------
