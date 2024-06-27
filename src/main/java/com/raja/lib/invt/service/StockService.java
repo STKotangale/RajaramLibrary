@@ -420,18 +420,28 @@ public class StockService {
 
 
 	public ResponseEntity<ApiResponseDTO<List<BookIssue>>> getAllIssue(String startDate, String endDate) {
-	    try {
-//	        sessionService.checkCurrentYear();
-	    } catch (Exception e) {
-	        System.err.println("Session check failed: " + e.getMessage());
-	        ApiResponseDTO<List<BookIssue>> response = new ApiResponseDTO<>(false, "No sessions found for the current year", new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR.value());
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-	    }
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate start = LocalDate.parse(startDate, inputFormatter);
+        LocalDate end = LocalDate.parse(endDate, inputFormatter);
 
-	    List<BookIssue> issues = stockRepository.getAllIssue(startDate, endDate);
-	    ApiResponseDTO<List<BookIssue>> response = new ApiResponseDTO<>(true, "Data retrieved successfully", issues, HttpStatus.OK.value());
-	    return ResponseEntity.ok(response);
-	}
+        int startYear = start.getYear();
+        int endYear = end.getYear();
+
+        try {
+            if (!sessionService.checkCurrentYear(startYear) || !sessionService.checkCurrentYear(endYear)) {
+                ApiResponseDTO<List<BookIssue>> response = new ApiResponseDTO<>(false, "No sessions found for the provided year range", new ArrayList<>(), HttpStatus.BAD_REQUEST.value());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (Exception e) {
+            System.err.println("Session check failed: " + e.getMessage());
+            ApiResponseDTO<List<BookIssue>> response = new ApiResponseDTO<>(false, "No sessions found for the current year", new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
+        List<BookIssue> issues = stockRepository.getAllIssue(startDate, endDate);
+        ApiResponseDTO<List<BookIssue>> response = new ApiResponseDTO<>(true, "Data retrieved successfully", issues, HttpStatus.OK.value());
+        return ResponseEntity.ok(response);
+    }
 
 	public List<IssueDetailsDTO> getInvoiceDetailsByStockId(Integer stockId) {
 		List<Object[]> result = stockRepository.findIssueDetailsById(stockId);
