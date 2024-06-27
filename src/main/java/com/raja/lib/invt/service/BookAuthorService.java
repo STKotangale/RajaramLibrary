@@ -35,7 +35,6 @@ public class BookAuthorService {
         LOGGER.info("Fetching all book authors");
 
         try {
-            sessionService.checkCurrentYear();
         } catch (Exception e) {
             LOGGER.error("Session check failed: {}", e.getMessage());
             return new ApiResponseDTO<>(false, e.getMessage(), null, 500); 
