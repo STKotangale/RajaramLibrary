@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.*;
 >>>>>>> sandesh-spring-new
 
-import com.raja.lib.invt.report.service.ReportService;
+import com.raja.lib.invt.report.service.AcessionReportService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -34,7 +34,7 @@ import com.raja.lib.invt.report.service.ReportService;
 public class AcessionReportController {
 
     @Autowired
-    private ReportService reportService;
+    private AcessionReportService acessionReportService;
 
     @PostMapping("/acession")
 <<<<<<< HEAD
@@ -51,16 +51,11 @@ public class AcessionReportController {
     public ResponseEntity<byte[]> getAcessionReport() {
 >>>>>>> sandesh-spring-new
         try {
-            System.out.println("SK1 ");
-            ByteArrayOutputStream outputStream = reportService.generateReport();
-            System.out.println("SK2 ");
+            ByteArrayOutputStream outputStream = acessionReportService.generateReport();
 
             HttpHeaders headers = new HttpHeaders();
-            System.out.println("SK3 ");
             headers.setContentType(MediaType.APPLICATION_PDF);
-            System.out.println("SK4 ");
             headers.add("Content-Disposition", "inline; filename=AcessionReport.pdf");
-            System.out.println("SK5 ");
 
             return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
         } catch (Exception e) {
