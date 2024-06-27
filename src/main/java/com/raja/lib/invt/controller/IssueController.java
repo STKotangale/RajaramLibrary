@@ -127,7 +127,7 @@ public class IssueController {
 	}
 
 	  @GetMapping("/purchase-return-all")
-	    public List<Map<String, Object>> getStockDetails(
+	    public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> getStockDetails(
 	            @RequestParam("startDate") String startDate,
 	            @RequestParam("endDate") String endDate) {
 	        return stockService.getStockDetailsByType(startDate, endDate);

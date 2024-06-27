@@ -587,8 +587,18 @@ public class StockService {
 	}
 
 	public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> findAllIssueReturn(String startDate, String endDate) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate start = LocalDate.parse(startDate, inputFormatter);
+        LocalDate end = LocalDate.parse(endDate, inputFormatter);
+
+        int startYear = start.getYear();
+        int endYear = end.getYear();
+
         try {
-//            sessionService.checkCurrentYear();
+            if (!sessionService.checkCurrentYear(startYear) || !sessionService.checkCurrentYear(endYear)) {
+                ApiResponseDTO<List<Map<String, Object>>> response = new ApiResponseDTO<>(false, "No sessions found for the provided year range", new ArrayList<>(), HttpStatus.BAD_REQUEST.value());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
         } catch (Exception e) {
             System.err.println("Session check failed: " + e.getMessage());
             ApiResponseDTO<List<Map<String, Object>>> response = new ApiResponseDTO<>(false, "No sessions found for the current year", new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -671,26 +681,44 @@ public class StockService {
 		return new ApiResponseDTO<>(true, "Purchase return created successfully", null, HttpStatus.CREATED.value());
 	}
 
-	public List<Map<String, Object>> getStockDetailsByType(String startDate, String endDate) {
-        List<Map<String, Object>> results = stockRepository.findStockDetailsByType(startDate, endDate);
-        List<Map<String, Object>> formattedResults = new ArrayList<>();
-        ObjectMapper objectMapper = new ObjectMapper();
+	 public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> getStockDetailsByType(String startDate, String endDate) {
+	        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	        LocalDate start = LocalDate.parse(startDate, inputFormatter);
+	        LocalDate end = LocalDate.parse(endDate, inputFormatter);
 
-        for (Map<String, Object> result : results) {
-            try {
-                Map<String, Object> newResult = new HashMap<>(result);
-                String booksJson = (String) result.get("books");
-                List<Map<String, Object>> books = objectMapper.readValue("[" + booksJson + "]", new TypeReference<List<Map<String, Object>>>() {});
-                newResult.put("books", books);
-                formattedResults.add(newResult);
-            } catch (Exception e) {
-                // Handle parsing exception
-                e.printStackTrace();
-            }
-        }
+	        int startYear = start.getYear();
+	        int endYear = end.getYear();
 
-        return formattedResults;
-    }
+	        try {
+	            if (!sessionService.checkCurrentYear(startYear) || !sessionService.checkCurrentYear(endYear)) {
+	                ApiResponseDTO<List<Map<String, Object>>> response = new ApiResponseDTO<>(false, "No sessions found for the provided year range", new ArrayList<>(), HttpStatus.BAD_REQUEST.value());
+	                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+	            }
+	        } catch (Exception e) {
+	            System.err.println("Session check failed: " + e.getMessage());
+	            ApiResponseDTO<List<Map<String, Object>>> response = new ApiResponseDTO<>(false, "No sessions found for the current year", new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	        }
+
+	        List<Map<String, Object>> results = stockRepository.findStockDetailsByType(startDate, endDate);
+	        List<Map<String, Object>> formattedResults = new ArrayList<>();
+	        ObjectMapper objectMapper = new ObjectMapper();
+
+	        for (Map<String, Object> result : results) {
+	            try {
+	                Map<String, Object> newResult = new HashMap<>(result);
+	                String booksJson = (String) result.get("books");
+	                List<Map<String, Object>> books = objectMapper.readValue("[" + booksJson + "]", new TypeReference<List<Map<String, Object>>>() {});
+	                newResult.put("books", books);
+	                formattedResults.add(newResult);
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	        }
+
+	        ApiResponseDTO<List<Map<String, Object>>> response = new ApiResponseDTO<>(true, "Data retrieved successfully", formattedResults, HttpStatus.OK.value());
+	        return ResponseEntity.ok(response);
+	    }
 	// ------------------------------------------ Book Lost
 	// ---------------------------------------------
 
