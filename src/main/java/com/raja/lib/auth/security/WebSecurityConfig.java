@@ -66,6 +66,7 @@ public class WebSecurityConfig {
                   .requestMatchers("/api/bookdetails/**").permitAll()
                   .requestMatchers("/api/stock/**").permitAll()
                   .requestMatchers("/api/issue/**").permitAll()
+                  .requestMatchers("/api/session/**").permitAll()
                   .requestMatchers("/api/book/**").permitAll()
                   .requestMatchers("/api/fees/**").permitAll()
                   .requestMatchers("/api/excel/**").permitAll()
@@ -74,6 +75,10 @@ public class WebSecurityConfig {
                   .requestMatchers("/api/membership-fees/**").permitAll()
                   .requestMatchers("/api/member-bookings/**").permitAll()
                   .requestMatchers("/api/reports/**").permitAll()
+                  .requestMatchers("/api/book-authors/**").permitAll()
+                  .requestMatchers("/api/book-publications/**").permitAll()
+                  .requestMatchers("/api/booktype/**").permitAll()
+                  .requestMatchers("/api/language/**").permitAll()
                   .anyRequest().authenticated()
           );
       http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
