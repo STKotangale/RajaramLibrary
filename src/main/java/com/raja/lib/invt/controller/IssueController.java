@@ -165,11 +165,13 @@ public class IssueController {
 					.body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
 		}
 	}
-
-	@GetMapping("/book-scrap-all")
-	public List<PurchaseReturnDTO> geScraptDetials() {
-		return stockService.getScrapDetials();
-	}
+	
+	 @GetMapping("/book-scrap-all")
+	    public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> getScrapDetails(
+	            @RequestParam String startDate,
+	            @RequestParam String endDate) {
+	        return stockService.getScrapDetails(startDate, endDate);
+	    }
 
 	@GetMapping("/acession-details")
 	public List<AcessionForLostScarap> getAcessionNO() {

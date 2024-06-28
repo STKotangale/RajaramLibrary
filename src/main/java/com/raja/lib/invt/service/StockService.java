@@ -865,9 +865,42 @@ public class StockService {
 		return new ApiResponseDTO<>(true, "Book scrap recorded successfully", null, HttpStatus.CREATED.value());
 	}
 
-	public List<PurchaseReturnDTO> getScrapDetials() {
-		return stockRepository.findBookScrap();
-	}
+	public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> getScrapDetails(String startDate, String endDate) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate start = LocalDate.parse(startDate, inputFormatter);
+        LocalDate end = LocalDate.parse(endDate, inputFormatter);
+
+        int startYear = start.getYear();
+        int endYear = end.getYear();
+
+        try {
+            if (!sessionService.checkCurrentYear(startYear) || !sessionService.checkCurrentYear(endYear)) {
+                ApiResponseDTO<List<Map<String, Object>>> response = new ApiResponseDTO<>(false, "No sessions found for the provided year range", null, HttpStatus.BAD_REQUEST.value());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (Exception e) {
+            System.err.println("Session check failed: " + e.getMessage());
+            ApiResponseDTO<List<Map<String, Object>>> response = new ApiResponseDTO<>(false, "No sessions found for the current year", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
+        List<Map<String, Object>> results = stockRepository.findBookScrap(startDate, endDate);
+
+        List<Map<String, Object>> formattedResults = results.stream().map(result -> {
+            Map<String, Object> modifiableResult = new HashMap<>(result);
+            try {
+                String bookDetailsStr = (String) result.get("bookDetails");
+                List<Map<String, Object>> bookDetails = objectMapper.readValue(bookDetailsStr, List.class);
+                modifiableResult.put("bookDetails", bookDetails);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace(); // Handle this appropriately in your application
+            }
+            return modifiableResult;
+        }).collect(Collectors.toList());
+
+        ApiResponseDTO<List<Map<String, Object>>> response = new ApiResponseDTO<>(true, "Data retrieved successfully", formattedResults, HttpStatus.OK.value());
+        return ResponseEntity.ok(response);
+    }
 
 	public List<StockModel> getStockDetials() {
 		return stockRepository.getAllStock();
