@@ -21,11 +21,12 @@ public class AcessionStatusReportBookTypewiseService {
 	@Autowired
     private DataSource dataSource;
 
-    public ByteArrayOutputStream generateAcessionStatusReportPublicationwise(String bookTypeId) throws Exception {
+    public ByteArrayOutputStream generateAcessionStatusReportPublicationwise(String bookTypeId, String bookTypeName) throws Exception {
         JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Accession/AcessionStatusReportBookTypewise.jrxml"));
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("bookTypeId", bookTypeId);
+        parameters.put("bookTypeName", bookTypeName);
 
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource.getConnection());
 

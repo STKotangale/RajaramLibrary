@@ -28,9 +28,9 @@ public class AcessionStatusReportBookTypewiseController {
     public ResponseEntity<byte[]> getAcessionStatusReportBookTypewise(@RequestBody Map<String, String> dateRange) {
         try {
             String bookTypeId = dateRange.get("bookTypeId");
-
-        	System.out.println("bookTypeId "+bookTypeId);
-            ByteArrayOutputStream outputStream = reportService.generateAcessionStatusReportPublicationwise(bookTypeId);
+        	String bookTypeName = dateRange.get("bookTypeName");
+        	
+            ByteArrayOutputStream outputStream = reportService.generateAcessionStatusReportPublicationwise(bookTypeId, bookTypeName);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
