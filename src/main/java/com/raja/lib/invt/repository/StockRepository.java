@@ -92,9 +92,9 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 	@Query(value = "SELECT " + "    is2.stock_id AS stockId, " + "    is2.invoiceNo, " + "    is2.invoiceDate, "
 			+ "    al.ledgerName, " + "    GROUP_CONCAT(" + "        CONCAT("
 			+ "            '{\"bookName\":\"', ib.bookName, '\",\"accessionNo\":\"', ibd.accessionNo, '\",\"stockDetailId\":', is3.stockDetailId, ',\"book_amount\":', is3.book_amount, '}'"
-			+ "        ) " + "        ORDER BY is3.stockDetailId SEPARATOR ','" + "    ) AS books, "
-			+ "    is2.billTotal, " + "    is2.discountPercent, " + "    is2.totalAfterDiscount, "
-			+ "    is2.grandTotal " + "FROM " + "    invt_stock is2 " + "JOIN "
+			+ "        ) ORDER BY is3.stockDetailId SEPARATOR ','" + "    ) AS books, " + "    is2.billTotal, "
+			+ "    is2.discountPercent, " + "    is2.totalAfterDiscount, " + "    is2.grandTotal, "
+			+ "    is2.discountAmount " + "FROM " + "    invt_stock is2 " + "JOIN "
 			+ "    invt_stockdetail is3 ON is3.stock_idF = is2.stock_id " + "JOIN "
 			+ "    invt_book ib ON ib.bookId = is3.book_idF " + "JOIN "
 			+ "    acc_ledger al ON al.ledgerID = is2.ledgerIDF " + "JOIN "
@@ -104,7 +104,7 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "    AND STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y') BETWEEN STR_TO_DATE(:startDate, '%d-%m-%Y') AND STR_TO_DATE(:endDate, '%d-%m-%Y') "
 			+ "GROUP BY " + "    is2.stock_id, " + "    is2.invoiceNo, " + "    is2.invoiceDate, "
 			+ "    al.ledgerName, " + "    is2.billTotal, " + "    is2.discountPercent, "
-			+ "    is2.totalAfterDiscount, " + "    is2.grandTotal " + "ORDER BY "
+			+ "    is2.totalAfterDiscount, " + "    is2.grandTotal, " + "    is2.discountAmount " + "ORDER BY "
 			+ "    STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y');", nativeQuery = true)
 	List<Map<String, Object>> findStockDetailsByType(@Param("startDate") String startDate,
 			@Param("endDate") String endDate);
@@ -133,21 +133,24 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "    STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y');", nativeQuery = true)
 	List<Map<String, Object>> findBookLost(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
-	@Query(value = "SELECT is2.stock_id AS stockId, " + "is2.invoiceNo, " + "is2.invoiceDate, " + "al.ledgerName, "
-			+ "is2.billTotal, " + "is2.discountPercent, " + "is2.totalAfterDiscount, " + "is2.grandTotal, "
-			+ "CONCAT('[', GROUP_CONCAT(CONCAT('{', " + "'\"bookDetailId\": ', ibd.bookDetailId, ', ', "
-			+ "'\"accessionNo\": \"', ibd.accessionNo, '\", ', " + "'\"bookName\": \"', ib.bookName, '\", ', "
-			+ "'\"amount\": ', is3.book_rate, ', ', "
-			+ "'\"stockIdF\": ', is3.stock_idF, '}') SEPARATOR ','), ']') AS bookDetails " + "FROM invt_stock is2 "
-			+ "JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
-			+ "JOIN invt_book ib ON ib.bookId = is3.book_idF " + "JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF "
-			+ "JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId "
-			+ "JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF " + "WHERE is2.stock_type = 'A6' "
-			+ "AND is3.stock_type = 'A6' "
-			+ "AND STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y') BETWEEN STR_TO_DATE(:startDate, '%d-%m-%Y') AND STR_TO_DATE(:endDate, '%d-%m-%Y') "
-			+ "GROUP BY is2.stock_id, is2.invoiceNo, is2.invoiceDate, al.ledgerName, is2.billTotal, "
-			+ "is2.discountPercent, is2.totalAfterDiscount, is2.grandTotal "
-			+ "ORDER BY STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y')", nativeQuery = true)
+	@Query(value = "SELECT " + "    is2.stock_id AS stockId, " + "    is2.invoiceNo, " + "    is2.invoiceDate, "
+			+ "    al.ledgerName, " + "    is2.billTotal, " + "    is2.discountAmount, " + "    is2.discountPercent, "
+			+ "    is2.totalAfterDiscount, " + "    is2.grandTotal, " + "    GROUP_CONCAT( " + "        CONCAT( "
+			+ "            '{\"bookDetailId\": ', ibd.bookDetailId, ', ', "
+			+ "            '\"accessionNo\": \"', ibd.accessionNo, '\", ', "
+			+ "            '\"bookName\": \"', ib.bookName, '\", ', "
+			+ "            '\"amount\": ', is3.book_rate, ', ', " + "            '\"stockIdF\": ', is3.stock_idF, '}' "
+			+ "        ) " + "        SEPARATOR ',' " + "    ) AS bookDetails " + "FROM " + "    invt_stock is2 "
+			+ "    JOIN invt_stockdetail is3 ON is3.stock_idF = is2.stock_id "
+			+ "    JOIN invt_book ib ON ib.bookId = is3.book_idF "
+			+ "    JOIN acc_ledger al ON al.ledgerID = is2.ledgerIDF "
+			+ "    JOIN invt_stock_copy_no iscn ON iscn.stockDetailIdF = is3.stockDetailId "
+			+ "    JOIN invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF " + "WHERE "
+			+ "    is2.stock_type = 'A6' " + "    AND is3.stock_type = 'A6' "
+			+ "    AND STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y') BETWEEN STR_TO_DATE(:startDate, '%d-%m-%Y') AND STR_TO_DATE(:endDate, '%d-%m-%Y') "
+			+ "GROUP BY "
+			+ "    is2.stock_id, is2.invoiceNo, is2.invoiceDate, al.ledgerName, is2.billTotal, is2.discountAmount, is2.discountPercent, is2.totalAfterDiscount, is2.grandTotal "
+			+ "ORDER BY " + "    STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y')", nativeQuery = true)
 	List<Map<String, Object>> findBookScrap(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
 	@Query(value = "select invoiceDate  from invt_stock is2 join\r\n"
@@ -184,15 +187,15 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "GROUP BY is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username, agm.firstname, agm.middlename, agm.lastname", nativeQuery = true)
 	List<Object[]> findIssueDetailsById(@Param("stockId") Integer stockId);
 
-	@Query(value = "SELECT " + "    is2.stock_id, " + "    is2.invoiceNo, " + "    is2.invoiceDate, "
+	@Query(value = "SELECT " + "    is2.stock_id AS stockId, " + "    is2.invoiceNo, " + "    is2.invoiceDate, "
 			+ "    au.username, " + "    CONCAT('[', GROUP_CONCAT( " + "        CONCAT( " + "            '{', "
 			+ "            '\"bookId\": ', ib.bookId, ', ', " + "            '\"fineDays\": ', is3.fineDays, ', ', "
-			+ "            '\"issuedate\": \"', is3.ref_issue_date, '\"', ', ', "
+			+ "            '\"issuedate\": \"', is3.ref_issue_date, '\", ', "
 			+ "            '\"fineAmount\": ', is3.fineAmount, ', ', "
 			+ "            '\"finePerDays\": ', is3.finePerDays, ', ', "
 			+ "            '\"bookDetailIds\": ', ibd.bookDetailId, ', ', "
 			+ "            '\"stockDetailId\": ', is3.stockDetailId, ', ', "
-			+ "            '\"AcessionNo\": ', ibd.accessionNo, ', ', "
+			+ "            '\"AcessionNo\": \"', ibd.accessionNo, '\", ', "
 			+ "            '\"BookName\": \"', ib.bookName, '\"', " + "            '}' " + "        ) SEPARATOR ',' "
 			+ "    ), ']') AS bookDetailsList " + "FROM " + "    invt_stock is2 " + "JOIN "
 			+ "    auth_general_members agm ON agm.memberId = is2.memberIdF " + "JOIN "
