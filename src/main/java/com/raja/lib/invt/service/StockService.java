@@ -56,7 +56,6 @@ import com.raja.lib.invt.resposne.BookDetailss;
 import com.raja.lib.invt.resposne.BookResponseDTO;
 import com.raja.lib.invt.resposne.IssueDetailsDTO;
 import com.raja.lib.invt.resposne.PurchaseReturnBookDetailDTO;
-import com.raja.lib.invt.resposne.PurchaseReturnDTO;
 import com.raja.lib.invt.resposne.StockDetailDTOs;
 import com.raja.lib.invt.resposne.StockDetailResponseDTO;
 import com.raja.lib.invt.resposne.StockInvoiceResponseDTO;
