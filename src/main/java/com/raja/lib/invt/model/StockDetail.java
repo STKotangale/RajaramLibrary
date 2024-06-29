@@ -53,7 +53,7 @@
 		private Book book_idF;
 		
 		@Column(name="bookDetailIdF")
-		private int bookDetailIdF;
+	    private Integer bookDetailIdF;
 		
 		@Column(name = "book_qty")
 		private int book_qty;
