@@ -27,7 +27,6 @@ import com.raja.lib.invt.request.BookLostRequestDTO;
 import com.raja.lib.invt.request.PurchaseReturnRequestDTO;
 import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.resposne.IssueDetailsDTO;
-import com.raja.lib.invt.resposne.PurchaseReturnDTO;
 import com.raja.lib.invt.service.BookDetailsService;
 import com.raja.lib.invt.service.StockService;
 
