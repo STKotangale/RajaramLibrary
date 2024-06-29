@@ -890,8 +890,16 @@ public class StockService {
             Map<String, Object> modifiableResult = new HashMap<>(result);
             try {
                 String bookDetailsStr = (String) result.get("bookDetails");
-                List<Map<String, Object>> bookDetails = objectMapper.readValue(bookDetailsStr, List.class);
-                modifiableResult.put("bookDetails", bookDetails);
+                // Check if bookDetailsStr is a single JSON object
+                if (bookDetailsStr.startsWith("{") && bookDetailsStr.endsWith("}")) {
+                    // Parse as a single object
+                    Map<String, Object> bookDetail = objectMapper.readValue(bookDetailsStr, new HashMap<String, Object>().getClass());
+                    modifiableResult.put("bookDetails", List.of(bookDetail)); // Convert to list for consistency
+                } else {
+                    // Parse as JSON array if necessary (adjust logic if bookDetails can be an array)
+                    List<Map<String, Object>> bookDetails = objectMapper.readValue(bookDetailsStr, List.class);
+                    modifiableResult.put("bookDetails", bookDetails);
+                }
             } catch (JsonProcessingException e) {
                 e.printStackTrace(); // Handle this appropriately in your application
             }
@@ -901,7 +909,6 @@ public class StockService {
         ApiResponseDTO<List<Map<String, Object>>> response = new ApiResponseDTO<>(true, "Data retrieved successfully", formattedResults, HttpStatus.OK.value());
         return ResponseEntity.ok(response);
     }
-
 	public List<StockModel> getStockDetials() {
 		return stockRepository.getAllStock();
 	}
