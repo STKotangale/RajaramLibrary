@@ -63,6 +63,7 @@ public class MembershipFeesController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
 
+
     @GetMapping("/nextInvoiceNumber")
     public ApiResponse getNextInvoiceNumber() {
         int nextInvoiceNumber = service.getNextInvoiceNumber();
