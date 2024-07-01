@@ -82,4 +82,17 @@ public class User implements Serializable {
         this.isBlock = isBlock;
         this.mobileNo = mobileNo;
     }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(userId);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        User other = (User) obj;
+        return userId == other.userId;
+    }
 }

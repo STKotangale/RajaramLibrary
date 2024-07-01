@@ -40,24 +40,54 @@ public class MembershipFeesController {
     }
 
     @PostMapping
-    public ResponseEntity<MembershipFeesResponse> createFee(@RequestBody MembershipFeesRequest request) {
-        return ResponseEntity.ok(service.createFee(request));
+    public ResponseEntity<ApiResponseDTO<String>> createFee(@RequestBody MembershipFeesRequest request) {
+        ApiResponseDTO<String> response = service.createFee(request);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MembershipFeesResponse> updateFee(@PathVariable Long id, @RequestBody MembershipFeesRequest request) {
-        return ResponseEntity.ok(service.updateFee(id, request));
+    public ResponseEntity<ApiResponseDTO<String>> updateFee(@PathVariable Long id, @RequestBody MembershipFeesRequest request) {
+        ApiResponseDTO<String> response = service.updateFee(id, request);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFee(@PathVariable Long id) {
-        service.deleteFee(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ApiResponseDTO<String>> deleteFee(@PathVariable Long id) {
+        ApiResponseDTO<String> response = service.deleteFee(id);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
-    
+
     @PostMapping("/check-member-fees")
     public ResponseEntity<ApiResponseDTO<String>> checkMemberFees(@RequestBody MemberCheckRequestDTO request) {
         ApiResponseDTO<String> response = service.checkMemberAndDate(request);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
+    
+    @GetMapping("/nextInvoiceNumber")
+    public ApiResponse getNextInvoiceNumber() {
+        int nextInvoiceNumber = service.getNextInvoiceNumber();
+        return new ApiResponse(nextInvoiceNumber);
+    }
+
+    static class ApiResponse {
+        private final int NextMonthlyMemberInvoiceNo;
+
+        public ApiResponse(int NextMonthlyMemberInvoiceNo) {
+            this.NextMonthlyMemberInvoiceNo = NextMonthlyMemberInvoiceNo;
+        }
+
+        public int getNextMonthlyMemberInvoiceNo() {
+            return NextMonthlyMemberInvoiceNo;
+        }
+    }
+    
+    @GetMapping("/nextInvoiceMembershipNo")
+    public ApiResponse getNextInvoiceNumbers() {
+        int nextInvoiceNumber = service.getNextInvoiceMembershipNo();
+        return new ApiResponse(nextInvoiceNumber);
+    }
+
+    
+    
 }
+
