@@ -1,7 +1,6 @@
 package com.raja.lib.invt.model;
 
 import com.raja.lib.auth.model.GeneralMember;
-import com.raja.lib.acc.model.Ledger;
 import jakarta.persistence.*;
 
 import lombok.Data;

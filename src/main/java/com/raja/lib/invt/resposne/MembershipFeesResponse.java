@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class MembershipFeesResponse {
-    private Long membershipId;
+    private int membershipId;
     private String memInvoiceNo;
     private String memInvoiceDate;
     private int memberIdF;

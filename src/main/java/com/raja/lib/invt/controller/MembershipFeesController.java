@@ -35,7 +35,7 @@ public class MembershipFeesController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MembershipFeesResponse> getFeeById(@PathVariable Long id) {
+    public ResponseEntity<MembershipFeesResponse> getFeeById(@PathVariable int id) {
         return ResponseEntity.ok(service.getFeeById(id));
     }
 
@@ -46,13 +46,13 @@ public class MembershipFeesController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO<String>> updateFee(@PathVariable Long id, @RequestBody MembershipFeesRequest request) {
+    public ResponseEntity<ApiResponseDTO<String>> updateFee(@PathVariable int id, @RequestBody MembershipFeesRequest request) {
         ApiResponseDTO<String> response = service.updateFee(id, request);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO<String>> deleteFee(@PathVariable Long id) {
+    public ResponseEntity<ApiResponseDTO<String>> deleteFee(@PathVariable int id) {
         ApiResponseDTO<String> response = service.deleteFee(id);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
@@ -62,7 +62,7 @@ public class MembershipFeesController {
         ApiResponseDTO<String> response = service.checkMemberAndDate(request);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
-    
+
     @GetMapping("/nextInvoiceNumber")
     public ApiResponse getNextInvoiceNumber() {
         int nextInvoiceNumber = service.getNextInvoiceNumber();
