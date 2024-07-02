@@ -23,7 +23,7 @@ public class MembershipFees {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "membershipId")
-    private Long membershipId;
+    private int membershipId;
 
     @Column(name = "mem_invoice_no")
     private String memInvoiceNo;

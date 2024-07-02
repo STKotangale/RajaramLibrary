@@ -1,7 +1,9 @@
 package com.raja.lib.invt.controller;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -52,4 +54,13 @@ public class MemberMonthlyFeesController {
         service.deleteFee(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/next-day/{memberId}")
+    public ResponseEntity<Map<String, String>> getNextDayByMemberId(@PathVariable int memberId) {
+        String nextDay = service.getNextDayByMemberId(memberId);
+        Map<String, String> response = new HashMap<>();
+        response.put("nextDay", nextDay);
+        return ResponseEntity.ok(response);
+    }
+
 }

@@ -16,7 +16,6 @@ import com.raja.lib.invt.objects.GetIssueDetilsByUser;
 import com.raja.lib.invt.objects.InvoiceDateProjection;
 import com.raja.lib.invt.objects.StockModel;
 import com.raja.lib.invt.resposne.CreateStockResponse;
-import com.raja.lib.invt.resposne.PurchaseReturnDTO;
 
 @Repository
 public interface StockRepository extends JpaRepository<Stock, Integer> {
@@ -188,7 +187,8 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 	List<Object[]> findIssueDetailsById(@Param("stockId") Integer stockId);
 
 	@Query(value = "SELECT " + "    is2.stock_id AS stockId, " + "    is2.invoiceNo, " + "    is2.invoiceDate, "
-			+ "    au.username, " + "    CONCAT('[', GROUP_CONCAT( " + "        CONCAT( " + "            '{', "
+			+ "    au.username, " + "    agm.firstname, " + "    agm.middlename, " + "    agm.lastname, "
+			+ "    CONCAT('[', GROUP_CONCAT( " + "        CONCAT( " + "            '{', "
 			+ "            '\"bookId\": ', ib.bookId, ', ', " + "            '\"fineDays\": ', is3.fineDays, ', ', "
 			+ "            '\"issuedate\": \"', is3.ref_issue_date, '\", ', "
 			+ "            '\"fineAmount\": ', is3.fineAmount, ', ', "
@@ -196,7 +196,7 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "            '\"bookDetailIds\": ', ibd.bookDetailId, ', ', "
 			+ "            '\"stockDetailId\": ', is3.stockDetailId, ', ', "
 			+ "            '\"AcessionNo\": \"', ibd.accessionNo, '\", ', "
-			+ "            '\"BookName\": \"', ib.bookName, '\"', " + "            '}' " + "        ) SEPARATOR ',' "
+			+ "            '\"BookName\": \"', ib.bookName, '\"' " + "            '}' " + "        ) SEPARATOR ',' "
 			+ "    ), ']') AS bookDetailsList " + "FROM " + "    invt_stock is2 " + "JOIN "
 			+ "    auth_general_members agm ON agm.memberId = is2.memberIdF " + "JOIN "
 			+ "    auth_users au ON au.memberIdF = agm.memberId " + "JOIN "
@@ -206,8 +206,9 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
 			+ "    invt_book_details ibd ON ibd.bookDetailId = iscn.bookDetailIdF " + "WHERE "
 			+ "    is2.stock_type = 'A3' " + "    AND is3.stock_type = 'A3' "
 			+ "    AND STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y') BETWEEN STR_TO_DATE(:startDate, '%d-%m-%Y') AND STR_TO_DATE(:endDate, '%d-%m-%Y') "
-			+ "GROUP BY " + "    is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username " + "ORDER BY "
-			+ "    STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y')", nativeQuery = true)
+			+ "GROUP BY "
+			+ "    is2.stock_id, is2.invoiceNo, is2.invoiceDate, au.username, agm.firstname, agm.middlename, agm.lastname "
+			+ "ORDER BY " + "    STR_TO_DATE(is2.invoiceDate, '%d-%m-%Y')", nativeQuery = true)
 	List<Map<String, Object>> getStockDetailsWithBookDetails(@Param("startDate") String startDate,
 			@Param("endDate") String endDate);
 
