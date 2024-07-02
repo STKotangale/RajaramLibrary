@@ -17,4 +17,8 @@ public interface MemberMonthlyFeesRepository extends JpaRepository<MemberMonthly
      
     @Query(value = "SELECT COALESCE(MAX(memMonInvoiceNo), 0) + 1 AS next_invoice_number FROM acc_member_monthly_fees", nativeQuery = true)
     int getNextInvoiceNumber();
+    
+    @Query(value = "SELECT DATE_FORMAT(DATE_ADD(STR_TO_DATE(MAX(ammf.toDate), '%d-%m-%Y'), INTERVAL 1 DAY), '%d-%m-%Y') AS next_day FROM acc_member_monthly_fees ammf WHERE ammf.memberIdF = :memberId", nativeQuery = true)
+    String findNextDayByMemberId(@Param("memberId") int memberId);
+
 }
