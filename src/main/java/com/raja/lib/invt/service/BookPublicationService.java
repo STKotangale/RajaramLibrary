@@ -2,10 +2,12 @@ package com.raja.lib.invt.service;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.raja.lib.invt.model.BookPublication;
@@ -115,14 +117,20 @@ public class BookPublicationService {
 
 
 	public ApiResponseDTO<Void> deleteBookPublication(int publicationId) {
-		LOGGER.info("Deleting book publication with id {}", publicationId);
-		if (bookPublicationRepository.existsById(publicationId)) {
-			bookPublicationRepository.deleteById(publicationId);
-			LOGGER.debug("Book publication deleted with id {}", publicationId);
-			return new ApiResponseDTO<>(true, "Book publication deleted successfully.", null, 200);
-		} else {
-			LOGGER.warn("Book publication not found with id {}", publicationId);
-			return new ApiResponseDTO<>(false, "Book publication not found.", null, 404);
-		}
+	    LOGGER.info("Deleting book publication with id {}", publicationId);
+	    if (bookPublicationRepository.existsById(publicationId)) {
+	        try {
+	            bookPublicationRepository.deleteById(publicationId);
+	            LOGGER.debug("Book publication deleted with id {}", publicationId);
+	            return new ApiResponseDTO<>(true, "Book publication deleted successfully.", null, HttpStatus.OK.value());
+	        } catch (DataIntegrityViolationException e) {
+	            LOGGER.error("Failed to delete book publication with id {}: {}", publicationId, e.getMessage());
+	            return new ApiResponseDTO<>(false, "Cannot delete the book publication because it is referenced by other records", null, HttpStatus.CONFLICT.value());
+	        }
+	    } else {
+	        LOGGER.warn("Book publication not found with id {}", publicationId);
+	        return new ApiResponseDTO<>(false, "Book publication not found.", null, HttpStatus.NOT_FOUND.value());
+	    }
 	}
+
 }

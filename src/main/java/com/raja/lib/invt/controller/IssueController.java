@@ -63,29 +63,25 @@ public class IssueController {
 					.body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
 		}
 	}
-	
-	@GetMapping(value = "/all")
-	public ResponseEntity<ApiResponseDTO<List<BookIssue>>> getAllIssue(@RequestParam String startDate, @RequestParam String endDate) {
-	    return stockService.getAllIssue(startDate, endDate);
-	}
 
+	@GetMapping(value = "/all")
+	public ResponseEntity<ApiResponseDTO<List<BookIssue>>> getAllIssue(@RequestParam String startDate,
+			@RequestParam String endDate) {
+		return stockService.getAllIssue(startDate, endDate);
+	}
 
 	@GetMapping("/book-issue/{stockId}")
 	public ResponseEntity<List<IssueDetailsDTO>> getInvoiceDetailsByStockId(@PathVariable Integer stockId) {
 		List<IssueDetailsDTO> issueDetails = stockService.getInvoiceDetailsByStockId(stockId);
 		return new ResponseEntity<>(issueDetails, HttpStatus.OK);
 	}
-	
+
 	@DeleteMapping("/{stockId}")
 	public ResponseEntity<ApiResponseDTO<Void>> deleteBookIssue(@PathVariable int stockId) {
-	    stockService.deleteBookIssue(stockId);
-	    return ResponseEntity
-	            .ok(new ApiResponseDTO<>(true, "Book issue deleted successfully", null, HttpStatus.OK.value()));
+		stockService.deleteBookIssue(stockId);
+		return ResponseEntity
+				.ok(new ApiResponseDTO<>(true, "Book issue deleted successfully", null, HttpStatus.OK.value()));
 	}
-
-
-
-
 
 //    ------------------------------------------------- Issue Return---------------------------------------------------
 	@GetMapping("/detail/{memberId}/{returnDate}")
@@ -99,13 +95,11 @@ public class IssueController {
 		return stockService.createIssueReturn(bookIssueReturnRequestDTO);
 	}
 
-	 @GetMapping("/issueReturns")
-	    public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> findAllIssueReturn(
-	        @RequestParam String startDate, 
-	        @RequestParam String endDate
-	    ) {
-	        return stockService.findAllIssueReturn(startDate, endDate);
-	    }
+	@GetMapping("/issueReturns")
+	public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> findAllIssueReturn(@RequestParam String startDate,
+			@RequestParam String endDate) {
+		return stockService.findAllIssueReturn(startDate, endDate);
+	}
 //  ------------------------------------------------- Purchase Return---------------------------------------------------
 
 	@GetMapping("/details/{bookName}")
@@ -126,11 +120,10 @@ public class IssueController {
 	}
 
 	@GetMapping("/purchase-return-all")
-    public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> getStockDetails(
-            @RequestParam("startDate") String startDate,
-            @RequestParam("endDate") String endDate) {
-        return stockService.getStockDetailsByType(startDate, endDate);
-    }
+	public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> getStockDetails(
+			@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate) {
+		return stockService.getStockDetailsByType(startDate, endDate);
+	}
 
 	// ------------------------------------------------- Book
 	// Lost---------------------------------------------------
@@ -148,9 +141,10 @@ public class IssueController {
 	}
 
 	@GetMapping("/book-lost-all")
-    public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> getLostDetails(@RequestParam String startDate, @RequestParam String endDate) {
-        return stockService.getLostDetails(startDate, endDate);
-    }
+	public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> getLostDetails(@RequestParam String startDate,
+			@RequestParam String endDate) {
+		return stockService.getLostDetails(startDate, endDate);
+	}
 	// ------------------------------------------------- Book
 	// scrap---------------------------------------------------
 
@@ -164,13 +158,12 @@ public class IssueController {
 					.body(new ApiResponseDTO<>(false, e.getMessage(), null, HttpStatus.INTERNAL_SERVER_ERROR.value()));
 		}
 	}
-	
-	 @GetMapping("/book-scrap-all")
-	    public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> getScrapDetails(
-	            @RequestParam String startDate,
-	            @RequestParam String endDate) {
-	        return stockService.getScrapDetails(startDate, endDate);
-	    }
+
+	@GetMapping("/book-scrap-all")
+	public ResponseEntity<ApiResponseDTO<List<Map<String, Object>>>> getScrapDetails(@RequestParam String startDate,
+			@RequestParam String endDate) {
+		return stockService.getScrapDetails(startDate, endDate);
+	}
 
 	@GetMapping("/acession-details")
 	public List<AcessionForLostScarap> getAcessionNO() {

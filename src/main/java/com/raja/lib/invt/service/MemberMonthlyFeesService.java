@@ -6,12 +6,10 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.raja.lib.acc.repository.LedgerRepository;
 import com.raja.lib.auth.model.GeneralMember;
 import com.raja.lib.auth.repository.GeneralMemberRepository;
 import com.raja.lib.invt.model.MemberMonthlyFees;
 import com.raja.lib.invt.repository.MemberMonthlyFeesRepository;
-import com.raja.lib.invt.repository.MembershipFeesRepository;
 import com.raja.lib.invt.request.MemberMonthlyFeesRequest;
 import com.raja.lib.invt.resposne.MemberMonthlyFeesResponse;
 
@@ -20,12 +18,7 @@ public class MemberMonthlyFeesService {
 
     @Autowired
     private MemberMonthlyFeesRepository repository;
-    
-    @Autowired
-    private MembershipFeesRepository feesrepository;
 
-    @Autowired
-    private LedgerRepository ledgerRepository;
 
     @Autowired
     private GeneralMemberRepository generalMemberRepository;
@@ -92,4 +85,9 @@ public class MemberMonthlyFeesService {
         response.setMemberName(fee.getMember().getFirstName() + " " + fee.getMember().getLastName()); // Set member's name
         return response;
     }
+    
+    public String getNextDayByMemberId(int memberId) {
+        return repository.findNextDayByMemberId(memberId);
+    }
+
 }

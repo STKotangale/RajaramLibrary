@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.raja.lib.acc.response.ApiResponseDTO;
@@ -124,14 +126,20 @@ public class BookAuthorService {
     public ApiResponseDTO<Void> deleteBookAuthor(int authorId) {
         LOGGER.info("Deleting book author with id {}", authorId);
         if (bookAuthorRepository.existsById(authorId)) {
-            bookAuthorRepository.deleteById(authorId);
-            LOGGER.debug("Book author deleted with id {}", authorId);
-            return new ApiResponseDTO<>(true, "Book author deleted successfully.", null, 200);
+            try {
+                bookAuthorRepository.deleteById(authorId);
+                LOGGER.debug("Book author deleted with id {}", authorId);
+                return new ApiResponseDTO<>(true, "Book author deleted successfully.", null, HttpStatus.OK.value());
+            } catch (DataIntegrityViolationException e) {
+                LOGGER.error("Failed to delete book author with id {}: {}", authorId, e.getMessage());
+                return new ApiResponseDTO<>(false, "Cannot delete the book author because it is referenced by other records", null, HttpStatus.CONFLICT.value());
+            }
         } else {
             LOGGER.warn("Book author not found with id {}", authorId);
-            return new ApiResponseDTO<>(false, "Book author not found.", null, 404);
+            return new ApiResponseDTO<>(false, "Book author not found.", null, HttpStatus.NOT_FOUND.value());
         }
     }
+
 
     private void validateBookAuthorRequestDTO(BookAuthorRequestDTO requestDTO) {
         var violations = validator.validate(requestDTO);

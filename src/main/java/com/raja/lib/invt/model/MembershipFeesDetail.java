@@ -19,7 +19,7 @@ public class MembershipFeesDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "membershipDetailId")
-    private Long membershipDetailId;
+    private int membershipDetailId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "membershipIdF", referencedColumnName = "membershipId")
