@@ -55,6 +55,6 @@ public class BookAuthorController {
     @DeleteMapping("/{authorId}")
     public ResponseEntity<ApiResponseDTO<Void>> deleteBookAuthor(@PathVariable int authorId) {
         ApiResponseDTO<Void> response = bookAuthorService.deleteBookAuthor(authorId);
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
+        return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 }

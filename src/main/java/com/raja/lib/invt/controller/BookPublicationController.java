@@ -50,6 +50,8 @@ public class BookPublicationController {
 
     @DeleteMapping("/{publicationId}")
     public ResponseEntity<ApiResponseDTO<Void>> deleteBookPublication(@PathVariable int publicationId) {
-        return ResponseEntity.ok(bookPublicationService.deleteBookPublication(publicationId));
+        ApiResponseDTO<Void> response = bookPublicationService.deleteBookPublication(publicationId);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
     }
+
 }

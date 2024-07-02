@@ -3,6 +3,8 @@ package com.raja.lib.invt.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,36 +27,47 @@ import com.raja.lib.invt.service.BookLanguageService;
 @RequestMapping("/api/language")
 public class BookLanguageController {
 
-    @Autowired
-    private BookLanguageService bookLanguageService;
+	@Autowired
+	private BookLanguageService bookLanguageService;
 
-    @PostMapping("/book-languages")
-    public ResponseEntity<ApiResponseDTO<BookLanguage>> createBookLanguage(@Validated @RequestBody BookLanguageRequest request) {
-        ApiResponseDTO<BookLanguage> response = bookLanguageService.createBookLanguage(request);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
-    }
+	@PostMapping("/book-languages")
+	public ResponseEntity<ApiResponseDTO<BookLanguage>> createBookLanguage(
+			@Validated @RequestBody BookLanguageRequest request) {
+		ApiResponseDTO<BookLanguage> response = bookLanguageService.createBookLanguage(request);
+		return ResponseEntity.status(response.getStatusCode()).body(response);
+	}
 
-    @GetMapping("/book-languages")
-    public ResponseEntity<ApiResponseDTO<List<BookLanguage>>> getAllBookLanguages() {
-        ApiResponseDTO<List<BookLanguage>> response = bookLanguageService.getAllBookLanguages();
-        return ResponseEntity.status(response.getStatusCode()).body(response);
-    }
+	@GetMapping("/book-languages")
+	public ResponseEntity<ApiResponseDTO<List<BookLanguage>>> getAllBookLanguages() {
+		ApiResponseDTO<List<BookLanguage>> response = bookLanguageService.getAllBookLanguages();
+		return ResponseEntity.status(response.getStatusCode()).body(response);
+	}
 
-    @GetMapping("/book-languages/{id}")
-    public ResponseEntity<ApiResponseDTO<BookLanguage>> getBookLanguageById(@PathVariable int id) {
-        ApiResponseDTO<BookLanguage> response = bookLanguageService.getBookLanguageById(id);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
-    }
+	@GetMapping("/book-languages/{id}")
+	public ResponseEntity<ApiResponseDTO<BookLanguage>> getBookLanguageById(@PathVariable int id) {
+		ApiResponseDTO<BookLanguage> response = bookLanguageService.getBookLanguageById(id);
+		return ResponseEntity.status(response.getStatusCode()).body(response);
+	}
 
-    @PutMapping("/book-languages/{id}")
-    public ResponseEntity<ApiResponseDTO<BookLanguage>> updateBookLanguage(@PathVariable int id, @Validated @RequestBody BookLanguageRequest request) {
-        ApiResponseDTO<BookLanguage> response = bookLanguageService.updateBookLanguage(id, request);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
-    }
+	@PutMapping("/book-languages/{id}")
+	public ResponseEntity<ApiResponseDTO<BookLanguage>> updateBookLanguage(@PathVariable int id,
+			@Validated @RequestBody BookLanguageRequest request) {
+		ApiResponseDTO<BookLanguage> response = bookLanguageService.updateBookLanguage(id, request);
+		return ResponseEntity.status(response.getStatusCode()).body(response);
+	}
 
-    @DeleteMapping("/book-languages/{id}")
-    public ResponseEntity<ApiResponseDTO<Void>> deleteBookLanguage(@PathVariable int id) {
-        ApiResponseDTO<Void> response = bookLanguageService.deleteBookLanguage(id);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
-    }
+	@DeleteMapping("/book-languages/{id}")
+	public ResponseEntity<ApiResponseDTO<Void>> deleteBookLanguage(@PathVariable int id) {
+		ApiResponseDTO<Void> response;
+		try {
+			response = bookLanguageService.deleteBookLanguage(id);
+			return ResponseEntity.status(response.getStatusCode()).body(response);
+		} catch (DataIntegrityViolationException e) {
+			response = new ApiResponseDTO<>(false,
+					"Cannot delete the book language because it is referenced by other records", null,
+					HttpStatus.CONFLICT.value());
+			return ResponseEntity.status(response.getStatusCode()).body(response);
+		}
+	}
+
 }

@@ -20,10 +20,9 @@ import com.raja.lib.invt.resposne.ApiResponseDTO;
 import com.raja.lib.invt.service.BookService;
 
 import jakarta.validation.Valid;
-
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/book")
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class BookController {
 
     @Autowired
