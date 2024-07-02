@@ -44,7 +44,6 @@ public class MembershipFeesService {
 	@Autowired
 	private LibraryFeeRepository libraryFeeRepository;
 
-
 	public List<MembershipFeesResponse> getAllFees() {
 		return repository.findAll().stream().map(this::convertToResponse).collect(Collectors.toList());
 	}
@@ -55,39 +54,40 @@ public class MembershipFeesService {
 	}
 
 	public ApiResponseDTO<String> createFee(MembershipFeesRequest request) {
-		MembershipFees fee = new MembershipFees();
-		updateEntityWithRequest(fee, request);
-		MembershipFees savedFee = repository.save(fee);
+        boolean memberHasPaid = repository.hasPaidMembershipFees(request.getMemberIdF());
 
-		for (MembershipFeesDetail detail : fee.getMembershipFeesDetails()) {
-			detail.setMembershipIdF(savedFee);
-			membershipFeesDetailRepository.save(detail);
-		}
+        if (memberHasPaid) {
+            return new ApiResponseDTO<>(false, "Member has already paid the membership fee", null, HttpStatus.CONFLICT.value());
+        }
+        MembershipFees fee = new MembershipFees();
+        updateEntityWithRequest(fee, request);
+        MembershipFees savedFee = repository.save(fee);
 
-		return new ApiResponseDTO<>(true, "Membership fee created successfully", null, HttpStatus.CREATED.value());
-	}
+        for (MembershipFeesDetail detail : fee.getMembershipFeesDetails()) {
+            detail.setMembershipIdF(savedFee);
+            membershipFeesDetailRepository.save(detail);
+        }
+        return new ApiResponseDTO<>(true, "Membership fee created successfully", null, HttpStatus.CREATED.value());
+    }
 
+	
 	@Transactional
 	public ApiResponseDTO<String> updateFee(int id, MembershipFeesRequest request) {
-	    MembershipFees existingFee = repository.findById(id)
-	        .orElseThrow(() -> new RuntimeException("Fee not found"));
-	    GeneralMember member = generalMemberRepository.findById(request.getMemberIdF())
-	        .orElseThrow(() -> new RuntimeException("Member not found"));
-	    existingFee.setMember(member);  // Update the member
-	    existingFee.setMemInvoiceNo(request.getMemInvoiceNo());
-	    existingFee.setMemInvoiceDate(request.getMemInvoiceDate());
-	    existingFee.setFeesType(request.getFeesType());
-	    existingFee.setBankName(request.getBankName());
-	    existingFee.setChequeNo(request.getChequeNo());
-	    existingFee.setChequeDate(request.getChequeDate());
-	    existingFee.setMembershipDescription(request.getMembershipDescription());
-	    existingFee.setFess_total(request.getFess_total());
-	    repository.save(existingFee);
-	    return new ApiResponseDTO<>(true, "Membership fee updated successfully", null, HttpStatus.OK.value());
+		MembershipFees existingFee = repository.findById(id).orElseThrow(() -> new RuntimeException("Fee not found"));
+		GeneralMember member = generalMemberRepository.findById(request.getMemberIdF())
+				.orElseThrow(() -> new RuntimeException("Member not found"));
+		existingFee.setMember(member); // Update the member
+		existingFee.setMemInvoiceNo(request.getMemInvoiceNo());
+		existingFee.setMemInvoiceDate(request.getMemInvoiceDate());
+		existingFee.setFeesType(request.getFeesType());
+		existingFee.setBankName(request.getBankName());
+		existingFee.setChequeNo(request.getChequeNo());
+		existingFee.setChequeDate(request.getChequeDate());
+		existingFee.setMembershipDescription(request.getMembershipDescription());
+		existingFee.setFess_total(request.getFess_total());
+		repository.save(existingFee);
+		return new ApiResponseDTO<>(true, "Membership fee updated successfully", null, HttpStatus.OK.value());
 	}
-
-
-
 
 	public ApiResponseDTO<String> deleteFee(int id) {
 		repository.deleteById(id);
@@ -153,22 +153,20 @@ public class MembershipFeesService {
 	}
 
 	public ApiResponseDTO<String> checkMemberAndDate(MemberCheckRequestDTO request) {
-	    Optional<GeneralMember> memberOptional = generalMemberRepository.findById(request.getMemberId());
+		Optional<GeneralMember> memberOptional = generalMemberRepository.findById(request.getMemberId());
 
-	    if (!memberOptional.isPresent()) {
-	        return new ApiResponseDTO<>(false, "Member not found", null, HttpStatus.NOT_FOUND.value());
-	    }
+		if (!memberOptional.isPresent()) {
+			return new ApiResponseDTO<>(false, "Member not found", null, HttpStatus.NOT_FOUND.value());
+		}
 
-	    int feesPaid = repository.hasPaidFees(request.getMemberId(), request.getDate());
-	    if (feesPaid == 0) {
-	        return new ApiResponseDTO<>(false, "Member has not paid the required fees or issue date is out of range", null, HttpStatus.NOT_FOUND.value());
-	    }
+		int feesPaid = repository.hasPaidFees(request.getMemberId(), request.getDate());
+		if (feesPaid == 0) {
+			return new ApiResponseDTO<>(false, "Member has not paid the required fees or issue date is out of range",
+					null, HttpStatus.NOT_FOUND.value());
+		}
 
-	    return new ApiResponseDTO<>(true, "Member can issue the book", null, HttpStatus.OK.value());
+		return new ApiResponseDTO<>(true, "Member can issue the book", null, HttpStatus.OK.value());
 	}
-
-
-
 
 	public int getNextInvoiceNumber() {
 		int maxInvoiceNumber = memberMonthlyFeesRepository.getNextInvoiceNumber();
@@ -176,8 +174,8 @@ public class MembershipFeesService {
 	}
 
 	public int getNextInvoiceMembershipNo() {
-	    Integer maxInvoiceNumber = repository.getNextMembershipNo();
-	    return (maxInvoiceNumber != null) ? maxInvoiceNumber : 1;
+		Integer maxInvoiceNumber = repository.getNextMembershipNo();
+		return (maxInvoiceNumber != null) ? maxInvoiceNumber : 1;
 	}
 
 }

@@ -18,4 +18,6 @@ public interface MembershipFeesRepository extends JpaRepository<MembershipFees, 
 	@Query(value = "SELECT MAX(amf.mem_invoice_no) + 1 FROM acc_membership_fees amf", nativeQuery = true)
 	Integer getNextMembershipNo();
 
+	@Query("SELECT COUNT(mf) > 0 FROM MembershipFees mf WHERE mf.member.memberId = :memberId")
+    boolean hasPaidMembershipFees(@Param("memberId") Integer memberId);
 }
