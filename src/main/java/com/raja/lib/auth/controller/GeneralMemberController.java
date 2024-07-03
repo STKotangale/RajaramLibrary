@@ -3,6 +3,7 @@ package com.raja.lib.auth.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -38,10 +39,16 @@ public class GeneralMemberController {
 
     @PostMapping
     public ResponseEntity<ApiResponseDTO<GeneralMemberResponseDTO>> createGeneralMember(@RequestBody GeneralMemberRequestDTO requestDTO) {
-        GeneralMemberResponseDTO createdMember = generalMemberService.createGeneralMember(requestDTO);
-        ApiResponseDTO<GeneralMemberResponseDTO> responseDTO = new ApiResponseDTO<>(true, "General member created successfully", createdMember, HttpStatus.CREATED.value());
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+        try {
+            GeneralMemberResponseDTO createdMember = generalMemberService.createGeneralMember(requestDTO);
+            ApiResponseDTO<GeneralMemberResponseDTO> responseDTO = new ApiResponseDTO<>(true, "General member created successfully", createdMember, HttpStatus.CREATED.value());
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+        } catch (DataIntegrityViolationException ex) {
+            ApiResponseDTO<GeneralMemberResponseDTO> responseDTO = new ApiResponseDTO<>(false, "Duplicate entry detected: " + ex.getMostSpecificCause().getMessage(), null, HttpStatus.CONFLICT.value());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(responseDTO);
+        }
     }
+    
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseDTO<GeneralMemberResponseDTO>> getGeneralMemberById(@PathVariable int id) {
