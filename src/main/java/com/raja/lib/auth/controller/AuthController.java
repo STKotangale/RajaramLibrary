@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -155,25 +156,31 @@ public class AuthController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUserById(@PathVariable int id, @Valid @RequestBody User updatedUser) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setUsername(updatedUser.getUsername());
-            user.setUseremail(updatedUser.getUseremail());
-            user.setIsBlock(updatedUser.getIsBlock());
-            user.setMobileNo(updatedUser.getMobileNo()); // New field
-            user.setGeneralMember(updatedUser.getGeneralMember());
+        try {
+            Optional<User> optionalUser = userRepository.findById(id);
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                user.setUsername(updatedUser.getUsername());
+                user.setUseremail(updatedUser.getUseremail());
+                user.setIsBlock(updatedUser.getIsBlock());
+                user.setMobileNo(updatedUser.getMobileNo());
+                user.setGeneralMember(updatedUser.getGeneralMember());
 
-            if (updatedUser.getUserpassword() != null) {
-                user.setUserpassword(encoder.encode(updatedUser.getUserpassword()));
+                if (updatedUser.getUserpassword() != null) {
+                    user.setUserpassword(encoder.encode(updatedUser.getUserpassword()));
+                }
+
+                userRepository.save(user);
+                return ResponseEntity.ok(new MessageResponse("User updated successfully"));
+            } else {
+                return ResponseEntity.notFound().build();
             }
-
-            userRepository.save(user);
-            return ResponseEntity.ok(new MessageResponse("User updated successfully"));
-        } else {
-            return ResponseEntity.notFound().build();
+        } catch (DataIntegrityViolationException ex) {
+            MessageResponse response = new MessageResponse("Duplicate entry detected: " + ex.getMostSpecificCause().getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
     }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
