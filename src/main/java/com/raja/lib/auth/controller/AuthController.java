@@ -53,189 +53,184 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+	@Autowired
+	AuthenticationManager authenticationManager;
 
-    @Autowired
-    UserRepository userRepository;
+	@Autowired
+	UserRepository userRepository;
 
-    @Autowired
-    RoleRepository roleRepository;
+	@Autowired
+	RoleRepository roleRepository;
 
-    @Autowired
-    PasswordEncoder encoder;
+	@Autowired
+	PasswordEncoder encoder;
 
-    @Autowired
-    JwtUtils jwtUtils;
+	@Autowired
+	JwtUtils jwtUtils;
 
-    @Autowired
-    SessionService sessionService;
-    
-    @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
+	@Autowired
+	SessionService sessionService;
 
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+	@PostMapping("/signin")
+	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();    
-        List<String> roles = userDetails.getAuthorities().stream()
-            .map(item -> item.getAuthority())
-            .collect(Collectors.toList());
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String jwt = jwtUtils.generateJwtToken(authentication);
 
-        HttpSession session = request.getSession(true);
-        session.setAttribute("username", userDetails.getUsername());
-        session.setAttribute("roles", roles);
+		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
+				.collect(Collectors.toList());
 
-        java.util.Date issuedAt = jwtUtils.getIssuedAtFromJwtToken(jwt);
-        SimpleDateFormat yearFormatter = new SimpleDateFormat("yyyy");
-        String loginYear = yearFormatter.format(issuedAt);
+		HttpSession session = request.getSession(true);
+		session.setAttribute("username", userDetails.getUsername());
+		session.setAttribute("roles", roles);
 
+		java.util.Date issuedAt = jwtUtils.getIssuedAtFromJwtToken(jwt);
+		SimpleDateFormat yearFormatter = new SimpleDateFormat("yyyy");
+		String loginYear = yearFormatter.format(issuedAt);
 
-        return ResponseEntity.ok(new JwtResponse(jwt, 
-                             userDetails.getId(), 
-                             userDetails.getUsername(), 
-                             userDetails.getEmail(), 
-                             roles,
-                             userDetails.getMemberId())); 
-    }
+		return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(),
+				userDetails.getEmail(), roles, userDetails.getMemberId()));
+	}
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
-        }
+	@PostMapping("/signup")
+	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+		}
 
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
-        }
+		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+		}
 
-        if (signUpRequest.getPassword().length() < 6) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Password length must be at least 6 characters!"));
-        }
+		if (signUpRequest.getPassword().length() < 6) {
+			return ResponseEntity.badRequest()
+					.body(new MessageResponse("Error: Password length must be at least 6 characters!"));
+		}
 
-        User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()), 'N', signUpRequest.getMobileNo()); // Updated constructor
+		User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
+				encoder.encode(signUpRequest.getPassword()), 'N', signUpRequest.getMobileNo()); // Updated constructor
 
-        Set<Role> roles = new HashSet<>();
+		Set<Role> roles = new HashSet<>();
 
-        if (signUpRequest.getRole() != null && !signUpRequest.getRole().isEmpty()) {
-            signUpRequest.getRole().forEach(roleName -> {
-                Role role = roleRepository.findByRoleName(roleName)
-                        .orElseThrow(() -> new RuntimeException("Error: Role '" + roleName + "' not found."));
-                roles.add(role);
-            });
-        } else {
-            Role defaultRole = roleRepository.findByRoleName("admin")
-                    .orElseThrow(() -> new RuntimeException("Error: Default role 'admin' not found."));
-            roles.add(defaultRole);
-        }
+		if (signUpRequest.getRole() != null && !signUpRequest.getRole().isEmpty()) {
+			signUpRequest.getRole().forEach(roleName -> {
+				Role role = roleRepository.findByRoleName(roleName)
+						.orElseThrow(() -> new RuntimeException("Error: Role '" + roleName + "' not found."));
+				roles.add(role);
+			});
+		} else {
+			Role defaultRole = roleRepository.findByRoleName("admin")
+					.orElseThrow(() -> new RuntimeException("Error: Default role 'admin' not found."));
+			roles.add(defaultRole);
+		}
 
-        user.setRoles(roles);
-        userRepository.save(user);
+		user.setRoles(roles);
+		userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
-    }
+		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+	}
 
-    @GetMapping("/users")
-    List<User> getAllUser() {
-        return userRepository.getAllAdminUsers();
-    }
+	@GetMapping("/users")
+	List<User> getAllUser() {
+		return userRepository.getAllAdminUsers();
+	}
 
-    @GetMapping("/{id}")
-    Optional<User> getUserById(@PathVariable int id) {
-        return userRepository.findById(id);
-    }
+	@GetMapping("/{id}")
+	Optional<User> getUserById(@PathVariable int id) {
+		return userRepository.findById(id);
+	}
 
-    @DeleteMapping("/{id}")
-    void deleteUserById(@PathVariable int id) {
-        userRepository.deleteById(id);
-    }
+	@DeleteMapping("/{id}")
+	void deleteUserById(@PathVariable int id) {
+		userRepository.deleteById(id);
+	}
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateUserById(@PathVariable int id, @Valid @RequestBody User updatedUser) {
-        try {
-            Optional<User> optionalUser = userRepository.findById(id);
-            if (optionalUser.isPresent()) {
-                User user = optionalUser.get();
-                user.setUsername(updatedUser.getUsername());
-                user.setUseremail(updatedUser.getUseremail());
-                user.setIsBlock(updatedUser.getIsBlock());
-                user.setMobileNo(updatedUser.getMobileNo());
-                user.setGeneralMember(updatedUser.getGeneralMember());
+	@PutMapping("/{id}")
+	public ResponseEntity<?> updateUserById(@PathVariable int id, @Valid @RequestBody User updatedUser) {
+		try {
+			Optional<User> optionalUser = userRepository.findById(id);
+			if (optionalUser.isPresent()) {
+				User user = optionalUser.get();
+				user.setUsername(updatedUser.getUsername());
+				user.setUseremail(updatedUser.getUseremail());
+				user.setIsBlock(updatedUser.getIsBlock());
+				user.setMobileNo(updatedUser.getMobileNo());
+				user.setGeneralMember(updatedUser.getGeneralMember());
 
-                if (updatedUser.getUserpassword() != null) {
-                    user.setUserpassword(encoder.encode(updatedUser.getUserpassword()));
-                }
+				if (updatedUser.getUserpassword() != null) {
+					user.setUserpassword(encoder.encode(updatedUser.getUserpassword()));
+				}
 
-                userRepository.save(user);
-                return ResponseEntity.ok(new MessageResponse("User updated successfully"));
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (DataIntegrityViolationException ex) {
-            MessageResponse response = new MessageResponse("Duplicate entry detected: " + ex.getMostSpecificCause().getMessage());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-        }
-    }
+				userRepository.save(user);
+				return ResponseEntity.ok(new MessageResponse("User updated successfully"));
+			} else {
+				return ResponseEntity.notFound().build();
+			}
+		} catch (DataIntegrityViolationException ex) {
+			MessageResponse response = new MessageResponse(
+					"Duplicate entry detected: " + ex.getMostSpecificCause().getMessage());
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+		}
+	}
 
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
+		Map<String, String> errors = new HashMap<>();
+		ex.getBindingResult().getAllErrors().forEach((error) -> {
+			String fieldName = ((FieldError) error).getField();
+			String errorMessage = error.getDefaultMessage();
+			errors.put(fieldName, errorMessage);
+		});
+		return ResponseEntity.badRequest().body(errors);
+	}
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return ResponseEntity.badRequest().body(errors);
-    }
-    
-    
-    // ---------------------------------------- Password funnality-----------------------------------------------------
-    
-    @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
-        String mobile = request.get("mobile");
-        String email = request.get("email");
+	// ---------------------------------------- Password
+	// funnality-----------------------------------------------------
 
-        Optional<User> userOptional = userRepository.findByUseremail(email);
-        if (userOptional.isPresent() && userOptional.get().getMobileNo().equals(mobile)) {
-            User user = userOptional.get();
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "User found");
-            response.put("userId", user.getUserId());
-            return ResponseEntity.ok(response);
-        } else {
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "User not found");
-            response.put("userId", null);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-    }
+	@PostMapping("/forgot-password")
+	public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
+		String mobile = request.get("mobile");
+		String email = request.get("email");
 
-    @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
-        int userId = Integer.parseInt(request.get("userId"));
-        String password = request.get("password");
-        String confirmPassword = request.get("confirmPassword");
+		Optional<User> userOptional = userRepository.findByUseremail(email);
+		if (userOptional.isPresent() && userOptional.get().getMobileNo().equals(mobile)) {
+			User user = userOptional.get();
+			Map<String, Object> response = new HashMap<>();
+			response.put("message", "User found");
+			response.put("userId", user.getUserId());
+			return ResponseEntity.ok(response);
+		} else {
+			Map<String, Object> response = new HashMap<>();
+			response.put("message", "User not found");
+			response.put("userId", null);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+		}
+	}
 
-        if (!password.equals(confirmPassword)) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Passwords do not match"));
-        }
+	@PostMapping("/reset-password")
+	public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+		int userId = Integer.parseInt(request.get("userId"));
+		String password = request.get("password");
+		String confirmPassword = request.get("confirmPassword");
 
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            user.setUserpassword(encoder.encode(password));
-            userRepository.save(user);
-            return ResponseEntity.ok(new MessageResponse("Password reset successfully"));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("User not found"));
-        }
-    }
-    
+		if (!password.equals(confirmPassword)) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: Passwords do not match"));
+		}
+
+		Optional<User> userOptional = userRepository.findById(userId);
+		if (userOptional.isPresent()) {
+			User user = userOptional.get();
+			user.setUserpassword(encoder.encode(password));
+			userRepository.save(user);
+			return ResponseEntity.ok(new MessageResponse("Password reset successfully"));
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("User not found"));
+		}
+	}
+
 }

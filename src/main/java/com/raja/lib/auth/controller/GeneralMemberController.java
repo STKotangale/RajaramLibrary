@@ -66,10 +66,16 @@ public class GeneralMemberController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseDTO<GeneralMemberResponseDTO>> updateGeneralMember(@PathVariable int id, @RequestBody GeneralMemberRequestDTO requestDTO) {
-        GeneralMemberResponseDTO updatedMember = generalMemberService.updateGeneralMember(id, requestDTO);
-        ApiResponseDTO<GeneralMemberResponseDTO> responseDTO = new ApiResponseDTO<>(true, "General member updated successfully", updatedMember, HttpStatus.OK.value());
-        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        try {
+            GeneralMemberResponseDTO updatedMember = generalMemberService.updateGeneralMember(id, requestDTO);
+            ApiResponseDTO<GeneralMemberResponseDTO> responseDTO = new ApiResponseDTO<>(true, "General member updated successfully", updatedMember, HttpStatus.OK.value());
+            return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        } catch (DataIntegrityViolationException ex) {
+            ApiResponseDTO<GeneralMemberResponseDTO> responseDTO = new ApiResponseDTO<>(false, "Duplicate entry detected: " + ex.getMostSpecificCause().getMessage(), null, HttpStatus.CONFLICT.value());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(responseDTO);
+        }
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponseDTO<String>> deleteGeneralMember(@PathVariable int id) {
