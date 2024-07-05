@@ -31,12 +31,14 @@ public class IssueRegisterMemberWiseController {
             String startDate = dateRange.get("startDate");
             String endDate = dateRange.get("endDate");
             String memberId = dateRange.get("memberId");
-
+            String memberName = dateRange.get("selectedMember");
+            
 //            System.out.println("startDate "+startDate);
 //            System.out.println("endDate "+endDate);
 //            System.out.println("memberId "+memberId);
+//            System.out.println("memberName "+memberName);
             // Generate the report
-            ByteArrayOutputStream outputStream = issueRegisterMemberWiseService.generateReport(startDate, endDate, memberId);
+            ByteArrayOutputStream outputStream = issueRegisterMemberWiseService.generateReport(startDate, endDate, memberId, memberName);
 
             // Set the response headers
             HttpHeaders headers = new HttpHeaders();

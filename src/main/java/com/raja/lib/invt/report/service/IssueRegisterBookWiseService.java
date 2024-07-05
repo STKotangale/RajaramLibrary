@@ -4,6 +4,8 @@ import net.sf.jasperreports.engine.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.raja.lib.tools.DateConversion;
+
 import javax.sql.DataSource;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -15,13 +17,16 @@ public class IssueRegisterBookWiseService {
     @Autowired
     private DataSource dataSource;
 
-    public ByteArrayOutputStream generateReport(String startDate, String endDate, String bookId) throws Exception {
+    public ByteArrayOutputStream generateReport(String startDate, String endDate, String bookId, String bookname) throws Exception {
         JasperReport jasperReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/Issue/IssueRegisterBookWise.jrxml"));
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("startDate", startDate);
         parameters.put("endDate", endDate);
+        parameters.put("PstartDate", DateConversion.StringYYYYMMDDToStringDDMMYYYY(startDate));
+        parameters.put("PendDate", DateConversion.StringYYYYMMDDToStringDDMMYYYY(endDate));
         parameters.put("bookId", bookId);
+        parameters.put("bookname", bookname);
 
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource.getConnection());
 

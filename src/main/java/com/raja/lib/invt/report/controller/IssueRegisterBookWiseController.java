@@ -31,11 +31,13 @@ public class IssueRegisterBookWiseController {
             String startDate = dateRange.get("startDate");
             String endDate = dateRange.get("endDate");
             String bookId = dateRange.get("bookId");
-            System.out.println("S date "+startDate);
-            System.out.println("e date "+endDate);
-            System.out.println("bookId "+bookId);
-            // Generate the report
-            ByteArrayOutputStream outputStream = issueRegisterBookWiseService.generateReport(startDate, endDate, bookId);
+            String bookname = dateRange.get("bookname");
+//            System.out.println("S date "+startDate);
+//            System.out.println("e date "+endDate);
+//            System.out.println("bookId "+bookId);
+//            System.out.println("bookname "+bookname);
+             // Generate the report
+            ByteArrayOutputStream outputStream = issueRegisterBookWiseService.generateReport(startDate, endDate, bookId, bookname);
 
             // Set the response headers
             HttpHeaders headers = new HttpHeaders();
