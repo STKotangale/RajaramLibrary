@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +20,7 @@ public class JasperReportController {
     @Autowired
     private JasperReportService jasperReportService;
 
-    @GetMapping("/report")
+    @PostMapping("/report")
     public ResponseEntity<InputStreamResource> generateReport() {
         ByteArrayInputStream bis = jasperReportService.exportReport();
         HttpHeaders headers = new HttpHeaders();
